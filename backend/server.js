@@ -26,6 +26,10 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(requestLogger);
 
 // API Routes
+// Auth routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
+// API Routes
 app.get('/api', (req, res) => {
     res.json({
         success: true,

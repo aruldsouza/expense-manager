@@ -32,30 +32,30 @@ Base URL: `/api`
 
 ### POST `/api/auth/register`
 
-- [ ] 2.1 Create user registration endpoint
-- [ ] 2.2 Validate request body (name, email, password)
-- [ ] 2.3 Hash password before saving
-- [ ] 2.4 Prevent duplicate email registration
-- [ ] 2.5 Save user to database
-- [ ] 2.6 Return success response
+- [x] 2.1 Create user registration endpoint
+- [x] 2.2 Validate request body (name, email, password)
+- [x] 2.3 Hash password before saving
+- [x] 2.4 Prevent duplicate email registration
+- [x] 2.5 Save user to database
+- [x] 2.6 Return success response
 
 ---
 
 ### POST `/api/auth/login`
 
-- [ ] 2.7 Create user login endpoint
-- [ ] 2.8 Validate login credentials
-- [ ] 2.9 Compare hashed passwords
-- [ ] 2.10 Generate JWT token
-- [ ] 2.11 Return token and user details
+- [x] 2.7 Create user login endpoint
+- [x] 2.8 Validate login credentials
+- [x] 2.9 Compare hashed passwords
+- [x] 2.10 Generate JWT token
+- [x] 2.11 Return token and user details
 
 ---
 
 ### Auth Middleware
 
-- [ ] 2.12 Create JWT verification middleware
-- [ ] 2.13 Attach authenticated user to request object
-- [ ] 2.14 Protect all private routes
+- [x] 2.12 Create JWT verification middleware
+- [x] 2.13 Attach authenticated user to request object
+- [x] 2.14 Protect all private routes
 
 ---
 
