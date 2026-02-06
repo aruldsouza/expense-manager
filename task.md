@@ -63,28 +63,28 @@ Base URL: `/api`
 
 ### POST `/api/groups`
 
-- [ ] 3.1 Create group creation endpoint
-- [ ] 3.2 Automatically add creator as group member
-- [ ] 3.3 Validate provided member IDs
-- [ ] 3.4 Prevent duplicate members in group
-- [ ] 3.5 Save group to database
-- [ ] 3.6 Return created group
+- [x] 3.1 Create group creation endpoint
+- [x] 3.2 Automatically add creator as group member
+- [x] 3.3 Validate provided member IDs
+- [x] 3.4 Prevent duplicate members in group
+- [x] 3.5 Save group to database
+- [x] 3.6 Return created group
 
 ---
 
 ### GET `/api/groups`
 
-- [ ] 3.7 Fetch groups for logged-in user
-- [ ] 3.8 Restrict access to user’s groups only
-- [ ] 3.9 Return group list
+- [x] 3.7 Fetch groups for logged-in user
+- [x] 3.8 Restrict access to user’s groups only
+- [x] 3.9 Return group list
 
 ---
 
 ### GET `/api/groups/:groupId`
 
-- [ ] 3.10 Fetch group details
-- [ ] 3.11 Validate group membership
-- [ ] 3.12 Return group metadata
+- [x] 3.10 Fetch group details
+- [x] 3.11 Validate group membership
+- [x] 3.12 Return group metadata
 
 ---
 

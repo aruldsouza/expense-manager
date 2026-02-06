@@ -28,6 +28,8 @@ app.use(requestLogger);
 // API Routes
 // Auth routes
 app.use('/api/auth', require('./routes/authRoutes'));
+// Group routes
+app.use('/api/groups', require('./routes/groupRoutes'));
 
 // API Routes
 app.get('/api', (req, res) => {
@@ -60,7 +62,7 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
     console.log('');
