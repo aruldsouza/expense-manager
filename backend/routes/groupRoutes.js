@@ -6,11 +6,13 @@ const { protect } = require('../middleware/auth');
 const expenseRoutes = require('./expenseRoutes');
 const balanceRoutes = require('./balanceRoutes');
 const settlementRoutes = require('./settlementRoutes');
+const transactionRoutes = require('./transactionRoutes');
 
 // Re-route into other resource routers
 router.use('/:groupId/expenses', expenseRoutes);
 router.use('/:groupId/balances', balanceRoutes);
 router.use('/:groupId/settlements', settlementRoutes);
+router.use('/:groupId/transactions', transactionRoutes);
 
 router.route('/')
     .post(protect, createGroup)

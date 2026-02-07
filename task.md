@@ -148,11 +148,11 @@ Base URL: `/api`
 
 ### GET `/api/groups/:groupId/transactions`
 
-- [ ] 7.1 Create transaction history endpoint
-- [ ] 7.2 Fetch all expenses and settlements
-- [ ] 7.3 Ensure chronological ordering
-- [ ] 7.4 Restrict access to group members
-- [ ] 7.5 Return transaction ledger
+- [x] 7.1 Create transaction history endpoint
+- [x] 7.2 Fetch all expenses and settlements
+- [x] 7.3 Ensure chronological ordering
+- [x] 7.4 Restrict access to group members
+- [x] 7.5 Return transaction ledger
 
 ---
 
