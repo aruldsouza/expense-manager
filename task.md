@@ -92,22 +92,22 @@ Base URL: `/api`
 
 ### POST `/api/groups/:groupId/expenses`
 
-- [ ] 4.1 Create add-expense endpoint
-- [ ] 4.2 Validate expense amount and payer
-- [ ] 4.3 Support equal split logic
-- [ ] 4.4 Support unequal split logic
-- [ ] 4.5 Support percentage split logic
-- [ ] 4.6 Validate split totals match expense amount
-- [ ] 4.7 Save expense to database
-- [ ] 4.8 Update balances for all group members
+- [x] 4.1 Create add-expense endpoint
+- [x] 4.2 Validate expense amount and payer
+- [x] 4.3 Support equal split logic
+- [x] 4.4 Support unequal split logic
+- [x] 4.5 Support percentage split logic
+- [x] 4.6 Validate split totals match expense amount
+- [x] 4.7 Save expense to database
+- [x] 4.8 Update balances for all group members
 
 ---
 
 ### GET `/api/groups/:groupId/expenses`
 
-- [ ] 4.9 Fetch all expenses for group
-- [ ] 4.10 Validate group membership
-- [ ] 4.11 Return expense list
+- [x] 4.9 Fetch all expenses for group
+- [x] 4.10 Validate group membership
+- [x] 4.11 Return expense list
 
 ---
 
@@ -115,10 +115,10 @@ Base URL: `/api`
 
 ### GET `/api/groups/:groupId/balances`
 
-- [ ] 5.1 Calculate net balance per user
-- [ ] 5.2 Ensure balance correctness
-- [ ] 5.3 Restrict access to group members
-- [ ] 5.4 Return balance summary
+- [x] 5.1 Calculate net balance per user
+- [x] 5.2 Ensure balance correctness
+- [x] 5.3 Restrict access to group members
+- [x] 5.4 Return balance summary
 
 ---
 
@@ -126,21 +126,21 @@ Base URL: `/api`
 
 ### GET `/api/groups/:groupId/settlements/optimized`
 
-- [ ] 6.1 Identify creditors and debtors
-- [ ] 6.2 Implement greedy debt optimization algorithm
-- [ ] 6.3 Minimize number of transactions
-- [ ] 6.4 Ensure total settlement consistency
-- [ ] 6.5 Return optimized settlement list
+- [x] 6.1 Identify creditors and debtors
+- [x] 6.2 Implement greedy debt optimization algorithm
+- [x] 6.3 Minimize number of transactions
+- [x] 6.4 Ensure total settlement consistency
+- [x] 6.5 Return optimized settlement list
 
 ---
 
 ### POST `/api/groups/:groupId/settlements`
 
-- [ ] 6.6 Create settlement endpoint
-- [ ] 6.7 Validate settlement request
-- [ ] 6.8 Prevent over-settlement
-- [ ] 6.9 Update balances atomically
-- [ ] 6.10 Persist settlement record
+- [x] 6.6 Create settlement endpoint
+- [x] 6.7 Validate settlement request
+- [x] 6.8 Prevent over-settlement
+- [x] 6.9 Update balances atomically
+- [x] 6.10 Persist settlement record
 
 ---
 
