@@ -5,6 +5,9 @@ const connectDB = require('./config/db');
 const requestLogger = require('./middleware/logger');
 const errorHandler = require('./middleware/errorHandler');
 
+// Security Middleware Imports
+const helmet = require('helmet');
+
 // Initialize Express app
 const app = express();
 
@@ -21,6 +24,9 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
+// Apply Security Middleware
+app.use(helmet()); // Set security headers
 
 // Request logging middleware
 app.use(requestLogger);

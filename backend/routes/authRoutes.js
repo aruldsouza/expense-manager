@@ -6,13 +6,14 @@ const {
     getCurrentUser,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
+const { registerValidation, loginValidation } = require('../middleware/validate');
 
 /**
  * @route   POST /api/auth/register
  * @desc    Register a new user
  * @access  Public
  */
-router.post('/register', registerUser);
+router.post('/register', registerValidation, registerUser);
 
 /**
  * @route   POST /api/auth/login

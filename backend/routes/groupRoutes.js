@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createGroup, getGroups, getGroupById } = require('../controllers/groupController');
 const { protect } = require('../middleware/auth');
+const { groupValidation } = require('../middleware/validate');
 
 const expenseRoutes = require('./expenseRoutes');
 const balanceRoutes = require('./balanceRoutes');
@@ -15,7 +16,7 @@ router.use('/:groupId/settlements', settlementRoutes);
 router.use('/:groupId/transactions', transactionRoutes);
 
 router.route('/')
-    .post(protect, createGroup)
+    .post(protect, groupValidation, createGroup)
     .get(protect, getGroups);
 
 router.route('/:id')

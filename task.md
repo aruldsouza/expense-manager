@@ -158,11 +158,11 @@ Base URL: `/api`
 
 ## 8️⃣ Validation & Security
 
-- [ ] 8.1 Validate all request payloads
-- [ ] 8.2 Handle invalid MongoDB ObjectIds
-- [ ] 8.3 Prevent unauthorized data access
-- [ ] 8.4 Sanitize user inputs
-- [ ] 8.5 Enforce role-based access where applicable
+- [x] 8.1 Validate all request payloads
+- [x] 8.2 Handle invalid MongoDB ObjectIds
+- [x] 8.3 Prevent unauthorized data access
+- [x] 8.4 Sanitize user inputs
+- [x] 8.5 Enforce role-based access where applicable
 
 ---
 
