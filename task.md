@@ -168,13 +168,13 @@ Base URL: `/api`
 
 ## 9️⃣ Testing & Verification
 
-- [ ] 9.1 Test authentication APIs
-- [ ] 9.2 Test group creation and access rules
-- [ ] 9.3 Test expense creation edge cases
-- [ ] 9.4 Test balance calculations
-- [ ] 9.5 Test optimized settlements
-- [ ] 9.6 Test settlement recording
-- [ ] 9.7 Verify MongoDB data consistency
+- [x] 9.1 Test authentication APIs
+- [x] 9.2 Test group creation and access rules
+- [x] 9.3 Test expense creation edge cases
+- [x] 9.4 Test balance calculations
+- [x] 9.5 Test optimized settlements
+- [x] 9.6 Test settlement recording
+- [x] 9.7 Verify MongoDB data consistency
 
 ---
 
