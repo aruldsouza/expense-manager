@@ -1,4 +1,4 @@
-```
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -25,8 +25,8 @@ const Navbar = () => {
                             <span className="hidden md:inline text-blue-200">Hello, {user.name}</span>
                             <Link to="/dashboard" className="hover:text-blue-200">Dashboard</Link>
                             <Link to="/groups" className="hover:text-blue-200">Groups</Link>
-                            <button 
-                                onClick={handleLogout} 
+                            <button
+                                onClick={handleLogout}
                                 className="flex items-center gap-1 hover:text-red-200"
                             >
                                 <FaSignOutAlt /> Logout

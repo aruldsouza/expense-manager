@@ -49,11 +49,11 @@ Backend Base URL: `/api`
 
 # 3️⃣ Dashboard Module
 
-- [ ] 3.1 Create Dashboard page
-- [ ] 3.2 Display logged-in user name
-- [ ] 3.3 Add navigation to Groups
-- [ ] 3.4 Add logout button
-- [ ] 3.5 Implement responsive layout
+- [x] 3.1 Create Dashboard page
+- [x] 3.2 Display logged-in user name
+- [x] 3.3 Add navigation to Groups
+- [x] 3.4 Add logout button
+- [x] 3.5 Implement responsive layout
 
 ---
 
