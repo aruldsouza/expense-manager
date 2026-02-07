@@ -20,7 +20,7 @@ router.post('/register', registerValidation, registerUser);
  * @desc    Login user and get token
  * @access  Public
  */
-router.post('/login', loginUser);
+router.post('/login', loginValidation, loginUser);
 
 /**
  * @route   GET /api/auth/me
