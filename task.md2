@@ -88,23 +88,23 @@ Backend Base URL: `/api`
 
 ## Add Expense
 
-- [ ] 5.1 Create add expense form
-- [ ] 5.2 Add payer selection dropdown
-- [ ] 5.3 Add split type selector (equal, unequal, percentage)
-- [ ] 5.4 Implement equal split UI
-- [ ] 5.5 Implement unequal split UI
-- [ ] 5.6 Implement percentage split UI
-- [ ] 5.7 Validate split totals before submit
-- [ ] 5.8 Connect to `POST /api/groups/:groupId/expenses`
-- [ ] 5.9 Reset form after successful submission
+- [x] 5.1 Create add expense form
+- [x] 5.2 Add payer selection dropdown
+- [x] 5.3 Add split type selector (equal, unequal, percentage)
+- [x] 5.4 Implement equal split UI
+- [x] 5.5 Implement unequal split UI
+- [x] 5.6 Implement percentage split UI
+- [x] 5.7 Validate split totals before submit
+- [x] 5.8 Connect to `POST /api/groups/:groupId/expenses`
+- [x] 5.9 Reset form after successful submission
 
 ## View Expenses
 
-- [ ] 5.10 Fetch expenses from `GET /api/groups/:groupId/expenses`
-- [ ] 5.11 Display expenses in list/table format
-- [ ] 5.12 Show payer, amount, split details
-- [ ] 5.13 Sort by latest first
-- [ ] 5.14 Handle empty expense state
+- [x] 5.10 Fetch expenses from `GET /api/groups/:groupId/expenses`
+- [x] 5.11 Display expenses in list/table format
+- [x] 5.12 Show payer, amount, split details
+- [x] 5.13 Sort by latest first
+- [x] 5.14 Handle empty expense state
 
 ---
 

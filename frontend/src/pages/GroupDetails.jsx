@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus } from 'react-icons/fa';
+import AddExpense from '../components/AddExpense';
+import ExpenseList from '../components/ExpenseList';
 
 const GroupDetails = () => {
     const { groupId } = useParams();
@@ -38,6 +40,14 @@ const GroupDetails = () => {
         { id: 'settlements', label: 'Settlements', icon: <FaHandHoldingUsd /> },
     ];
 
+    const [showAddExpense, setShowAddExpense] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    const handleExpenseAdded = () => {
+        setRefreshTrigger(prev => prev + 1);
+        setShowAddExpense(false);
+    };
+
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             {/* Header */}
@@ -54,6 +64,14 @@ const GroupDetails = () => {
                             </span>
                         </div>
                     </div>
+                    <div className="text-right">
+                        <button
+                            onClick={() => setShowAddExpense(true)}
+                            className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition flex items-center gap-2"
+                        >
+                            <FaPlus /> Add Expense
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -64,8 +82,8 @@ const GroupDetails = () => {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex items-center gap-2 px-6 py-3 font-medium text-sm transition-colors duration-200 focus:outline-none ${activeTab === tab.id
-                                ? 'border-b-2 border-blue-600 text-blue-600'
-                                : 'text-gray-500 hover:text-gray-700'
+                            ? 'border-b-2 border-blue-600 text-blue-600'
+                            : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         {tab.icon} {tab.label}
@@ -73,15 +91,10 @@ const GroupDetails = () => {
                 ))}
             </div>
 
-            {/* Tab Content Placeholder */}
+            {/* Tab Content */}
             <div className="bg-white p-6 rounded-lg shadow min-h-[300px]">
                 {activeTab === 'expenses' && (
-                    <div className="text-center py-10 text-gray-500">
-                        <p className="mb-4">No expenses recorded yet.</p>
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
-                            + Add Expense
-                        </button>
-                    </div>
+                    <ExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
                 {activeTab === 'balances' && (
                     <div className="text-center py-10 text-gray-500">
@@ -94,6 +107,16 @@ const GroupDetails = () => {
                     </div>
                 )}
             </div>
+
+            {/* Add Expense Modal */}
+            {showAddExpense && (
+                <AddExpense
+                    groupId={groupId}
+                    members={group.members}
+                    onExpenseAdded={handleExpenseAdded}
+                    onClose={() => setShowAddExpense(false)}
+                />
+            )}
         </div>
     );
 };
