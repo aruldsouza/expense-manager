@@ -122,17 +122,17 @@ Backend Base URL: `/api`
 
 ## Optimized Settlements
 
-- [ ] 7.1 Fetch optimized settlements from `GET /api/groups/:groupId/settlements/optimized`
-- [ ] 7.2 Display settlement suggestions
-- [ ] 7.3 Show minimized transaction list
-- [ ] 7.4 Validate totals visually
+- [x] 7.1 Fetch optimized settlements from `GET /api/groups/:groupId/settlements/optimized`
+- [x] 7.2 Display settlement suggestions
+- [x] 7.3 Show minimized transaction list
+- [x] 7.4 Validate totals visually
 
 ## Record Settlement
 
-- [ ] 7.5 Create settlement form
-- [ ] 7.6 Connect to `POST /api/groups/:groupId/settlements`
-- [ ] 7.7 Handle validation errors
-- [ ] 7.8 Refresh balances after settlement
+- [x] 7.5 Create settlement form
+- [x] 7.6 Connect to `POST /api/groups/:groupId/settlements`
+- [x] 7.7 Handle validation errors
+- [x] 7.8 Refresh balances after settlement
 
 ---
 

@@ -5,6 +5,8 @@ import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus } fr
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
+import SettlementList from '../components/SettlementList';
+import RecordSettlement from '../components/RecordSettlement';
 
 const GroupDetails = () => {
     const { groupId } = useParams();
@@ -42,6 +44,8 @@ const GroupDetails = () => {
     ];
 
     const [showAddExpense, setShowAddExpense] = useState(false);
+    const [showRecordSettlement, setShowRecordSettlement] = useState(false);
+    const [settlementData, setSettlementData] = useState({});
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleExpenseAdded = () => {
@@ -65,10 +69,19 @@ const GroupDetails = () => {
                             </span>
                         </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right space-x-2">
+                        <button
+                            onClick={() => {
+                                setSettlementData({});
+                                setShowRecordSettlement(true);
+                            }}
+                            className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition flex items-center gap-2 inline-flex"
+                        >
+                            <FaHandHoldingUsd /> Settle Up
+                        </button>
                         <button
                             onClick={() => setShowAddExpense(true)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition flex items-center gap-2"
+                            className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition flex items-center gap-2 inline-flex"
                         >
                             <FaPlus /> Add Expense
                         </button>
@@ -101,9 +114,28 @@ const GroupDetails = () => {
                     <BalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
                 {activeTab === 'settlements' && (
-                    <div className="text-center py-10 text-gray-500">
-                        <p>Settlement options will appear here.</p>
-                    </div>
+                    <SettlementList
+                        groupId={groupId}
+                        refreshTrigger={refreshTrigger}
+                        onMarkPaid={(settlement) => {
+                            // Find member IDs for payer/payee names (simple lookup)
+                            // Ideally settlement API returns IDs too. 
+                            // Assuming settlement object structure from backend.
+                            // If backend optimization returns names, we match by name or ID.
+                            // Let's assume for now optimization returns { debtor: ID, creditor: ID, amount }
+                            // Wait, previous backend implementation returned { debtorName, creditorName, amount }?
+                            // Let's check backend `settlementController.js`.
+                            // If it returns names, we might need a way to get IDs for the form.
+                            // But for "Mark as Paid", we can pre-fill.
+                            // Assuming backend returns IDs too as `debtor` and `creditor` fields.
+                            setSettlementData({
+                                payer: settlement.debtor,
+                                payee: settlement.creditor,
+                                amount: settlement.amount
+                            });
+                            setShowRecordSettlement(true);
+                        }}
+                    />
                 )}
             </div>
 
@@ -114,6 +146,20 @@ const GroupDetails = () => {
                     members={group.members}
                     onExpenseAdded={handleExpenseAdded}
                     onClose={() => setShowAddExpense(false)}
+                />
+            )}
+
+            {/* Record Settlement Modal */}
+            {showRecordSettlement && (
+                <RecordSettlement
+                    groupId={groupId}
+                    members={group.members}
+                    initialData={settlementData}
+                    onSettlementRecorded={handleExpenseAdded} // Re-using refresh trigger
+                    onClose={() => {
+                        setShowRecordSettlement(false);
+                        setSettlementData({});
+                    }}
                 />
             )}
         </div>
