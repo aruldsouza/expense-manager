@@ -61,26 +61,26 @@ Backend Base URL: `/api`
 
 ## Create Group
 
-- [ ] 4.1 Create group creation form
-- [ ] 4.2 Add member selection UI
-- [ ] 4.3 Validate input before submission
-- [ ] 4.4 Connect to `POST /api/groups`
-- [ ] 4.5 Handle API success and errors
-- [ ] 4.6 Refresh group list after creation
+- [x] 4.1 Create group creation form
+- [x] 4.2 Add member selection UI
+- [x] 4.3 Validate input before submission
+- [x] 4.4 Connect to `POST /api/groups`
+- [x] 4.5 Handle API success and errors
+- [x] 4.6 Refresh group list after creation
 
 ## View Groups
 
-- [ ] 4.7 Fetch groups from `GET /api/groups`
-- [ ] 4.8 Display groups in card/list format
-- [ ] 4.9 Handle empty group state
-- [ ] 4.10 Navigate to group details page
+- [x] 4.7 Fetch groups from `GET /api/groups`
+- [x] 4.8 Display groups in card/list format
+- [x] 4.9 Handle empty group state
+- [x] 4.10 Navigate to group details page
 
 ## Group Details Page
 
-- [ ] 4.11 Fetch group details from `GET /api/groups/:groupId`
-- [ ] 4.12 Display group members
-- [ ] 4.13 Display group metadata
-- [ ] 4.14 Add navigation tabs (Expenses, Balances, Settlements)
+- [x] 4.11 Fetch group details from `GET /api/groups/:groupId`
+- [x] 4.12 Display group members
+- [x] 4.13 Display group metadata
+- [x] 4.14 Add navigation tabs (Expenses, Balances, Settlements)
 
 ---
 

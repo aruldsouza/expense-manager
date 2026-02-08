@@ -7,6 +7,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
 
+import CreateGroup from './pages/CreateGroup';
+import GroupDetails from './pages/GroupDetails';
+
 function App() {
   return (
     <AuthProvider>
@@ -19,6 +22,8 @@ function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="groups/create" element={<CreateGroup />} />
+            <Route path="groups/:groupId" element={<GroupDetails />} />
             {/* Future protected routes: /groups, /groups/:id, etc. */}
           </Route>
         </Route>

@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { FaUsers, FaMoneyBillWave, FaChartPie, FaPlus } from 'react-icons/fa';
+import GroupList from '../components/GroupList';
 
 const Dashboard = () => {
     const { user } = useAuth();
@@ -62,25 +63,16 @@ const Dashboard = () => {
 
             {/* Recent Activity / Quick Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        <FaUsers className="text-blue-500" /> Your Groups
-                    </h2>
-                    <div className="text-center py-8 text-gray-500">
-                        <p>No groups yet.</p>
-                        <Link to="/groups/create" className="text-blue-500 hover:underline mt-2 inline-block">
-                            Create your first group
+                <div className="bg-white p-6 rounded-lg shadow col-span-1 lg:col-span-2">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold flex items-center gap-2">
+                            <FaUsers className="text-blue-500" /> Your Groups
+                        </h2>
+                        <Link to="/groups/create" className="text-sm text-blue-600 hover:underline">
+                            + New Group
                         </Link>
                     </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        Recent Activity
-                    </h2>
-                    <div className="text-center py-8 text-gray-500">
-                        <p>No recent activity.</p>
-                    </div>
+                    <GroupList />
                 </div>
             </div>
         </div>
