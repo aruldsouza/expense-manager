@@ -110,11 +110,11 @@ Backend Base URL: `/api`
 
 # 6️⃣ Balance Module
 
-- [ ] 6.1 Fetch balances from `GET /api/groups/:groupId/balances`
-- [ ] 6.2 Display who owes whom
-- [ ] 6.3 Highlight creditors (green)
-- [ ] 6.4 Highlight debtors (red)
-- [ ] 6.5 Ensure UI matches backend calculations
+- [x] 6.1 Fetch balances from `GET /api/groups/:groupId/balances`
+- [x] 6.2 Display who owes whom
+- [x] 6.3 Highlight creditors (green)
+- [x] 6.4 Highlight debtors (red)
+- [x] 6.5 Ensure UI matches backend calculations
 
 ---
 

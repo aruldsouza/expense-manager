@@ -4,6 +4,7 @@ import api from '../services/api';
 import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
+import BalanceList from '../components/BalanceList';
 
 const GroupDetails = () => {
     const { groupId } = useParams();
@@ -97,9 +98,7 @@ const GroupDetails = () => {
                     <ExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
                 {activeTab === 'balances' && (
-                    <div className="text-center py-10 text-gray-500">
-                        <p>Balances will appear here.</p>
-                    </div>
+                    <BalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
                 {activeTab === 'settlements' && (
                     <div className="text-center py-10 text-gray-500">
