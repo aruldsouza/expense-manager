@@ -142,7 +142,7 @@ Backend Base URL: `/api`
 - [x] 8.2 Merge expenses + settlements
 - [x] 8.3 Sort chronologically
 - [x] 8.4 Display clean ledger UI
-- [ ] 8.5 Add filter options (expenses/settlements)
+- [x] 8.5 Add filter options (expenses/settlements)
 
 ---
 
