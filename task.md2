@@ -138,10 +138,10 @@ Backend Base URL: `/api`
 
 # 8️⃣ Transaction History Module
 
-- [ ] 8.1 Fetch transaction history from `GET /api/groups/:groupId/transactions`
-- [ ] 8.2 Merge expenses + settlements
-- [ ] 8.3 Sort chronologically
-- [ ] 8.4 Display clean ledger UI
+- [x] 8.1 Fetch transaction history from `GET /api/groups/:groupId/transactions`
+- [x] 8.2 Merge expenses + settlements
+- [x] 8.3 Sort chronologically
+- [x] 8.4 Display clean ledger UI
 - [ ] 8.5 Add filter options (expenses/settlements)
 
 ---

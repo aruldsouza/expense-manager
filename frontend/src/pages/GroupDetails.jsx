@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
 import SettlementList from '../components/SettlementList';
 import RecordSettlement from '../components/RecordSettlement';
+import TransactionList from '../components/TransactionList';
 
 const GroupDetails = () => {
     const { groupId } = useParams();
@@ -41,6 +42,7 @@ const GroupDetails = () => {
         { id: 'expenses', label: 'Expenses', icon: <FaMoneyBillWave /> },
         { id: 'balances', label: 'Balances', icon: <FaBalanceScale /> },
         { id: 'settlements', label: 'Settlements', icon: <FaHandHoldingUsd /> },
+        { id: 'history', label: 'History', icon: <FaHistory /> },
     ];
 
     const [showAddExpense, setShowAddExpense] = useState(false);
@@ -136,6 +138,9 @@ const GroupDetails = () => {
                             setShowRecordSettlement(true);
                         }}
                     />
+                )}
+                {activeTab === 'history' && (
+                    <TransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
             </div>
 
