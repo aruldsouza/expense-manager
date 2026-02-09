@@ -9,6 +9,12 @@ import SettlementList from '../components/SettlementList';
 import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 
+// Memoized Components
+const MemoizedExpenseList = React.memo(ExpenseList);
+const MemoizedBalanceList = React.memo(BalanceList);
+const MemoizedSettlementList = React.memo(SettlementList);
+const MemoizedTransactionList = React.memo(TransactionList);
+
 const GroupDetails = () => {
     const { groupId } = useParams();
     const [group, setGroup] = useState(null);
@@ -110,26 +116,16 @@ const GroupDetails = () => {
             {/* Tab Content */}
             <div className="bg-white p-6 rounded-lg shadow min-h-[300px]">
                 {activeTab === 'expenses' && (
-                    <ExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
+                    <MemoizedExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
                 {activeTab === 'balances' && (
-                    <BalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
+                    <MemoizedBalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
                 {activeTab === 'settlements' && (
-                    <SettlementList
+                    <MemoizedSettlementList
                         groupId={groupId}
                         refreshTrigger={refreshTrigger}
                         onMarkPaid={(settlement) => {
-                            // Find member IDs for payer/payee names (simple lookup)
-                            // Ideally settlement API returns IDs too. 
-                            // Assuming settlement object structure from backend.
-                            // If backend optimization returns names, we match by name or ID.
-                            // Let's assume for now optimization returns { debtor: ID, creditor: ID, amount }
-                            // Wait, previous backend implementation returned { debtorName, creditorName, amount }?
-                            // Let's check backend `settlementController.js`.
-                            // If it returns names, we might need a way to get IDs for the form.
-                            // But for "Mark as Paid", we can pre-fill.
-                            // Assuming backend returns IDs too as `debtor` and `creditor` fields.
                             setSettlementData({
                                 payer: settlement.debtor,
                                 payee: settlement.creditor,
@@ -140,7 +136,7 @@ const GroupDetails = () => {
                     />
                 )}
                 {activeTab === 'history' && (
-                    <TransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
+                    <MemoizedTransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
                 )}
             </div>
 

@@ -148,22 +148,22 @@ Backend Base URL: `/api`
 
 # 9️⃣ UI/UX Enhancements
 
-- [ ] 9.1 Add loading spinners for API calls
-- [ ] 9.2 Add global error handling UI
-- [ ] 9.3 Add toast notifications
-- [ ] 9.4 Improve form validation messages
-- [ ] 9.5 Add mobile responsiveness
-- [ ] 9.6 Improve overall styling consistency
+- [x] 9.1 Add loading spinners for API calls
+- [x] 9.2 Add global error handling UI
+- [x] 9.3 Add toast notifications
+- [x] 9.4 Improve form validation messages
+- [x] 9.5 Add mobile responsiveness
+- [x] 9.6 Improve overall styling consistency
 
 ---
 
 # 🔟 State Management & Optimization
 
-- [ ] 10.1 Optimize API calls
-- [ ] 10.2 Avoid unnecessary re-renders
-- [ ] 10.3 Memoize heavy components
-- [ ] 10.4 Structure reusable components
-- [ ] 10.5 Clean up unused state variables
+- [x] 10.1 Optimize API calls
+- [x] 10.2 Avoid unnecessary re-renders
+- [x] 10.3 Memoize heavy components
+- [x] 10.4 Structure reusable components
+- [x] 10.5 Clean up unused state variables
 
 ---
 
