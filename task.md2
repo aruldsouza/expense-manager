@@ -169,13 +169,13 @@ Backend Base URL: `/api`
 
 # 1️⃣1️⃣ Testing & Verification
 
-- [ ] 11.1 Test authentication flow
-- [ ] 11.2 Test protected routes
-- [ ] 11.3 Test group creation flow
-- [ ] 11.4 Test expense creation edge cases
-- [ ] 11.5 Test balance rendering accuracy
-- [ ] 11.6 Test settlement workflow
-- [ ] 11.7 Test UI responsiveness
+- [x] 11.1 Test authentication flow
+- [x] 11.2 Test protected routes
+- [x] 11.3 Test group creation flow
+- [x] 11.4 Test expense creation edge cases
+- [x] 11.5 Test balance rendering accuracy
+- [x] 11.6 Test settlement workflow
+- [x] 11.7 Test UI responsiveness
 
 ---
 

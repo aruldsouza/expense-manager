@@ -14,10 +14,10 @@ export const AuthProvider = ({ children }) => {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    // Verify token by fetching user details
-                    const res = await api.get('/auth/me'); // Assuming this endpoint exists
+                    const res = await api.get('/auth/me');
                     if (res.data.success) {
-                        setUser(res.data.data);
+                        // Backend returns { success: true, data: { user: {...} } }
+                        setUser(res.data.data.user);
                     } else {
                         localStorage.removeItem('token');
                     }
@@ -35,13 +35,10 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await api.post('/auth/login', { email, password });
             if (res.data.success) {
-                localStorage.setItem('token', res.data.token);
-                // We might need to decode token or fetch user details if not provided in login response
-                // For now assuming login returns user object or we fetch it.
-                // Based on backend implementation: Login returns { success: true, token: "...", user: {...} } ?
-                // Let's verify with backend code if needed, but assuming standard 2.11 task completion.
-                // Actually backend 2.11 says "Return token and user details".
-                setUser(res.data.user || { name: 'User', email }); // Fallback
+                // Correctly access nested data based on backend response structure
+                const { token, user } = res.data.data;
+                localStorage.setItem('token', token);
+                setUser(user);
                 return { success: true };
             }
         } catch (error) {
