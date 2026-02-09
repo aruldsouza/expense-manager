@@ -181,8 +181,8 @@ Backend Base URL: `/api`
 
 # 1️⃣2️⃣ Finalization
 
-- [ ] 12.1 Refactor component structure
-- [ ] 12.2 Remove unused files
-- [ ] 12.3 Add frontend README
-- [ ] 12.4 Prepare production build
-- [ ] 12.5 Deployment readiness check
+- [x] 12.1 Refactor component structure
+- [x] 12.2 Remove unused files
+- [x] 12.3 Add frontend README
+- [x] 12.4 Prepare production build
+- [x] 12.5 Deployment readiness check
