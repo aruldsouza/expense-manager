@@ -142,6 +142,48 @@ const runVerification = async () => {
             console.error('❌ Delete Group Failed:', e.response?.data?.message || e.message);
         }
 
+        // 8. Test Optimized Settlements
+        console.log('\n8️⃣  Testing Optimized Settlements (User A)...');
+        try {
+            // Re-create group and expense to test this since we deleted the previous one
+            const resGroup = await axios.post(`${API_URL}/groups`, {
+                name: 'Settlement Test Group',
+                description: 'Verifying Optimized Settlements',
+                members: [userB_Id]
+            }, {
+                headers: { Authorization: `Bearer ${userAToken}` }
+            });
+            const newGroupId = resGroup.data.data._id;
+
+            await axios.post(`${API_URL}/groups/${newGroupId}/expenses`, {
+                description: 'Lunch',
+                amount: 60,
+                payer: userA_Id,
+                splitType: 'EQUAL',
+                splits: [
+                    { user: userA_Id, amount: 30 },
+                    { user: userB_Id, amount: 30 }
+                ]
+            }, {
+                headers: { Authorization: `Bearer ${userAToken}` }
+            });
+
+            const resOpt = await axios.get(`${API_URL}/groups/${newGroupId}/settlements/optimized`, {
+                headers: { Authorization: `Bearer ${userAToken}` }
+            });
+            const recommendations = resOpt.data.data;
+            console.log('💡 Recommendations:', JSON.stringify(recommendations, null, 2));
+
+            if (recommendations.length > 0 && recommendations[0].amount === 30) {
+                console.log('✅ Optimized Settlements Verified: User B owes User A $30');
+            } else {
+                console.error('❌ Optimized Settlements Check Failed');
+            }
+
+        } catch (e) {
+            console.error('❌ Optimized Settlements Failed:', e.response?.data?.message || e.message);
+        }
+
         console.log('\n🎉 Backend Features Verified!');
 
     } catch (error) {

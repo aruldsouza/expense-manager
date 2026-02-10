@@ -26,7 +26,8 @@ const GroupDetails = () => {
     // Moved these to top to avoid conditional hook call error
     const [showAddExpense, setShowAddExpense] = useState(false);
     const [showRecordSettlement, setShowRecordSettlement] = useState(false);
-    // const [settlementData, setSettlementData] = useState({}); // Unused for opening general modal
+    // State for pre-filling settlement modal
+    const [settlementInitialData, setSettlementInitialData] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleExpenseAdded = () => {
@@ -37,6 +38,12 @@ const GroupDetails = () => {
     const handleSettlementRecorded = () => {
         setRefreshTrigger(prev => prev + 1);
         setShowRecordSettlement(false);
+        setSettlementInitialData(null); // Reset data
+    };
+
+    const handleOpenSettlement = (data = null) => {
+        setSettlementInitialData(data);
+        setShowRecordSettlement(true);
     };
 
     useEffect(() => {
@@ -51,39 +58,44 @@ const GroupDetails = () => {
             }
         };
         fetchGroupDetails();
-    }, [groupId, refreshTrigger]); // Added refreshTrigger dependency
+    }, [groupId, refreshTrigger]);
 
     if (loading) return <Container className="text-center py-5"><Spinner animation="border" variant="primary" /></Container>;
     if (error) return <Container className="py-5"><Alert variant="danger">{error}</Alert></Container>;
     if (!group) return <Container className="text-center py-5"><h3>Group not found</h3></Container>;
 
     return (
-        <Container className="py-4">
+        <Container className="py-4 animate-fade-in">
             {/* Header */}
             <div className="mb-4">
-                <Link to="/dashboard" className="text-decoration-none text-muted d-flex align-items-center gap-2 mb-2">
+                <Link to="/dashboard" className="text-decoration-none text-muted d-flex align-items-center gap-2 mb-2 btn btn-link ps-0">
                     <FaArrowLeft /> Back to Dashboard
                 </Link>
-                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div className="glass-card p-4 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                     <div>
-                        <h1 className="display-6 fw-bold mb-0">{group.name}</h1>
+                        <h1 className="display-6 fw-bold mb-1 text-primary">{group.name}</h1>
                         <p className="text-muted mb-0">{group.description}</p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Button variant="primary" onClick={() => setShowAddExpense(true)} className="d-flex align-items-center gap-2 shadow-sm">
+                        <Button
+                            className="btn-modern-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
+                            onClick={() => setShowAddExpense(true)}
+                        >
                             <FaPlus /> Add Expense
                         </Button>
-                        <Button variant="outline-success" onClick={() => setShowRecordSettlement(true)} className="d-flex align-items-center gap-2 shadow-sm">
+                        <Button
+                            variant="outline-success"
+                            onClick={() => handleOpenSettlement(null)}
+                            className="d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
+                        >
                             <FaHandHoldingUsd /> Settle Up
                         </Button>
                     </div>
                 </div>
             </div>
 
-            {/* Quick Stats / Members (Optional - could go here) */}
-
             {/* Main Content Tabs */}
-            <Card className="shadow-sm border-0">
+            <Card className="shadow-sm border-0 glass-card">
                 <Card.Body className="p-0">
                     <Tabs
                         activeKey={activeTab}
@@ -103,7 +115,11 @@ const GroupDetails = () => {
                         </Tab>
                         <Tab eventKey="settlements" title={<><FaHandHoldingUsd className="me-2" />Settlements</>}>
                             <div className="p-3">
-                                <MemoizedSettlementList groupId={groupId} refreshTrigger={refreshTrigger} />
+                                <MemoizedSettlementList
+                                    groupId={groupId}
+                                    refreshTrigger={refreshTrigger}
+                                    onSettle={handleOpenSettlement}
+                                />
                             </div>
                         </Tab>
                         <Tab eventKey="history" title={<><FaHistory className="me-2" />History</>}>
@@ -117,8 +133,8 @@ const GroupDetails = () => {
 
             {/* Add Expense Modal */}
             <Modal show={showAddExpense} onHide={() => setShowAddExpense(false)} centered size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title className="fw-bold"><FaMoneyBillWave className="me-2 text-danger" />Add Expense</Modal.Title>
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="fw-bold text-primary"><FaMoneyBillWave className="me-2" />Add Expense</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-0">
                     <AddExpense
@@ -132,13 +148,14 @@ const GroupDetails = () => {
 
             {/* Record Settlement Modal */}
             <Modal show={showRecordSettlement} onHide={() => setShowRecordSettlement(false)} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title className="fw-bold"><FaHandHoldingUsd className="me-2 text-success" />Record Settlement</Modal.Title>
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="fw-bold text-success"><FaHandHoldingUsd className="me-2" />Record Settlement</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-0">
                     <RecordSettlement
                         groupId={groupId}
                         groupMembers={group.members}
+                        initialData={settlementInitialData}
                         onSuccess={handleSettlementRecorded}
                         onCancel={() => setShowRecordSettlement(false)}
                     />

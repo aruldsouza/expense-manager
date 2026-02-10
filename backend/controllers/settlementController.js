@@ -8,8 +8,9 @@ const Expense = require('../models/Expense');
 const createSettlement = async (req, res, next) => {
     try {
         const { payee, amount } = req.body;
+        // Check if payer is provided in body, else default to logged-in user
+        const payer = req.body.payer || req.user._id;
         const groupId = req.params.groupId;
-        const payer = req.user._id;
 
         const group = await Group.findById(groupId);
         if (!group) {

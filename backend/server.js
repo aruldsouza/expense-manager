@@ -16,9 +16,26 @@ connectDB();
 
 // Middleware
 // CORS configuration - allow frontend to make requests
+// CORS configuration
+const whitelist = [
+    'http://localhost:5173',
+    'https://aibased-expense-manager.vercel.app',
+    process.env.CORS_ORIGIN
+].filter(Boolean); // Remove undefined if env var not set
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Vite default port
-    credentials: true,
+    origin: function (origin, callback) {
+        // Allows requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log('Blocked by CORS:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
 }));
 
 // Body parsing middleware
@@ -39,6 +56,10 @@ app.use('/api/groups', require('./routes/groupRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // API Routes
+app.get('/', (req, res) => {
+    res.send('API is running...');
+});
+
 app.get('/api', (req, res) => {
     res.json({
         success: true,

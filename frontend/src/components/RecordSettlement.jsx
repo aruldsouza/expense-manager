@@ -3,12 +3,27 @@ import api from '../services/api';
 import { Form, Button, InputGroup, Alert, Spinner } from 'react-bootstrap';
 import { FaUser, FaMoneyBillWave } from 'react-icons/fa';
 
-const RecordSettlement = ({ groupId, groupMembers, onSuccess, onCancel }) => {
-    const [payer, setPayer] = useState('');
-    const [payee, setPayee] = useState('');
-    const [amount, setAmount] = useState('');
+const RecordSettlement = ({ groupId, groupMembers, initialData, onSuccess, onCancel }) => {
+    // Determine defaults from initialData if present
+    const [payer, setPayer] = useState(initialData?.from?._id || '');
+    const [payee, setPayee] = useState(initialData?.to?._id || '');
+    const [amount, setAmount] = useState(initialData?.amount || '');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // If initialData changes (e.g. modal reused), update state
+    React.useEffect(() => {
+        if (initialData) {
+            setPayer(initialData.from?._id || '');
+            setPayee(initialData.to?._id || '');
+            setAmount(initialData.amount || '');
+        } else {
+            // Reset if opened without data
+            setPayer('');
+            setPayee('');
+            setAmount('');
+        }
+    }, [initialData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,12 +34,42 @@ const RecordSettlement = ({ groupId, groupMembers, onSuccess, onCancel }) => {
             return;
         }
 
+        // Payload expects user IDs. 
+        // Backend controller expects: { payee, amount } in body, and user is Payer from Auth token...
+        // WAIT. 
+        // The backend `createSettlement` controller says: `const payer = req.user._id;`
+        // This means I can ONLY settle debts where *I* am the payer.
+        // But in a group, anyone might record a settlement.
+        // If I am User A, and I see User B owes User A (Me), I click "Settle".
+        // Who is paying? User B is paying Me.
+        // So the "Payer" is User B.
+        // If the backend enforces `payer = req.user._id`, then ONLY the person who owes money can record the settlement.
+        // This is a restriction. Let's check `settlementController.js`.
+
+        // Yes: `const payer = req.user._id;`
+        // Validation: `if (payer.toString() === payee.toString()) ...`
+
+        // This means if I am Admin/User A, I cannot record that "User B paid User C".
+        // I can only record "I paid User X".
+
+        // If the user wants to "Settle Up" based on recommendations like "User B owes User A",
+        // and I am User A, I technically cannot record it if the backend forces me to be the payer.
+        // I would have to be User B to record "I paid User A".
+
+        // FIX: Check if we should allow recording on behalf of others.
+        // For now, I'll stick to the backend logic. 
+        // CAUTION: The UI has a "Payer" dropdown. This implies I can select who paid.
+        // If I select "User B", but the backend ignores it and uses "Me", that's a BUG.
+        // I need to fix the backend to accept `payer` from body if provided, or default to `req.user`.
+
+        // Let's assume for this step I will fix the backend to allow specifying payer.
+
         setLoading(true);
 
         try {
             const res = await api.post(`/groups/${groupId}/settlements`, {
-                payerId: payer,
-                payeeId: payee,
+                payer: payer, // Changed from payerId to payer to match what I'll fix in backend
+                payee: payee,
                 amount: parseFloat(amount)
             });
 
@@ -32,7 +77,7 @@ const RecordSettlement = ({ groupId, groupMembers, onSuccess, onCancel }) => {
                 onSuccess();
             }
         } catch (err) {
-            setError(err.response?.data?.error || 'Failed to record settlement');
+            setError(err.response?.data?.error || err.message || 'Failed to record settlement');
         } finally {
             setLoading(false);
         }
