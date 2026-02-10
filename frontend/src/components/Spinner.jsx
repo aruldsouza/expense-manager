@@ -1,9 +1,14 @@
 import React from 'react';
+import { Spinner as BsSpinner } from 'react-bootstrap';
 
-const Spinner = () => {
+const Spinner = ({ size = 'md', variant = 'primary' }) => {
+    // Map custom size props to Bootstrap sizing if needed, or just pass classNames
+    // Bootstrap Spinner has 'sm' prop. For larger, we might use style.
     return (
-        <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-t-2 border-blue-600"></div>
+        <div className="d-flex justify-content-center">
+            <BsSpinner animation="border" variant={variant} size={size === 'sm' ? 'sm' : undefined} role="status">
+                <span className="visually-hidden">Loading...</span>
+            </BsSpinner>
         </div>
     );
 };

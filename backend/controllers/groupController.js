@@ -18,7 +18,7 @@ const createGroup = async (req, res, next) => {
         });
 
         // Ensure unique members (in case creator is also in members array)
-        group.members = [...new Set(group.members)];
+        group.members = [...new Set(group.members.map(m => m.toString()))];
 
         const createdGroup = await group.save();
 
@@ -36,7 +36,8 @@ const createGroup = async (req, res, next) => {
 // @access  Private
 const getGroups = async (req, res, next) => {
     try {
-        const groups = await Group.find({ members: req.user._id })
+        // Find groups where the current user is in the members array
+        const groups = await Group.find({ members: { $in: [req.user._id] } })
             .sort({ updatedAt: -1 });
 
         res.json({
@@ -78,8 +79,45 @@ const getGroupById = async (req, res, next) => {
     }
 };
 
+// @desc    Delete group
+// @route   DELETE /api/groups/:id
+// @access  Private
+const deleteGroup = async (req, res, next) => {
+    try {
+        const group = await Group.findById(req.params.id);
+
+        if (!group) {
+            res.status(404);
+            throw new Error('Group not found');
+        }
+
+        // Only creator can delete
+        if (group.creator.toString() !== req.user._id.toString()) {
+            res.status(403);
+            throw new Error('Only the group creator can delete this group');
+        }
+
+        const Expense = require('../models/Expense');
+        const Settlement = require('../models/Settlement');
+
+        // Delete associated data
+        await Expense.deleteMany({ group: group._id });
+        await Settlement.deleteMany({ group: group._id });
+        await group.deleteOne();
+
+        res.json({
+            success: true,
+            data: {},
+            message: 'Group deleted successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createGroup,
     getGroups,
-    getGroupById
+    getGroupById,
+    deleteGroup
 };

@@ -186,3 +186,15 @@ Backend Base URL: `/api`
 - [x] 12.3 Add frontend README
 - [x] 12.4 Prepare production build
 - [x] 12.5 Deployment readiness check
+
+---
+
+# 12️⃣ UI Overhaul (Bootstrap)
+
+- [x] 12.1 Install Bootstrap & React-Bootstrap
+- [x] 12.2 Configure global styles (`main.jsx`, `index.css`)
+- [x] 12.3 Refactor Authentication Pages (Login, Register)
+- [x] 12.4 Refactor Dashboard & Layout
+- [x] 12.5 Refactor Group Modules (List, Create, Details)
+- [x] 12.6 Refactor Components (Expenses, Balances, Settlements)
+- [x] 12.7 Ensure consistent styling across the app

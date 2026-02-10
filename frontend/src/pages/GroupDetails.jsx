@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
 import SettlementList from '../components/SettlementList';
 import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
+import { Container, Row, Col, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
 
 // Memoized Components
 const MemoizedExpenseList = React.memo(ExpenseList);
@@ -19,41 +20,13 @@ const GroupDetails = () => {
     const { groupId } = useParams();
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('expenses');
 
-    useEffect(() => {
-        const fetchGroupDetails = async () => {
-            try {
-                const res = await api.get(`/groups/${groupId}`);
-                if (res.data.success) {
-                    setGroup(res.data.data);
-                }
-            } catch (err) {
-                setError('Failed to load group details');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchGroupDetails();
-    }, [groupId]);
-
-    if (loading) return <div className="text-center py-10">Loading...</div>;
-    if (error) return <div className="text-center text-red-500 py-10">{error}</div>;
-    if (!group) return <div className="text-center py-10">Group not found</div>;
-
-    const tabs = [
-        { id: 'expenses', label: 'Expenses', icon: <FaMoneyBillWave /> },
-        { id: 'balances', label: 'Balances', icon: <FaBalanceScale /> },
-        { id: 'settlements', label: 'Settlements', icon: <FaHandHoldingUsd /> },
-        { id: 'history', label: 'History', icon: <FaHistory /> },
-    ];
-
+    // Moved these to top to avoid conditional hook call error
     const [showAddExpense, setShowAddExpense] = useState(false);
     const [showRecordSettlement, setShowRecordSettlement] = useState(false);
-    const [settlementData, setSettlementData] = useState({});
+    // const [settlementData, setSettlementData] = useState({}); // Unused for opening general modal
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleExpenseAdded = () => {
@@ -61,109 +34,118 @@ const GroupDetails = () => {
         setShowAddExpense(false);
     };
 
+    const handleSettlementRecorded = () => {
+        setRefreshTrigger(prev => prev + 1);
+        setShowRecordSettlement(false);
+    };
+
+    useEffect(() => {
+        const fetchGroupDetails = async () => {
+            try {
+                const res = await api.get(`/groups/${groupId}`);
+                setGroup(res.data.data);
+            } catch (err) {
+                setError('Failed to load group details');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchGroupDetails();
+    }, [groupId, refreshTrigger]); // Added refreshTrigger dependency
+
+    if (loading) return <Container className="text-center py-5"><Spinner animation="border" variant="primary" /></Container>;
+    if (error) return <Container className="py-5"><Alert variant="danger">{error}</Alert></Container>;
+    if (!group) return <Container className="text-center py-5"><h3>Group not found</h3></Container>;
+
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
+        <Container className="py-4">
             {/* Header */}
-            <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex justify-between items-start">
+            <div className="mb-4">
+                <Link to="/dashboard" className="text-decoration-none text-muted d-flex align-items-center gap-2 mb-2">
+                    <FaArrowLeft /> Back to Dashboard
+                </Link>
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-800">{group.name}</h1>
-                        <p className="text-gray-500 mt-1">{group.description}</p>
-                        <div className="mt-3 flex items-center text-sm text-gray-500 gap-2">
-                            <FaUsers />
-                            <span>{group.members.length} members: </span>
-                            <span className="font-medium text-gray-700">
-                                {group.members.map(m => m.name).join(', ')}
-                            </span>
-                        </div>
+                        <h1 className="display-6 fw-bold mb-0">{group.name}</h1>
+                        <p className="text-muted mb-0">{group.description}</p>
                     </div>
-                    <div className="text-right space-x-2">
-                        <button
-                            onClick={() => {
-                                setSettlementData({});
-                                setShowRecordSettlement(true);
-                            }}
-                            className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition flex items-center gap-2 inline-flex"
-                        >
-                            <FaHandHoldingUsd /> Settle Up
-                        </button>
-                        <button
-                            onClick={() => setShowAddExpense(true)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition flex items-center gap-2 inline-flex"
-                        >
+                    <div className="d-flex gap-2">
+                        <Button variant="primary" onClick={() => setShowAddExpense(true)} className="d-flex align-items-center gap-2 shadow-sm">
                             <FaPlus /> Add Expense
-                        </button>
+                        </Button>
+                        <Button variant="outline-success" onClick={() => setShowRecordSettlement(true)} className="d-flex align-items-center gap-2 shadow-sm">
+                            <FaHandHoldingUsd /> Settle Up
+                        </Button>
                     </div>
                 </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex border-b border-gray-200">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-6 py-3 font-medium text-sm transition-colors duration-200 focus:outline-none ${activeTab === tab.id
-                            ? 'border-b-2 border-blue-600 text-blue-600'
-                            : 'text-gray-500 hover:text-gray-700'
-                            }`}
-                    >
-                        {tab.icon} {tab.label}
-                    </button>
-                ))}
-            </div>
+            {/* Quick Stats / Members (Optional - could go here) */}
 
-            {/* Tab Content */}
-            <div className="bg-white p-6 rounded-lg shadow min-h-[300px]">
-                {activeTab === 'expenses' && (
-                    <MemoizedExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
-                )}
-                {activeTab === 'balances' && (
-                    <MemoizedBalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
-                )}
-                {activeTab === 'settlements' && (
-                    <MemoizedSettlementList
-                        groupId={groupId}
-                        refreshTrigger={refreshTrigger}
-                        onMarkPaid={(settlement) => {
-                            setSettlementData({
-                                payer: settlement.debtor,
-                                payee: settlement.creditor,
-                                amount: settlement.amount
-                            });
-                            setShowRecordSettlement(true);
-                        }}
-                    />
-                )}
-                {activeTab === 'history' && (
-                    <MemoizedTransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
-                )}
-            </div>
+            {/* Main Content Tabs */}
+            <Card className="shadow-sm border-0">
+                <Card.Body className="p-0">
+                    <Tabs
+                        activeKey={activeTab}
+                        onSelect={(k) => setActiveTab(k)}
+                        className="mb-3 border-bottom px-3 pt-3"
+                        id="group-tabs"
+                    >
+                        <Tab eventKey="expenses" title={<><FaMoneyBillWave className="me-2" />Expenses</>}>
+                            <div className="p-3">
+                                <MemoizedExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
+                            </div>
+                        </Tab>
+                        <Tab eventKey="balances" title={<><FaBalanceScale className="me-2" />Balances</>}>
+                            <div className="p-3">
+                                <MemoizedBalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
+                            </div>
+                        </Tab>
+                        <Tab eventKey="settlements" title={<><FaHandHoldingUsd className="me-2" />Settlements</>}>
+                            <div className="p-3">
+                                <MemoizedSettlementList groupId={groupId} refreshTrigger={refreshTrigger} />
+                            </div>
+                        </Tab>
+                        <Tab eventKey="history" title={<><FaHistory className="me-2" />History</>}>
+                            <div className="p-3">
+                                <MemoizedTransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
+                            </div>
+                        </Tab>
+                    </Tabs>
+                </Card.Body>
+            </Card>
 
             {/* Add Expense Modal */}
-            {showAddExpense && (
-                <AddExpense
-                    groupId={groupId}
-                    members={group.members}
-                    onExpenseAdded={handleExpenseAdded}
-                    onClose={() => setShowAddExpense(false)}
-                />
-            )}
+            <Modal show={showAddExpense} onHide={() => setShowAddExpense(false)} centered size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title className="fw-bold"><FaMoneyBillWave className="me-2 text-danger" />Add Expense</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-0">
+                    <AddExpense
+                        groupId={groupId}
+                        groupMembers={group.members}
+                        onSuccess={handleExpenseAdded}
+                        onCancel={() => setShowAddExpense(false)}
+                    />
+                </Modal.Body>
+            </Modal>
 
             {/* Record Settlement Modal */}
-            {showRecordSettlement && (
-                <RecordSettlement
-                    groupId={groupId}
-                    members={group.members}
-                    initialData={settlementData}
-                    onSettlementRecorded={handleExpenseAdded} // Re-using refresh trigger
-                    onClose={() => {
-                        setShowRecordSettlement(false);
-                        setSettlementData({});
-                    }}
-                />
-            )}
-        </div>
+            <Modal show={showRecordSettlement} onHide={() => setShowRecordSettlement(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title className="fw-bold"><FaHandHoldingUsd className="me-2 text-success" />Record Settlement</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-0">
+                    <RecordSettlement
+                        groupId={groupId}
+                        groupMembers={group.members}
+                        onSuccess={handleSettlementRecorded}
+                        onCancel={() => setShowRecordSettlement(false)}
+                    />
+                </Modal.Body>
+            </Modal>
+
+        </Container>
     );
 };
 

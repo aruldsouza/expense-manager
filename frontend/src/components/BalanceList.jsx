@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { FaArrowRight } from 'react-icons/fa';
+import { ListGroup, Badge, Spinner, Alert } from 'react-bootstrap';
+import { FaUser } from 'react-icons/fa';
 
 const BalanceList = ({ groupId, refreshTrigger }) => {
     const [balances, setBalances] = useState([]);
@@ -16,7 +17,6 @@ const BalanceList = ({ groupId, refreshTrigger }) => {
                 }
             } catch (err) {
                 setError('Failed to load balances');
-                console.error(err);
             } finally {
                 setLoading(false);
             }
@@ -25,53 +25,67 @@ const BalanceList = ({ groupId, refreshTrigger }) => {
         fetchBalances();
     }, [groupId, refreshTrigger]);
 
-    if (loading) return <div className="text-center py-4">Loading balances...</div>;
-    if (error) return <div className="text-red-500 py-4">{error}</div>;
+    if (loading) return <div className="text-center py-4"><Spinner animation="border" variant="primary" size="sm" /></div>;
+    if (error) return <Alert variant="danger">{error}</Alert>;
 
-    // Filter out users with 0 or negligible balance for cleaner UI
-    // But displaying everyone is also good for confirming they are settled.
-    // Let's sort: Owed (Positive) -> Settled (0) -> Owes (Negative)
     const sortedBalances = [...balances].sort((a, b) => b.balance - a.balance);
 
     return (
-        <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">Net Balances</h3>
+        <ListGroup variant="flush">
             {sortedBalances.map((userBalance) => {
                 const bal = userBalance.balance;
+                const user = userBalance.user;
                 const isOwed = bal > 0;
-                const isIndebted = bal < 0;
                 const isSettled = Math.abs(bal) < 0.01;
 
+                if (!user) return null;
+
+                let variant = 'secondary';
+                let textClass = 'text-muted';
+                let label = 'Settled';
+                let sign = '';
+
+                if (isOwed) {
+                    variant = 'success';
+                    textClass = 'text-success';
+                    label = 'Gets back';
+                    sign = '+';
+                } else if (!isSettled) {
+                    variant = 'danger';
+                    textClass = 'text-danger';
+                    label = 'Owes';
+                    sign = '-'; // or just empty if we use abs, but usually owe is negative
+                }
+
                 return (
-                    <div key={userBalance.userId} className="flex items-center justify-between p-3 bg-white border rounded shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
-                                {userBalance.name.charAt(0).toUpperCase()}
+                    <ListGroup.Item key={user._id} className="d-flex justify-content-between align-items-center py-3">
+                        <div className="d-flex align-items-center gap-3">
+                            <div className={`rounded-circle d-flex align-items-center justify-content-center bg-light text-secondary`} style={{ width: '40px', height: '40px' }}>
+                                <span className="fw-bold fs-5">{user.name ? user.name.charAt(0).toUpperCase() : '?'}</span>
                             </div>
-                            <span className="font-medium text-gray-800">{userBalance.name}</span>
+                            <div>
+                                <h6 className="mb-0 fw-bold">{user.name || 'Unknown'}</h6>
+                            </div>
                         </div>
 
-                        <div className="text-right">
+                        <div className="text-end">
                             {isSettled ? (
-                                <span className="text-gray-500 font-medium px-3 py-1 bg-gray-100 rounded-full text-sm">
-                                    Settled up
-                                </span>
-                            ) : isOwed ? (
-                                <div className="text-green-600">
-                                    <span className="text-xs uppercase font-bold text-gray-500 block">gets back</span>
-                                    <span className="font-bold text-lg">${bal.toFixed(2)}</span>
-                                </div>
+                                <Badge bg="light" text="dark" className="border">Settled up</Badge>
                             ) : (
-                                <div className="text-red-600">
-                                    <span className="text-xs uppercase font-bold text-gray-500 block">owes</span>
-                                    <span className="font-bold text-lg">${Math.abs(bal).toFixed(2)}</span>
+                                <div>
+                                    <small className="text-uppercase fw-bold d-block" style={{ fontSize: '0.7rem', color: isOwed ? '#198754' : '#dc3545' }}>
+                                        {label}
+                                    </small>
+                                    <span className={`fw-bold fs-5 ${textClass}`}>
+                                        ${Math.abs(bal).toFixed(2)}
+                                    </span>
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </ListGroup.Item>
                 );
             })}
-        </div>
+        </ListGroup>
     );
 };
 

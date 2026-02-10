@@ -1,35 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { FaMoneyBillWave, FaTimes } from 'react-icons/fa';
+import { Form, Button, InputGroup, Row, Col, Alert, Spinner } from 'react-bootstrap';
+import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle } from 'react-icons/fa';
 
-const AddExpense = ({ groupId, members, onExpenseAdded, onClose }) => {
+const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
     const { user } = useAuth();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [payer, setPayer] = useState(user?._id || '');
     const [splitType, setSplitType] = useState('EQUAL'); // EQUAL, UNEQUAL, PERCENT
     const [splits, setSplits] = useState({}); // { userId: amountOrPercent }
-    const [error, setError] = useState('');
+    const [involvedMembers, setInvolvedMembers] = useState([]); // Array of user IDs
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    // Initialize splits when members change or split type changes
+    // Initialize splits and involved members
     useEffect(() => {
-        const initialSplits = {};
-        if (members) {
-            members.forEach(m => {
+        if (groupMembers && groupMembers.length > 0) {
+            setInvolvedMembers(groupMembers.map(m => m._id));
+
+            const initialSplits = {};
+            groupMembers.forEach(m => {
                 initialSplits[m._id] = '';
             });
+            setSplits(initialSplits);
         }
-        setSplits(initialSplits);
-    }, [members, splitType]);
+    }, [groupMembers]);
 
-    // Set default payer to current user if available
+    // Set default payer
     useEffect(() => {
-        if (user && !payer) {
-            setPayer(user._id);
+        if (user && !payer && groupMembers?.length > 0) {
+            // check if user is in groupMembers
+            const isMember = groupMembers.find(m => m._id === user._id);
+            if (isMember) setPayer(user._id);
+            else if (groupMembers.length > 0) setPayer(groupMembers[0]._id);
         }
-    }, [user, payer]);
+    }, [user, payer, groupMembers]);
 
     const handleSplitChange = (userId, value) => {
         setSplits(prev => ({
@@ -38,16 +45,28 @@ const AddExpense = ({ groupId, members, onExpenseAdded, onClose }) => {
         }));
     };
 
+    const toggleMemberInvolvement = (userId) => {
+        if (involvedMembers.includes(userId)) {
+            // Don't allow removing the last member
+            if (involvedMembers.length > 1) {
+                setInvolvedMembers(involvedMembers.filter(id => id !== userId));
+            }
+        } else {
+            setInvolvedMembers([...involvedMembers, userId]);
+        }
+    };
+
     const validateSplits = () => {
         const totalAmount = parseFloat(amount);
         if (isNaN(totalAmount) || totalAmount <= 0) return 'Invalid amount';
 
+        if (involvedMembers.length === 0) return 'At least one member must be involved';
+
         if (splitType === 'EQUAL') return null;
 
         let totalSplit = 0;
-        const memberIds = members.map(m => m._id);
 
-        memberIds.forEach(id => {
+        involvedMembers.forEach(id => {
             const val = parseFloat(splits[id] || 0);
             totalSplit += val;
         });
@@ -82,17 +101,24 @@ const AddExpense = ({ groupId, members, onExpenseAdded, onClose }) => {
                 splits: []
             };
 
-            if (splitType !== 'EQUAL') {
-                payload.splits = members.map(m => ({
-                    user: m._id,
-                    amount: parseFloat(splits[m._id] || 0)
+            if (splitType === 'EQUAL') {
+                // For EQUAL, we send the involved members so backend knows who to split among
+                payload.splits = involvedMembers.map(id => ({
+                    user: id,
+                    amount: 0 // Backend calculates this
+                }));
+            } else {
+                // For UNEQUAL/PERCENT, only send involved members with their values
+                payload.splits = involvedMembers.map(id => ({
+                    user: id,
+                    amount: parseFloat(splits[id] || 0),
+                    percent: splitType === 'PERCENT' ? parseFloat(splits[id] || 0) : undefined
                 }));
             }
 
             const res = await api.post(`/groups/${groupId}/expenses`, payload);
             if (res.data.success) {
-                onExpenseAdded();
-                onClose(); // Close modal/form
+                onSuccess();
             }
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to add expense');
@@ -102,131 +128,160 @@ const AddExpense = ({ groupId, members, onExpenseAdded, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-                <div className="flex justify-between items-center p-6 border-b">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                        <FaMoneyBillWave className="text-blue-600" /> Add Expense
-                    </h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                        <FaTimes size={24} />
-                    </button>
-                </div>
+        <div className="p-4">
+            {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
 
-                <div className="p-6">
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {error}
-                        </div>
-                    )}
+            <Form onSubmit={handleSubmit}>
+                <Row>
+                    <Col md={12}>
+                        <Form.Group className="mb-3" controlId="description">
+                            <Form.Label className="fw-bold">Description</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FaAlignLeft /></InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder="e.g., Dinner, Taxi, Groceries"
+                                    required
+                                />
+                            </InputGroup>
+                        </Form.Group>
+                    </Col>
+                </Row>
 
-                    <form onSubmit={handleSubmit}>
-                        {/* Description */}
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-bold mb-2">Description</label>
-                            <input
-                                type="text"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                className="w-full border rounded px-3 py-2"
-                                placeholder="e.g., Dinner, Taxi"
-                                required
-                            />
-                        </div>
-
-                        {/* Amount & Payer */}
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label className="block text-gray-700 font-bold mb-2">Amount ($)</label>
-                                <input
+                <Row>
+                    <Col md={6}>
+                        <Form.Group className="mb-3" controlId="amount">
+                            <Form.Label className="fw-bold">Amount</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FaMoneyBillWave /></InputGroup.Text>
+                                <Form.Control
                                     type="number"
-                                    min="0.01"
                                     step="0.01"
+                                    min="0.01"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
-                                    className="w-full border rounded px-3 py-2"
                                     placeholder="0.00"
                                     required
                                 />
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 font-bold mb-2">Paid By</label>
-                                <select
+                            </InputGroup>
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group className="mb-3" controlId="payer">
+                            <Form.Label className="fw-bold">Paid By</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FaUser /></InputGroup.Text>
+                                <Form.Select
                                     value={payer}
                                     onChange={(e) => setPayer(e.target.value)}
-                                    className="w-full border rounded px-3 py-2"
                                     required
                                 >
                                     <option value="" disabled>Select Payer</option>
-                                    {members && members.map(m => (
+                                    {groupMembers && groupMembers.map(m => (
                                         <option key={m._id} value={m._id}>{m.name}</option>
                                     ))}
-                                </select>
-                            </div>
-                        </div>
+                                </Form.Select>
+                            </InputGroup>
+                        </Form.Group>
+                    </Col>
+                </Row>
 
-                        {/* Split Type Selector */}
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-bold mb-2">Split Type</label>
-                            <div className="flex gap-4">
-                                {['EQUAL', 'UNEQUAL', 'PERCENT'].map(type => (
-                                    <label key={type} className="flex items-center gap-2 cursor-pointer">
-                                        <input
-                                            type="radio"
-                                            name="splitType"
-                                            value={type}
-                                            checked={splitType === type}
-                                            onChange={(e) => setSplitType(e.target.value)}
-                                            className="text-blue-600 focus:ring-blue-500"
-                                        />
-                                        <span className="capitalize">{type.toLowerCase()}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Split Details UI */}
-                        {splitType !== 'EQUAL' && (
-                            <div className="mb-6 bg-gray-50 p-4 rounded border">
-                                <h4 className="font-semibold mb-3 text-sm text-gray-700">
-                                    Split Details ({splitType === 'PERCENT' ? '%' : '$'})
-                                </h4>
-                                {members.map(m => (
-                                    <div key={m._id} className="flex justify-between items-center mb-2">
-                                        <span className="text-sm">{m.name}</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            step={splitType === 'PERCENT' ? "1" : "0.01"}
-                                            value={splits[m._id] || ''}
-                                            onChange={(e) => handleSplitChange(m._id, e.target.value)}
-                                            className="w-24 border rounded px-2 py-1 text-right"
-                                            placeholder="0"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="flex justify-end gap-3 mt-6">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            >
-                                {loading ? 'Saving...' : 'Add Expense'}
-                            </button>
-                        </div>
-                    </form>
+                <div className="mb-4">
+                    <Form.Label className="fw-bold d-block">Split With</Form.Label>
+                    <div className="d-flex flex-wrap gap-2">
+                        {groupMembers && groupMembers.map(m => {
+                            const isSelected = involvedMembers.includes(m._id);
+                            return (
+                                <div
+                                    key={m._id}
+                                    onClick={() => toggleMemberInvolvement(m._id)}
+                                    className={`d-flex align-items-center gap-2 px-3 py-2 rounded-pill border cursor-pointer ${isSelected ? 'bg-primary text-white border-primary' : 'bg-light text-muted'}`}
+                                    style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                                >
+                                    {isSelected ? <FaCheckCircle /> : <FaRegCircle />}
+                                    <span className="fw-bold">{m.name}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+
+                <Form.Group className="mb-4" controlId="splitType">
+                    <Form.Label className="fw-bold">Split Method</Form.Label>
+                    <div className="d-flex gap-3">
+                        <Form.Check
+                            type="radio"
+                            id="split-equal"
+                            label="Equally"
+                            name="splitType"
+                            value="EQUAL"
+                            checked={splitType === 'EQUAL'}
+                            onChange={(e) => setSplitType(e.target.value)}
+                        />
+                        <Form.Check
+                            type="radio"
+                            id="split-unequal"
+                            label="Unequally ($)"
+                            name="splitType"
+                            value="UNEQUAL"
+                            checked={splitType === 'UNEQUAL'}
+                            onChange={(e) => setSplitType(e.target.value)}
+                        />
+                        <Form.Check
+                            type="radio"
+                            id="split-percent"
+                            label="Percentage (%)"
+                            name="splitType"
+                            value="PERCENT"
+                            checked={splitType === 'PERCENT'}
+                            onChange={(e) => setSplitType(e.target.value)}
+                        />
+                    </div>
+                </Form.Group>
+
+                {splitType !== 'EQUAL' && (
+                    <div className="mb-4 bg-light p-3 rounded border">
+                        <h6 className="fw-bold mb-3 small text-muted text-uppercase">
+                            Split Details ({splitType === 'PERCENT' ? '%' : '$'})
+                        </h6>
+                        {groupMembers
+                            .filter(m => involvedMembers.includes(m._id))
+                            .map(m => (
+                                <Form.Group as={Row} className="mb-2 align-items-center" controlId={`split-${m._id}`} key={m._id}>
+                                    <Form.Label column sm="8" className="mb-0">
+                                        {m.name}
+                                    </Form.Label>
+                                    <Col sm="4">
+                                        <InputGroup size="sm">
+                                            <InputGroup.Text>
+                                                {splitType === 'PERCENT' ? <FaPercentage size={10} /> : <FaDollarSign size={10} />}
+                                            </InputGroup.Text>
+                                            <Form.Control
+                                                type="number"
+                                                min="0"
+                                                step={splitType === 'PERCENT' ? "1" : "0.01"}
+                                                value={splits[m._id] || ''}
+                                                onChange={(e) => handleSplitChange(m._id, e.target.value)}
+                                                placeholder="0"
+                                            />
+                                        </InputGroup>
+                                    </Col>
+                                </Form.Group>
+                            ))}
+                    </div>
+                )}
+
+                <div className="d-flex justify-content-end gap-2 border-top pt-3">
+                    <Button variant="light" onClick={onCancel} disabled={loading}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" type="submit" disabled={loading}>
+                        {loading ? <Spinner size="sm" /> : 'Save Expense'}
+                    </Button>
+                </div>
+            </Form>
         </div>
     );
 };

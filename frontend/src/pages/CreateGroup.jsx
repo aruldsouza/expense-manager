@@ -1,47 +1,56 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import { FaUsers, FaPlus, FaTimes } from 'react-icons/fa';
+// import { useAuth } from '../context/AuthContext'; // Unused
+import { FaUsers, FaPlus, FaTimes, FaUserPlus, FaSearch } from 'react-icons/fa';
+import { Container, Card, Form, Button, Row, Col, Badge, Spinner, Alert, ListGroup } from 'react-bootstrap';
 
 const CreateGroup = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    // const { user } = useAuth(); // Unused
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [memberEmail, setMemberEmail] = useState('');
-    const [members, setMembers] = useState([]); // Store invitees (for now just email strings or placeholder IDs if backend supported email lookup)
+
+    // Member search/selection state
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedMembers, setSelectedMembers] = useState([]); // Array of user objects
+    const [searching, setSearching] = useState(false);
+
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Note: Backend currently expects member IDs. 
-    // Ideally we need a user search or just add by email if backend supports it.
-    // Based on backend task 3.1, it validates member IDs.
-    // For V1, we might only be able to add ourselves or valid IDs.
-    // Let's assume for this step we Create Group first, then maybe add members? 
-    // Or we need a way to look up users. 
-    // Let's stick to creating a group with just the creator for now to keep it simple, 
-    // as efficiently finding other user IDs without a search API is hard.
-    // Wait, Task 4.2 says "Add member selection UI".
-    // I'll add the UI but maybe mock the ID lookup or just send the current user as member.
-    // Actually, looking at backend `groupController.js` (from memory), it adds req.user.id automatically.
-    // So sending empty members array is fine.
-
-    const handleAddMember = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
-        if (memberEmail && !members.includes(memberEmail)) {
-            // In a real app, we'd verify this email exists and get an ID.
-            // For this specific prototype without a search API, we might just list them visually
-            // but the backend won't accept emails in the `members` array if it expects ObjectIds.
-            // I will create the group with just the creator for now, 
-            // and perhaps showing a "Feature coming soon: Invite by email" message.
-            setMembers([...members, memberEmail]);
-            setMemberEmail('');
+        if (!searchQuery.trim()) return;
+
+        setSearching(true);
+        try {
+            const res = await api.get('/auth/users', {
+                params: { query: searchQuery }
+            });
+            if (res.data.success) {
+                setSearchResults(res.data.data);
+            }
+        } catch (err) {
+            console.error(err);
+            // Optionally set a search error, but usually just empty results is fine
+        } finally {
+            setSearching(false);
         }
     };
 
-    const handleRemoveMember = (email) => {
-        setMembers(members.filter(m => m !== email));
+    const handleAddMember = (user) => {
+        // Prevent duplicates
+        if (!selectedMembers.some(m => m._id === user._id)) {
+            setSelectedMembers([...selectedMembers, user]);
+        }
+        setSearchResults([]); // Clear search results after selection
+        setSearchQuery('');
+    };
+
+    const handleRemoveMember = (userId) => {
+        setSelectedMembers(selectedMembers.filter(m => m._id !== userId));
     };
 
     const handleSubmit = async (e) => {
@@ -50,12 +59,10 @@ const CreateGroup = () => {
         setError('');
 
         try {
-            // Since backend expects ObjectIds and we don't have a way to get them from emails yet,
-            // we will send an empty members array (creator is added by backend).
             const res = await api.post('/groups', {
                 name,
                 description,
-                members: []
+                members: selectedMembers.map(m => m._id) // Send array of IDs
             });
 
             if (res.data.success) {
@@ -69,92 +76,132 @@ const CreateGroup = () => {
     };
 
     return (
-        <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                <FaUsers className="text-blue-600" /> Create New Group
-            </h2>
+        <Container className="mt-4">
+            <Row className="justify-content-center">
+                <Col md={8} lg={6}>
+                    <Card className="shadow-lg border-0 rounded-3">
+                        <Card.Header className="bg-primary text-white p-4 rounded-top-3">
+                            <h3 className="mb-0 fw-bold d-flex align-items-center gap-2">
+                                <FaPlus /> Create New Group
+                            </h3>
+                            <p className="mb-0 text-white-50">Start sharing expenses effortlessly</p>
+                        </Card.Header>
+                        <Card.Body className="p-4">
+                            {error && <Alert variant="danger">{error}</Alert>}
 
-            {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {error}
-                </div>
-            )}
+                            <Form onSubmit={handleSubmit}>
+                                <Form.Group className="mb-3" controlId="groupName">
+                                    <Form.Label className="fw-bold">Group Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        placeholder="e.g., Summer Trip, Apartment 302"
+                                        required
+                                        size="lg"
+                                    />
+                                </Form.Group>
 
-            <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2">Group Name</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g., Summer Trip, Apartment 302"
-                        required
-                    />
-                </div>
+                                <Form.Group className="mb-3" controlId="description">
+                                    <Form.Label className="fw-bold">Description (Optional)</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        placeholder="What is this group for?"
+                                    />
+                                </Form.Group>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-bold mb-2">Description (Optional)</label>
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="What is this group for?"
-                        rows="3"
-                    />
-                </div>
+                                <Form.Group className="mb-4">
+                                    <Form.Label className="fw-bold">Add Members</Form.Label>
+                                    <div className="d-flex gap-2 mb-2">
+                                        <Form.Control
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Search by name or email"
+                                            className="flex-grow-1"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault(); // Prevent submit form
+                                                    handleSearch(e);
+                                                }
+                                            }}
+                                        />
+                                        <Button
+                                            variant="outline-primary"
+                                            onClick={handleSearch}
+                                            type="button"
+                                            disabled={searching}
+                                            className="d-flex align-items-center gap-1"
+                                        >
+                                            {searching ? <Spinner size="sm" /> : <FaSearch />}
+                                        </Button>
+                                    </div>
 
-                {/* Member Invite UI - Visual Only for now as explained */}
-                <div className="mb-6">
-                    <label className="block text-gray-700 font-bold mb-2">Invite Members (Email)</label>
-                    <div className="flex gap-2">
-                        <input
-                            type="email"
-                            value={memberEmail}
-                            onChange={(e) => setMemberEmail(e.target.value)}
-                            className="flex-grow border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="friend@example.com"
-                        />
-                        <button
-                            onClick={handleAddMember}
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded"
-                            type="button"
-                        >
-                            Add
-                        </button>
-                    </div>
-                    {members.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                            {members.map((m, idx) => (
-                                <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm flex items-center gap-1">
-                                    {m} <button onClick={() => handleRemoveMember(m)}><FaTimes /></button>
-                                </span>
-                            ))}
-                        </div>
-                    )}
-                    <p className="text-xs text-gray-500 mt-1">
-                        *Note: Adding members by email is currently limited. Groups will be created with you as the admin.
-                    </p>
-                </div>
+                                    {/* Search Results */}
+                                    {searchResults.length > 0 && (
+                                        <ListGroup className="mb-3 shadow-sm border" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                            {searchResults.map(user => (
+                                                <ListGroup.Item
+                                                    key={user._id}
+                                                    action
+                                                    onClick={() => handleAddMember(user)}
+                                                    className="d-flex justify-content-between align-items-center"
+                                                >
+                                                    <div>
+                                                        <div className="fw-bold">{user.name}</div>
+                                                        <small className="text-muted">{user.email}</small>
+                                                    </div>
+                                                    <FaPlus className="text-primary" />
+                                                </ListGroup.Item>
+                                            ))}
+                                        </ListGroup>
+                                    )}
 
-                <div className="flex justify-end gap-3">
-                    <button
-                        type="button"
-                        onClick={() => navigate('/dashboard')}
-                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
-                    >
-                        {loading ? 'Creating...' : <><FaPlus /> Create Group</>}
-                    </button>
-                </div>
-            </form>
-        </div>
+                                    {/* Selected Members */}
+                                    <div className="d-flex flex-wrap gap-2 mt-2">
+                                        {selectedMembers.map((m) => (
+                                            <Badge key={m._id} bg="light" text="dark" className="border d-flex align-items-center gap-2 px-3 py-2 rounded-pill">
+                                                {m.name || m.email}
+                                                <FaTimes
+                                                    className="text-danger cursor-pointer"
+                                                    onClick={() => handleRemoveMember(m._id)}
+                                                    style={{ cursor: 'pointer' }}
+                                                />
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                    <Form.Text className="text-muted small mt-2 d-block">
+                                        *You will be automatically added as the creator/admin.
+                                    </Form.Text>
+                                </Form.Group>
+
+                                <div className="d-flex justify-content-end gap-2 border-top pt-3">
+                                    <Button
+                                        variant="light"
+                                        onClick={() => navigate('/dashboard')}
+                                        disabled={loading}
+                                        className="fw-bold text-muted"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        type="submit"
+                                        disabled={loading}
+                                        className="fw-bold px-4 d-flex align-items-center gap-2"
+                                    >
+                                        {loading ? <Spinner size="sm" /> : <><FaPlus /> Create Group</>}
+                                    </Button>
+                                </div>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

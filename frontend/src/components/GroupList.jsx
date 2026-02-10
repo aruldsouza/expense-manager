@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { FaUsers, FaArrowRight } from 'react-icons/fa';
+import { FaUsers, FaArrowRight, FaPlus, FaTrash } from 'react-icons/fa';
+import { Card, Row, Col, Badge, Button, Spinner, Alert } from 'react-bootstrap';
 
 const GroupList = () => {
     const [groups, setGroups] = useState([]);
@@ -26,49 +27,90 @@ const GroupList = () => {
         fetchGroups();
     }, []);
 
-    if (loading) return <div className="text-center py-4">Loading groups...</div>;
-    if (error) return <div className="text-red-500 py-4">{error}</div>;
+    if (loading) return <div className="text-center py-4"><Spinner animation="border" variant="primary" /></div>;
+    if (error) return <Alert variant="danger">{error}</Alert>;
 
     if (groups.length === 0) {
         return (
-            <div className="bg-white p-6 rounded-lg shadow text-center">
-                <FaUsers className="text-4xl text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">You haven't joined any groups yet.</p>
-                <Link to="/groups/create" className="text-blue-600 font-bold hover:underline">
-                    Create your first group
-                </Link>
-            </div>
+            <Card className="text-center border-0 glass-card p-5 mx-auto" style={{ maxWidth: '500px' }}>
+                <Card.Body>
+                    <div className="mb-4">
+                        <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex p-4 text-primary">
+                            <FaUsers size={48} />
+                        </div>
+                    </div>
+                    <Card.Title className="h4 fw-bold mb-3">No Groups Yet</Card.Title>
+                    <Card.Text className="text-muted mb-4 fs-5">
+                        You haven't joined any groups yet. Create one to get started!
+                    </Card.Text>
+                    <Button as={Link} to="/groups/create" className="btn-modern-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                        <FaPlus className="me-2" /> Create Group
+                    </Button>
+                </Card.Body>
+            </Card>
         );
     }
 
+    const handleDelete = async (groupId, e) => {
+        e.preventDefault(); // Prevent link navigation
+        if (window.confirm('Are you sure you want to delete this group? All expenses and data will be lost.')) {
+            try {
+                await api.delete(`/groups/${groupId}`);
+                setGroups(groups.filter(g => g._id !== groupId));
+            } catch (err) {
+                alert(err.response?.data?.error || 'Failed to delete group');
+            }
+        }
+    };
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Row xs={1} md={2} lg={3} className="g-4 p-3">
             {groups.map((group) => (
-                <Link
-                    key={group._id}
-                    to={`/groups/${group._id}`}
-                    className="block bg-white p-5 rounded-lg shadow hover:shadow-md transition border border-transparent hover:border-blue-500"
-                >
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h3 className="font-bold text-lg text-gray-800">{group.name}</h3>
-                            <p className="text-gray-500 text-sm mt-1 line-clamp-2">
-                                {group.description || 'No description'}
-                            </p>
-                        </div>
-                        <div className="bg-blue-100 p-2 rounded-full text-blue-600">
-                            <FaUsers />
-                        </div>
-                    </div>
-                    <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
-                        <span>{group.members?.length || 1} members</span>
-                        <span className="flex items-center gap-1 text-blue-600 font-medium">
-                            View <FaArrowRight size={12} />
-                        </span>
-                    </div>
-                </Link>
+                <Col key={group._id}>
+                    <Card className="h-100 glass-card glass-card-hover border-0">
+                        <Card.Body className="p-4 d-flex flex-column">
+                            <div className="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <div className="d-flex align-items-center gap-2 mb-1">
+                                        <div className="rounded-circle bg-primary bg-opacity-10 p-2 text-primary d-flex align-items-center justify-content-center" style={{ width: 32, height: 32 }}>
+                                            <FaUsers size={14} />
+                                        </div>
+                                        <Card.Title className="fw-bold text-dark mb-0 h6">{group.name}</Card.Title>
+                                    </div>
+                                    <Card.Subtitle className="text-muted small ps-1">
+                                        {group.description || 'No description'}
+                                    </Card.Subtitle>
+                                </div>
+                                <Badge bg="light" text="dark" className="d-flex align-items-center gap-1 border shadow-sm rounded-pill px-3 py-2">
+                                    <span className="fw-normal">{group.members?.length || 1}</span>
+                                    <span className="text-muted small">Members</span>
+                                </Badge>
+                            </div>
+
+                            <div className="mt-auto d-grid gap-2 pt-3">
+                                <Button
+                                    as={Link}
+                                    to={`/groups/${group._id}`}
+                                    variant="light"
+                                    size="sm"
+                                    className="d-flex justify-content-center align-items-center gap-2 fw-bold text-primary border shadow-sm"
+                                >
+                                    View Details <FaArrowRight size={12} />
+                                </Button>
+                                <Button
+                                    variant="link"
+                                    size="sm"
+                                    onClick={(e) => handleDelete(group._id, e)}
+                                    className="d-flex justify-content-center align-items-center gap-2 text-decoration-none text-danger opacity-75 hover-opacity-100 pb-0"
+                                >
+                                    <FaTrash size={12} /> Delete Group
+                                </Button>
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </Col>
             ))}
-        </div>
+        </Row>
     );
 };
 

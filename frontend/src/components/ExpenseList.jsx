@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { FaCalendarAlt, FaUser } from 'react-icons/fa';
+import { ListGroup, Badge, Spinner, Alert } from 'react-bootstrap';
+import { FaMoneyBillWave, FaUser } from 'react-icons/fa';
 
 const ExpenseList = ({ groupId, refreshTrigger }) => {
     const [expenses, setExpenses] = useState([]);
@@ -9,6 +10,10 @@ const ExpenseList = ({ groupId, refreshTrigger }) => {
 
     useEffect(() => {
         const fetchExpenses = async () => {
+            // Reset loading state when trigger changes to show we are refetching
+            // setLoading(true); 
+            // actually better not to flash loading spinner on every small add, 
+            // but initial load needs it.
             try {
                 const res = await api.get(`/groups/${groupId}/expenses`);
                 if (res.data.success) {
@@ -25,49 +30,41 @@ const ExpenseList = ({ groupId, refreshTrigger }) => {
         fetchExpenses();
     }, [groupId, refreshTrigger]);
 
-    if (loading) return <div className="text-center py-4">Loading expenses...</div>;
-    if (error) return <div className="text-red-500 py-4">{error}</div>;
-
-    if (expenses.length === 0) {
-        return (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
-                <p className="text-gray-500">No expenses recorded yet.</p>
-            </div>
-        );
-    }
+    if (loading) return <div className="text-center py-4"><Spinner animation="border" variant="primary" size="sm" /></div>;
+    if (error) return <Alert variant="danger">{error}</Alert>;
+    if (expenses.length === 0) return <div className="text-center py-4 text-muted">No expenses recorded yet.</div>;
 
     return (
-        <div className="space-y-4">
+        <ListGroup variant="flush">
             {expenses.map((expense) => (
-                <div key={expense._id} className="bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className="font-bold text-gray-800 text-lg">{expense.description}</span>
-                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full uppercase">
-                                    {expense.splitType.toLowerCase()}
-                                </span>
-                            </div>
-                            <div className="text-sm text-gray-500 flex items-center gap-3">
-                                <span className="flex items-center gap-1">
-                                    <FaUser className="text-gray-400" />
-                                    Paid by <span className="font-medium text-gray-700">{expense.payer.name}</span>
-                                </span>
-                                <span className="flex items-center gap-1">
-                                    <FaCalendarAlt className="text-gray-400" />
-                                    {new Date(expense.date).toLocaleDateString()}
-                                </span>
-                            </div>
+                <ListGroup.Item key={expense._id} className="d-flex justify-content-between align-items-center py-3">
+                    <div className="d-flex align-items-center gap-3">
+                        <div className="bg-light p-2 rounded-circle text-primary">
+                            <FaMoneyBillWave size={20} />
                         </div>
-                        <div className="text-right">
-                            <span className="block text-xl font-bold text-blue-600">
-                                ${expense.amount.toFixed(2)}
-                            </span>
+                        <div>
+                            <h6 className="mb-0 fw-bold">{expense.description}</h6>
+                            <small className="text-muted d-flex align-items-center gap-1">
+                                <FaUser size={10} />
+                                <span className="fw-bold">{expense.payer?.name || 'Unknown'}</span> paid ${expense.amount.toFixed(2)}
+                            </small>
+                            <div className="text-muted small mt-1">
+                                <span className="me-1">Splits:</span>
+                                {expense.splits.map((split, idx) => (
+                                    <Badge bg="secondary" className="me-1 fw-normal text-white" key={idx}>
+                                        {split.user?.name}: ${split.amount.toFixed(2)}
+                                    </Badge>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div className="text-end">
+                        <h5 className="mb-0 fw-bold text-dark">${expense.amount.toFixed(2)}</h5>
+                        <small className="text-muted">{new Date(expense.date).toLocaleDateString()}</small>
+                    </div>
+                </ListGroup.Item>
             ))}
-        </div>
+        </ListGroup>
     );
 };
 

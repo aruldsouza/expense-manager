@@ -140,7 +140,29 @@ const getOptimizedSettlements = async (req, res, next) => {
     }
 };
 
+// @desc    Get all settlements for a group
+// @route   GET /api/groups/:groupId/settlements
+// @access  Private
+const getSettlements = async (req, res, next) => {
+    try {
+        const groupId = req.params.groupId;
+
+        const settlements = await Settlement.find({ group: groupId })
+            .populate('payer', 'name email')
+            .populate('payee', 'name email')
+            .sort({ date: -1 });
+
+        res.json({
+            success: true,
+            data: settlements
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createSettlement,
-    getOptimizedSettlements
+    getOptimizedSettlements,
+    getSettlements
 };

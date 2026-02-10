@@ -3,6 +3,7 @@ import api from '../services/api';
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (name, email, password) => {
         try {
-            const res = await api.post('/auth/register', { name, email, password });
+            await api.post('/auth/register', { name, email, password });
             return {
                 success: true,
                 message: 'Registration successful! Please login.'

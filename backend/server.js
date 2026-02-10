@@ -36,6 +36,7 @@ app.use(requestLogger);
 app.use('/api/auth', require('./routes/authRoutes'));
 // Group routes
 app.use('/api/groups', require('./routes/groupRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // API Routes
 app.get('/api', (req, res) => {

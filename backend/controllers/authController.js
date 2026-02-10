@@ -135,8 +135,41 @@ const getCurrentUser = async (req, res, next) => {
     }
 };
 
+/**
+ * @route   GET /api/auth/users
+ * @desc    Search users by name or email
+ * @access  Private
+ */
+const searchUsers = async (req, res, next) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            res.status(400);
+            throw new Error('Please provide a search query');
+        }
+
+        const users = await User.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { email: { $regex: query, $options: 'i' } }
+            ]
+        }).select('_id name email');
+
+        // Filter out the current user
+        const filteredUsers = users.filter(user => user._id.toString() !== req.user._id.toString());
+
+        res.json({
+            success: true,
+            data: filteredUsers
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
     getCurrentUser,
+    searchUsers
 };

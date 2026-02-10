@@ -4,6 +4,7 @@ const {
     registerUser,
     loginUser,
     getCurrentUser,
+    searchUsers
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { registerValidation, loginValidation } = require('../middleware/validate');
@@ -28,5 +29,12 @@ router.post('/login', loginValidation, loginUser);
  * @access  Private (requires authentication)
  */
 router.get('/me', protect, getCurrentUser);
+
+/**
+ * @route   GET /api/auth/users
+ * @desc    Search users
+ * @access  Private
+ */
+router.get('/users', protect, searchUsers);
 
 module.exports = router;

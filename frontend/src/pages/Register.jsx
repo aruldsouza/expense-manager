@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaUserPlus } from 'react-icons/fa';
+import { useToast } from '../context/ToastContext';
+import { Container, Row, Col, Card, Form, Button, Spinner } from 'react-bootstrap';
+import { FaUser, FaLock, FaEnvelope, FaUserPlus } from 'react-icons/fa';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -10,11 +12,18 @@ const Register = () => {
         password: '',
         confirmPassword: ''
     });
-    const [error, setError] = useState('');
-    const { register } = useAuth();
-    const navigate = useNavigate();
-
     const { name, email, password, confirmPassword } = formData;
+
+    const [loading, setLoading] = useState(false);
+    const { register, user } = useAuth();
+    const navigate = useNavigate();
+    const toast = useToast();
+
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     const onChange = (e) => {
         setFormData((prevState) => ({
@@ -25,121 +34,141 @@ const Register = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        setError('');
 
         if (password !== confirmPassword) {
-            setError('Passwords do not match');
+            toast.error('Passwords do not match');
             return;
         }
 
+        setLoading(true);
+
         const res = await register(name, email, password);
+        setLoading(false);
+
         if (res.success) {
             navigate('/login');
+            toast.success('Registration successful. Please login.');
         } else {
-            setError(res.message);
+            toast.error(res.message || 'Registration failed');
         }
     };
 
+    if (loading) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center vh-100">
+                <Spinner animation="border" variant="primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </Container>
+        );
+    }
+
     return (
-        <div className="flex justify-center items-center mt-10">
-            <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-                <div className="text-center mb-6">
-                    <FaUserPlus className="text-4xl text-blue-600 mx-auto mb-2" />
-                    <h1 className="text-2xl font-bold">Register</h1>
-                    <p className="text-gray-600">Create your account</p>
-                </div>
+        <Container className="mt-5">
+            <Row className="justify-content-center">
+                <Col md={8} lg={6}>
+                    <Card className="shadow border-0 rounded-3">
+                        <Card.Body className="p-5">
+                            <div className="text-center mb-4">
+                                <FaUserPlus className="text-secondary mb-3" size={40} />
+                                <h2 className="fw-bold">Create Account</h2>
+                                <p className="text-muted">Register to start managing expenses</p>
+                            </div>
 
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-                        <span className="block sm:inline">{error}</span>
-                    </div>
-                )}
+                            <Form onSubmit={onSubmit}>
+                                <Form.Group className="mb-3" controlId="name">
+                                    <Form.Label className="fw-bold">Full Name</Form.Label>
+                                    <div className="input-group">
+                                        <span className="input-group-text bg-light border-end-0">
+                                            <FaUser className="text-muted" />
+                                        </span>
+                                        <Form.Control
+                                            type="text"
+                                            name="name"
+                                            value={name}
+                                            onChange={onChange}
+                                            placeholder="John Doe"
+                                            required
+                                            className="border-start-0 ps-0"
+                                        />
+                                    </div>
+                                </Form.Group>
 
-                <form onSubmit={onSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={name}
-                            onChange={onChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Enter your name"
-                            required
-                        />
-                    </div>
+                                <Form.Group className="mb-3" controlId="email">
+                                    <Form.Label className="fw-bold">Email Address</Form.Label>
+                                    <div className="input-group">
+                                        <span className="input-group-text bg-light border-end-0">
+                                            <FaEnvelope className="text-muted" />
+                                        </span>
+                                        <Form.Control
+                                            type="email"
+                                            name="email"
+                                            value={email}
+                                            onChange={onChange}
+                                            placeholder="name@example.com"
+                                            required
+                                            className="border-start-0 ps-0"
+                                        />
+                                    </div>
+                                </Form.Group>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={email}
-                            onChange={onChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Enter your email"
-                            required
-                        />
-                    </div>
+                                <Row>
+                                    <Col md={6}>
+                                        <Form.Group className="mb-3" controlId="password">
+                                            <Form.Label className="fw-bold">Password</Form.Label>
+                                            <div className="input-group">
+                                                <span className="input-group-text bg-light border-end-0">
+                                                    <FaLock className="text-muted" />
+                                                </span>
+                                                <Form.Control
+                                                    type="password"
+                                                    name="password"
+                                                    value={password}
+                                                    onChange={onChange}
+                                                    placeholder="Create password"
+                                                    required
+                                                    className="border-start-0 ps-0"
+                                                />
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Form.Group className="mb-4" controlId="confirmPassword">
+                                            <Form.Label className="fw-bold">Confirm Password</Form.Label>
+                                            <div className="input-group">
+                                                <span className="input-group-text bg-light border-end-0">
+                                                    <FaLock className="text-muted" />
+                                                </span>
+                                                <Form.Control
+                                                    type="password"
+                                                    name="confirmPassword"
+                                                    value={confirmPassword}
+                                                    onChange={onChange}
+                                                    placeholder="Confirm password"
+                                                    required
+                                                    className="border-start-0 ps-0"
+                                                />
+                                            </div>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={password}
-                            onChange={onChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Enter password"
-                            required
-                            minLength="6"
-                        />
-                    </div>
-
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-                            Confirm Password
-                        </label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            value={confirmPassword}
-                            onChange={onChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Confirm password"
-                            required
-                            minLength="6"
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition duration-300"
-                        >
-                            Register
-                        </button>
-                    </div>
-                </form>
-
-                <p className="mt-4 text-center text-gray-600 text-sm">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-blue-600 hover:text-blue-800 font-bold">
-                        Login
-                    </Link>
-                </p>
-            </div>
-        </div>
+                                <div className="d-grid">
+                                    <Button variant="success" size="lg" type="submit" className="fw-bold shadow-sm">
+                                        Sign Up
+                                    </Button>
+                                </div>
+                            </Form>
+                        </Card.Body>
+                        <Card.Footer className="bg-white text-center py-3 border-0">
+                            <p className="mb-0 text-muted">
+                                Already have an account? <Link to="/login" className="fw-bold text-decoration-none">Login</Link>
+                            </p>
+                        </Card.Footer>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

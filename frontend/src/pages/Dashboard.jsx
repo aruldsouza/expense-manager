@@ -1,80 +1,112 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import api from '../services/api';
 import { FaUsers, FaMoneyBillWave, FaChartPie, FaPlus } from 'react-icons/fa';
 import GroupList from '../components/GroupList';
+import StatCard from '../components/StatCard';
+import { Row, Col, Button, Card } from 'react-bootstrap';
 
 const Dashboard = () => {
     const { user } = useAuth();
+    const [stats, setStats] = useState({
+        totalExpenses: 0,
+        youAreOwed: 0,
+        activeGroups: 0
+    });
+    const [loading, setLoading] = useState(true);
 
-    const StatCard = ({ title, value, icon, color }) => (
-        <div className="bg-white p-6 rounded-lg shadow border-l-4" style={{ borderColor: color }}>
-            <div className="flex justify-between items-start">
-                <div>
-                    <p className="text-gray-500 text-sm font-medium uppercase">{title}</p>
-                    <h3 className="text-2xl font-bold mt-1">{value}</h3>
-                </div>
-                <div className={`p-3 rounded-full bg-opacity-20`} style={{ backgroundColor: color }}>
-                    {React.cloneElement(icon, { className: `text-xl`, style: { color: color } })}
-                </div>
-            </div>
-        </div>
-    );
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await api.get('/dashboard/stats');
+                if (res.data.success) {
+                    setStats(res.data.data);
+                }
+            } catch (err) {
+                console.error("Failed to load dashboard stats", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, []);
 
     return (
-        <div className="space-y-6">
+        <div className="dashboard-container animate-fade-in">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-center bg-blue-600 text-white p-6 rounded-lg shadow-lg">
-                <div>
-                    <h1 className="text-3xl font-bold">Welcome back, {user?.name}!</h1>
-                    <p className="text-blue-100 mt-2">Here's what's happening with your expenses.</p>
+            <div className="glass-card p-5 mb-5 d-flex flex-column flex-md-row justify-content-between align-items-center border-0 position-relative overflow-hidden">
+                <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)', zIndex: -1 }}></div>
+                <div className="mb-3 mb-md-0 position-relative">
+                    <h1 className="h2 fw-bold mb-2">
+                        Welcome back, <span className="text-gradient">{user?.name}!</span>
+                    </h1>
+                    <p className="mb-0 text-muted fs-5">Here's what's happening with your expenses.</p>
                 </div>
-                <div className="mt-4 md:mt-0 flex gap-3">
-                    <Link
+                <div>
+                    <Button
+                        as={Link}
                         to="/groups/create"
-                        className="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center gap-2"
+                        className="btn-modern-primary rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 shadow-sm"
                     >
                         <FaPlus /> New Group
-                    </Link>
+                    </Button>
                 </div>
             </div>
 
-            {/* Quick Stats (Placeholder for now) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard
-                    title="Total Expenses"
-                    value="$0.00"
-                    icon={<FaMoneyBillWave />}
-                    color="#EF4444"
-                />
-                <StatCard
-                    title="You are owed"
-                    value="$0.00"
-                    icon={<FaChartPie />}
-                    color="#10B981"
-                />
-                <StatCard
-                    title="Active Groups"
-                    value="0"
-                    icon={<FaUsers />}
-                    color="#3B82F6"
-                />
-            </div>
+            {/* Quick Stats */}
+            <Row className="g-4 mb-5">
+                <Col md={4}>
+                    <StatCard
+                        title="You Spent"
+                        value={`$${stats.totalExpenses.toFixed(2)}`}
+                        icon={<FaMoneyBillWave className="text-white fs-4" />}
+                        color="linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)"
+                        loading={loading}
+                        className="shadow-sm border-0"
+                    />
+                </Col>
+                <Col md={4}>
+                    <StatCard
+                        title={stats.netBalance > 0 ? "You are owed" : "You owe"}
+                        value={`$${Math.abs(stats.netBalance || 0).toFixed(2)}`}
+                        icon={<FaChartPie className="text-white fs-4" />}
+                        color={stats.netBalance >= 0
+                            ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
+                            : "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"}
+                        loading={loading}
+                        className="shadow-sm border-0"
+                    />
+                </Col>
+                <Col md={4}>
+                    <StatCard
+                        title="Active Groups"
+                        value={stats.activeGroups}
+                        icon={<FaUsers className="text-white fs-4" />}
+                        color="linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)"
+                        loading={loading}
+                        className="shadow-sm border-0"
+                    />
+                </Col>
+            </Row>
 
             {/* Recent Activity / Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow col-span-1 lg:col-span-2">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold flex items-center gap-2">
-                            <FaUsers className="text-blue-500" /> Your Groups
-                        </h2>
-                        <Link to="/groups/create" className="text-sm text-blue-600 hover:underline">
-                            + New Group
-                        </Link>
+            <Row>
+                <Col lg={12}>
+                    <div className="glass-card border-0 p-4">
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                            <h4 className="mb-0 fw-bold d-flex align-items-center gap-2 text-dark">
+                                <FaUsers className="text-primary" /> Your Groups
+                            </h4>
+                            <Link to="/groups/create" className="text-decoration-none fw-bold text-primary">
+                                View All
+                            </Link>
+                        </div>
+                        <GroupList />
                     </div>
-                    <GroupList />
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
     );
 };
