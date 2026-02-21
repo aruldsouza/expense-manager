@@ -34,6 +34,14 @@ const initSocket = (httpServer, corsOrigins) => {
             }
         });
 
+        // Client sends userId to join their private notification room
+        socket.on('join:user', (userId) => {
+            if (userId) {
+                socket.join(`user:${userId}`);
+                console.log(`🔔 Socket ${socket.id} joined user:${userId}`);
+            }
+        });
+
         socket.on('disconnect', () => {
             console.log(`🔌 Socket disconnected: ${socket.id}`);
         });

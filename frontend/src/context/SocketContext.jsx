@@ -46,6 +46,13 @@ export const SocketProvider = ({ children }) => {
         }
     };
 
+    // Join private user room — call once after login with user._id
+    const joinUser = (userId) => {
+        if (socketRef.current && userId) {
+            socketRef.current.emit('join:user', userId);
+        }
+    };
+
     const on = (event, handler) => {
         socketRef.current?.on(event, handler);
     };
@@ -55,7 +62,7 @@ export const SocketProvider = ({ children }) => {
     };
 
     return (
-        <SocketContext.Provider value={{ joinGroup, leaveGroup, on, off, socket: socketRef.current }}>
+        <SocketContext.Provider value={{ joinGroup, leaveGroup, joinUser, on, off, socket: socketRef.current }}>
             {children}
         </SocketContext.Provider>
     );

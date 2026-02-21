@@ -2,6 +2,7 @@ const Expense = require('../models/Expense');
 const Budget = require('../models/Budget');
 const Group = require('../models/Group');
 const { CATEGORIES } = require('../models/Budget');
+const { createNotifications } = require('../utils/notificationHelper');
 
 // Helper: verify group membership
 const verifyMembership = async (groupId, userId) => {
@@ -36,6 +37,29 @@ const upsertBudget = async (req, res, next) => {
             { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
         );
         res.status(201).json({ success: true, data: budget });
+
+        // Check if current spending already exceeds the new budget limit
+        try {
+            const my = budget.monthYear;
+            const [year, month] = my.split('-').map(Number);
+            const startDate = new Date(year, month - 1, 1);
+            const endDate = new Date(year, month, 1);
+            const agg = await Expense.aggregate([
+                { $match: { group: require('mongoose').Types.ObjectId.createFromHexString(req.params.groupId), category: budget.category, date: { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, total: { $sum: '$amount' } } }
+            ]);
+            const spent = agg[0]?.total || 0;
+            if (spent > budget.limit) {
+                await createNotifications(
+                    [budget.createdBy.toString()],
+                    'budget:exceeded',
+                    `⚠️ Budget exceeded: ${budget.category} spent ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(spent)} of ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(budget.limit)} limit`,
+                    { groupId: req.params.groupId, relatedId: budget._id }
+                );
+            }
+        } catch (e) {
+            console.warn('Budget notification error:', e.message);
+        }
     } catch (error) {
         next(error);
     }

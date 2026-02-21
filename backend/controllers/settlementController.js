@@ -3,6 +3,7 @@ const Group = require('../models/Group');
 const Expense = require('../models/Expense');
 const mongoose = require('mongoose');
 const { getIO } = require('../socket');
+const { createNotifications } = require('../utils/notificationHelper');
 
 // ─── Shared: compute net balance between all members ─────────────────────────
 const computeNetBalances = async (groupId, members) => {
@@ -147,8 +148,18 @@ const createSettlement = async (req, res, next) => {
                 wasPartial: isPartial,
                 remainingDebt: remaining
             });
+
+            // Notify the payee
+            const payerName = populated.payer?.name || 'Someone';
+            const label = isPartial ? 'partially settled' : 'fully settled';
+            await createNotifications(
+                [payee.toString()],
+                'settlement:new',
+                `${payerName} ${label} ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)} with you`,
+                { groupId, relatedId: settlement._id }
+            );
         } catch (e) {
-            console.warn('Socket emit settlement:new failed:', e.message);
+            console.warn('Socket/notification emit failed:', e.message);
         }
     } catch (error) { next(error); }
 };

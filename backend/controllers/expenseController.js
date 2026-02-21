@@ -2,6 +2,7 @@ const Expense = require('../models/Expense');
 const Group = require('../models/Group');
 const { cloudinary } = require('../middleware/upload');
 const { getIO } = require('../socket');
+const { createNotifications } = require('../utils/notificationHelper');
 
 // @desc    Add new expense to group
 // @route   POST /api/groups/:groupId/expenses
@@ -107,8 +108,21 @@ const addExpense = async (req, res, next) => {
                 .populate('payer', 'name email')
                 .populate('splits.user', 'name');
             getIO().to(`group:${groupId}`).emit('expense:new', populated);
+
+            // Notify all members except the payer
+            const recipients = group.members
+                .map(m => m.toString())
+                .filter(id => id !== payer.toString());
+            if (recipients.length > 0) {
+                await createNotifications(
+                    recipients,
+                    'expense:new',
+                    `${populated.payer?.name || 'Someone'} added "${description}" — ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)}`,
+                    { groupId, relatedId: expense._id }
+                );
+            }
         } catch (e) {
-            console.warn('Socket emit expense:new failed:', e.message);
+            console.warn('Socket/notification emit failed:', e.message);
         }
 
     } catch (error) {
