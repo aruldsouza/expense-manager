@@ -50,6 +50,14 @@ const expenseSchema = new mongoose.Schema({
         type: String,
         enum: ['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom'],
         default: 'Other'
+    },
+    receiptUrl: {
+        type: String,
+        default: null
+    },
+    receiptPublicId: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true

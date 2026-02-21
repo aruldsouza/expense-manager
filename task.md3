@@ -57,10 +57,10 @@ Allow users to pay part of what they owe.
 Allow users to upload bills.
 
 ### Tasks:
-[ ] Integrate Cloudinary or AWS S3
-[ ] Add file upload middleware
-[ ] Store receipt URL in Expense model
-[ ] Add receipt preview modal
+[x] Integrate Cloudinary or AWS S3
+[x] Add file upload middleware
+[x] Store receipt URL in Expense model
+[x] Add receipt preview modal
 
 ---
 

@@ -1,5 +1,6 @@
 const Expense = require('../models/Expense');
 const Group = require('../models/Group');
+const { cloudinary } = require('../middleware/upload');
 
 // @desc    Add new expense to group
 // @route   POST /api/groups/:groupId/expenses
@@ -84,7 +85,9 @@ const addExpense = async (req, res, next) => {
             payer,
             splitType,
             splits: processedSplits,
-            category: category || 'Other'
+            category: category || 'Other',
+            receiptUrl: req.file ? req.file.path : null,
+            receiptPublicId: req.file ? req.file.filename : null
         });
 
         res.status(201).json({
@@ -133,5 +136,32 @@ const getGroupExpenses = async (req, res, next) => {
 
 module.exports = {
     addExpense,
-    getGroupExpenses
+    getGroupExpenses,
+    deleteReceipt
 };
+
+// @desc  Delete receipt from an expense
+// @route DELETE /api/groups/:groupId/expenses/:id/receipt
+// @access Private
+async function deleteReceipt(req, res, next) {
+    try {
+        const expense = await Expense.findById(req.params.id);
+        if (!expense) { res.status(404); throw new Error('Expense not found'); }
+        if (expense.group.toString() !== req.params.groupId) { res.status(403); throw new Error('Not authorized'); }
+
+        // Remove from Cloudinary if we have a publicId
+        if (expense.receiptPublicId) {
+            try {
+                await cloudinary.uploader.destroy(expense.receiptPublicId, { resource_type: 'auto' });
+            } catch (e) {
+                console.warn('Cloudinary destroy warning:', e.message);
+            }
+        }
+
+        expense.receiptUrl = null;
+        expense.receiptPublicId = null;
+        await expense.save();
+
+        res.json({ success: true, data: expense });
+    } catch (error) { next(error); }
+}

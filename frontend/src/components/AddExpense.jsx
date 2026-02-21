@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { Form, Button, InputGroup, Row, Col, Alert, Spinner } from 'react-bootstrap';
-import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag } from 'react-icons/fa';
+import { Form, Button, InputGroup, Row, Col, Alert, Spinner, Image } from 'react-bootstrap';
+import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag, FaPaperclip, FaTimesCircle } from 'react-icons/fa';
 
 const CATEGORIES = ['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
 
 const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
     const { user } = useAuth();
@@ -17,6 +19,8 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
     const [involvedMembers, setInvolvedMembers] = useState([]); // Array of user IDs
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [receiptFile, setReceiptFile] = useState(null);
+    const [localPreview, setLocalPreview] = useState(null);
 
     // Initialize splits and involved members
     useEffect(() => {
@@ -96,32 +100,36 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
         setLoading(true);
 
         try {
-            const payload = {
-                description,
-                amount: parseFloat(amount),
-                payer,
-                splitType,
-                category,
-                splits: []
-            };
+            // Build FormData — required because we may have a file
+            const formData = new FormData();
+            formData.append('description', description);
+            formData.append('amount', parseFloat(amount));
+            formData.append('payer', payer);
+            formData.append('splitType', splitType);
+            formData.append('category', category);
 
+            // Build splits array
+            let splitsArr = [];
             if (splitType === 'EQUAL') {
-                // For EQUAL, we send the involved members so backend knows who to split among
-                payload.splits = involvedMembers.map(id => ({
-                    user: id,
-                    amount: 0 // Backend calculates this
-                }));
+                splitsArr = involvedMembers.map(id => ({ user: id, amount: 0 }));
             } else {
-                // For UNEQUAL/PERCENT, only send involved members with their values
-                payload.splits = involvedMembers.map(id => ({
+                splitsArr = involvedMembers.map(id => ({
                     user: id,
                     amount: parseFloat(splits[id] || 0),
                     percent: splitType === 'PERCENT' ? parseFloat(splits[id] || 0) : undefined
                 }));
             }
+            formData.append('splits', JSON.stringify(splitsArr));
 
-            const res = await api.post(`/groups/${groupId}/expenses`, payload);
+            // Attach receipt file if selected
+            if (receiptFile) formData.append('receipt', receiptFile);
+
+            const res = await api.post(`/groups/${groupId}/expenses`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             if (res.data.success) {
+                setReceiptFile(null);
+                setLocalPreview(null);
                 onSuccess();
             }
         } catch (err) {
@@ -287,6 +295,42 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
                             ))}
                     </div>
                 )}
+
+                {/* Receipt Upload */}
+                <Form.Group className="mb-3" controlId="receipt">
+                    <Form.Label className="fw-bold d-flex align-items-center gap-2">
+                        <FaPaperclip className="text-secondary" /> Receipt <span className="text-muted fw-normal small">(optional — image or PDF, max 5 MB)</span>
+                    </Form.Label>
+                    <Form.Control
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,application/pdf"
+                        onChange={e => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            if (!ALLOWED_TYPES.includes(file.type)) { setError('Only images (JPG/PNG/WEBP/GIF) and PDFs allowed'); e.target.value = ''; return; }
+                            if (file.size > MAX_FILE_SIZE) { setError('File too large — max 5 MB'); e.target.value = ''; return; }
+                            setReceiptFile(file);
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = ev => setLocalPreview(ev.target.result);
+                                reader.readAsDataURL(file);
+                            } else {
+                                setLocalPreview('pdf');
+                            }
+                        }}
+                    />
+                    {localPreview && (
+                        <div className="mt-2 d-flex align-items-center gap-2">
+                            {localPreview === 'pdf'
+                                ? <span className="badge bg-secondary fs-6">📄 {receiptFile?.name}</span>
+                                : <Image src={localPreview} thumbnail style={{ maxHeight: '80px', maxWidth: '120px' }} />
+                            }
+                            <Button variant="outline-danger" size="sm" onClick={() => { setReceiptFile(null); setLocalPreview(null); }}>
+                                <FaTimesCircle /> Remove
+                            </Button>
+                        </div>
+                    )}
+                </Form.Group>
 
                 <div className="d-flex justify-content-end gap-2 border-top pt-3">
                     <Button variant="light" onClick={onCancel} disabled={loading}>
