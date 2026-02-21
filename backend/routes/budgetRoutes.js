@@ -1,5 +1,6 @@
 const express = require('express');
 const { protect } = require('../middleware/auth');
+const { requireRole } = require('../middleware/rbac');
 const {
     upsertBudget, getBudgets, updateBudget, deleteBudget,
     getCategoryAnalytics, getBudgetStatus
@@ -11,17 +12,18 @@ const budgetRouter = express.Router({ mergeParams: true });
 budgetRouter.use(protect);
 
 budgetRouter.route('/')
-    .post(upsertBudget)
-    .get(getBudgets);
+    .post(requireRole('Member'), upsertBudget)
+    .get(requireRole('Viewer'), getBudgets);
 
 budgetRouter.route('/:id')
-    .put(updateBudget)
-    .delete(deleteBudget);
+    .put(requireRole('Member'), updateBudget)
+    .delete(requireRole('Member'), deleteBudget);
 
 // ─── Analytics router (mounted at /:groupId/analytics) ────────────────────────
 const analyticsRouter = express.Router({ mergeParams: true });
 
 analyticsRouter.use(protect);
+analyticsRouter.use(requireRole('Viewer'));
 
 // GET /:groupId/analytics              → spending per category
 analyticsRouter.get('/', getCategoryAnalytics);

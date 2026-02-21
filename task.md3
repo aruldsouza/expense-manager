@@ -97,11 +97,11 @@ In-app notification center.
 Add structured permissions inside groups.
 
 ### Tasks:
-[ ] Add roles (Admin / Member / Viewer)
-[ ] Restrict group deletion to Admin
-[ ] Restrict expense editing
-[ ] Add middleware for role validation
-[ ] Add role management UI
+[x] Add roles (Admin / Member / Viewer)
+[x] Restrict group deletion to Admin
+[x] Restrict expense editing
+[x] Add middleware for role validation
+[x] Add role management UI
 
 ---
 

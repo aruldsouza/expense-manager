@@ -11,9 +11,13 @@ import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
 import CategoryAnalytics from '../components/CategoryAnalytics';
+import CategoryAnalytics from '../components/CategoryAnalytics';
+import ManageMembers from '../components/ManageMembers';
+import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import { Container, Row, Col, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
+import { FaUserShield, FaCog } from 'react-icons/fa';
 
 // Memoized Components
 const MemoizedExpenseList = React.memo(ExpenseList);
@@ -33,6 +37,7 @@ const GroupDetails = () => {
     const [showRecordSettlement, setShowRecordSettlement] = useState(false);
     const [settlementInitialData, setSettlementInitialData] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [currentUserRole, setCurrentUserRole] = useState('Member');
 
     // Socket.IO: join group room + listen for real-time events
     useEffect(() => {
@@ -86,6 +91,7 @@ const GroupDetails = () => {
             try {
                 const res = await api.get(`/groups/${groupId}`);
                 setGroup(res.data.data);
+                if (res.data.role) setCurrentUserRole(res.data.role);
             } catch (err) {
                 setError('Failed to load group details');
             } finally {
@@ -112,19 +118,23 @@ const GroupDetails = () => {
                         <p className="text-muted mb-0">{group.description}</p>
                     </div>
                     <div className="d-flex gap-2">
-                        <Button
-                            className="btn-modern-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
-                            onClick={() => setShowAddExpense(true)}
-                        >
-                            <FaPlus /> Add Expense
-                        </Button>
-                        <Button
-                            variant="outline-success"
-                            onClick={() => handleOpenSettlement(null)}
-                            className="d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
-                        >
-                            <FaHandHoldingUsd /> Settle Up
-                        </Button>
+                        {currentUserRole !== 'Viewer' && (
+                            <>
+                                <Button
+                                    className="btn-modern-primary d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
+                                    onClick={() => setShowAddExpense(true)}
+                                >
+                                    <FaPlus /> Add Expense
+                                </Button>
+                                <Button
+                                    variant="outline-success"
+                                    onClick={() => handleOpenSettlement(null)}
+                                    className="d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
+                                >
+                                    <FaHandHoldingUsd /> Settle Up
+                                </Button>
+                            </>
+                        )}
                         <Link
                             to={`/groups/${groupId}/recurring`}
                             className="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-sm rounded-pill px-4 text-decoration-none"
@@ -170,11 +180,39 @@ const GroupDetails = () => {
                             </div>
                         </Tab>
                         <Tab eventKey="budgets" title={<><FaWallet className="me-2" />Budgets</>}>
-                            <BudgetManager groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
+                            <BudgetManager
+                                groupId={groupId}
+                                groupCurrency={group.currency}
+                                refreshTrigger={refreshTrigger}
+                                currentUserRole={currentUserRole}
+                            />
                         </Tab>
                         <Tab eventKey="analytics" title={<><FaChartPie className="me-2" />Analytics</>}>
                             <CategoryAnalytics groupId={groupId} groupCurrency={group.currency} />
                         </Tab>
+                        {currentUserRole === 'Admin' && (
+                            <Tab eventKey="members" title={<><FaUserShield className="me-2 text-danger" />Members</>}>
+                                <div className="p-3">
+                                    <ManageMembers
+                                        groupId={groupId}
+                                        members={group.members}
+                                        currentUserId={user?._id}
+                                        creatorId={group.creator?._id || group.creator}
+                                        onUpdate={() => setRefreshTrigger(prev => prev + 1)}
+                                    />
+                                </div>
+                            </Tab>
+                        )}
+                        {currentUserRole === 'Admin' && (
+                            <Tab eventKey="settings" title={<><FaCog className="me-2" />Settings</>}>
+                                <div className="p-3">
+                                    <GroupSettings
+                                        group={group}
+                                        onUpdate={() => setRefreshTrigger(prev => prev + 1)}
+                                    />
+                                </div>
+                            </Tab>
+                        )}
                     </Tabs>
                 </Card.Body>
             </Card>

@@ -17,8 +17,16 @@ const groupSchema = new mongoose.Schema({
         required: true
     },
     members: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        role: {
+            type: String,
+            enum: ['Admin', 'Member', 'Viewer'],
+            default: 'Member'
+        }
     }],
     type: {
         type: String,

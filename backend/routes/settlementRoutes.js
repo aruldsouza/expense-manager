@@ -8,16 +8,17 @@ const {
     deleteSettlement
 } = require('../controllers/settlementController');
 const { protect } = require('../middleware/auth');
+const { requireRole } = require('../middleware/rbac');
 const { settlementValidation } = require('../middleware/validate');
 
 // GET /debt?payer=X&payee=Y — must come before /:id to avoid conflict
-router.get('/debt', protect, getDebtBetween);
-router.get('/optimized', protect, getOptimizedSettlements);
+router.get('/debt', protect, requireRole('Viewer'), getDebtBetween);
+router.get('/optimized', protect, requireRole('Viewer'), getOptimizedSettlements);
 
 router.route('/')
-    .post(protect, settlementValidation, createSettlement)
-    .get(protect, getSettlements);
+    .post(protect, requireRole('Member'), settlementValidation, createSettlement)
+    .get(protect, requireRole('Viewer'), getSettlements);
 
-router.delete('/:id', protect, deleteSettlement);
+router.delete('/:id', protect, requireRole('Member'), deleteSettlement);
 
 module.exports = router;

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { createGroup, getGroups, getGroupById, deleteGroup } = require('../controllers/groupController');
+const { createGroup, getGroups, getGroupById, deleteGroup, updateGroup, updateRole, removeMember } = require('../controllers/groupController');
 const { protect } = require('../middleware/auth');
+const { requireRole } = require('../middleware/rbac');
 const { groupValidation } = require('../middleware/validate');
 
 const expenseRoutes = require('./expenseRoutes');
@@ -24,8 +25,22 @@ router.route('/')
     .post(protect, groupValidation, createGroup)
     .get(protect, getGroups);
 
+// The get route uses req.params.id for legacy compatibility.
+// We apply the RBAC middleware to paths with :groupId so it extracts the param correctly.
 router.route('/:id')
-    .get(protect, getGroupById)
-    .delete(protect, deleteGroup);
+    .get(protect, getGroupById)          // Internal check handles role
+    .put(protect, (req, res, next) => {
+        // map id to groupId for the middleware
+        req.params.groupId = req.params.id;
+        next();
+    }, requireRole('Admin'), updateGroup)
+    .delete(protect, (req, res, next) => {
+        req.params.groupId = req.params.id;
+        next();
+    }, requireRole('Admin'), deleteGroup);
+
+// Admin member management routes
+router.patch('/:groupId/members/:userId/role', protect, requireRole('Admin'), updateRole);
+router.delete('/:groupId/members/:userId', protect, requireRole('Admin'), removeMember);
 
 module.exports = router;

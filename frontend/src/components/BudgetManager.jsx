@@ -21,7 +21,7 @@ const CATEGORY_COLORS = {
     Transport: '#6366f1', Other: '#6b7280', Custom: '#f97316'
 };
 
-const BudgetManager = ({ groupId, groupCurrency, refreshTrigger }) => {
+const BudgetManager = ({ groupId, groupCurrency, refreshTrigger, currentUserRole = 'Member' }) => {
     const [budgets, setBudgets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -112,9 +112,11 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger }) => {
                         size="sm"
                     />
                 </div>
-                <Button size="sm" className="btn-modern-primary d-flex align-items-center gap-2 rounded-pill px-3" onClick={openAdd}>
-                    <FaPlus /> Set Budget
-                </Button>
+                {currentUserRole !== 'Viewer' && (
+                    <Button size="sm" className="btn-modern-primary d-flex align-items-center gap-2 rounded-pill px-3" onClick={openAdd}>
+                        <FaPlus /> Set Budget
+                    </Button>
+                )}
             </div>
 
             {anyExceeded && (
@@ -130,7 +132,9 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger }) => {
                 <div className="text-center py-5 text-muted">
                     <div style={{ fontSize: '3rem' }}>💰</div>
                     <p className="mt-2">No budgets set for this month.</p>
-                    <Button variant="outline-primary" size="sm" onClick={openAdd}>Set your first budget</Button>
+                    {currentUserRole !== 'Viewer' && (
+                        <Button variant="outline-primary" size="sm" onClick={openAdd}>Set your first budget</Button>
+                    )}
                 </div>
             ) : (
                 <Row xs={1} md={2} lg={3} className="g-3">
@@ -155,10 +159,12 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger }) => {
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="d-flex gap-1">
-                                                <Button variant="outline-secondary" size="sm" onClick={() => openEdit(b)}><FaEdit /></Button>
-                                                <Button variant="outline-danger" size="sm" onClick={() => handleDelete(b._id)}><FaTrash /></Button>
-                                            </div>
+                                            {currentUserRole !== 'Viewer' && (
+                                                <div className="d-flex gap-1">
+                                                    <Button variant="outline-secondary" size="sm" onClick={() => openEdit(b)}><FaEdit /></Button>
+                                                    <Button variant="outline-danger" size="sm" onClick={() => handleDelete(b._id)}><FaTrash /></Button>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="mt-3">
