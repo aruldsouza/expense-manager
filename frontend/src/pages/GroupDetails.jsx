@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
 import SettlementList from '../components/SettlementList';
 import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
+import BudgetManager from '../components/BudgetManager';
+import CategoryAnalytics from '../components/CategoryAnalytics';
 import { Container, Row, Col, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
 
 // Memoized Components
@@ -132,6 +134,12 @@ const GroupDetails = () => {
                             <div className="p-3">
                                 <MemoizedTransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
                             </div>
+                        </Tab>
+                        <Tab eventKey="budgets" title={<><FaWallet className="me-2" />Budgets</>}>
+                            <BudgetManager groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
+                        </Tab>
+                        <Tab eventKey="analytics" title={<><FaChartPie className="me-2" />Analytics</>}>
+                            <CategoryAnalytics groupId={groupId} groupCurrency={group.currency} />
                         </Tab>
                     </Tabs>
                 </Card.Body>

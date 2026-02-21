@@ -6,7 +6,7 @@ const Group = require('../models/Group');
 // @access  Private
 const addExpense = async (req, res, next) => {
     try {
-        const { description, amount, payer, splitType, splits } = req.body;
+        const { description, amount, payer, splitType, splits, category } = req.body;
         const groupId = req.params.groupId;
 
         // Validation: Check if group exists
@@ -83,7 +83,8 @@ const addExpense = async (req, res, next) => {
             group: groupId,
             payer,
             splitType,
-            splits: processedSplits
+            splits: processedSplits,
+            category: category || 'Other'
         });
 
         res.status(201).json({

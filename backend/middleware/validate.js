@@ -41,8 +41,9 @@ const groupValidation = [
 const expenseValidation = [
     check('description', 'Description is required').not().isEmpty().trim().escape(),
     check('amount', 'Amount must be a positive number').isFloat({ min: 0.01 }),
-    check('payer', 'Valid payer ID is required').isMongoId(),
+    check('payer', 'Payer ID is required').not().isEmpty(),
     check('splitType').optional().isIn(['EQUAL', 'UNEQUAL', 'PERCENT']),
+    check('category').optional().isIn(['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom']),
     validate
 ];
 

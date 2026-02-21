@@ -6,30 +6,53 @@ import { FaUsers, FaMoneyBillWave, FaChartPie, FaPlus } from 'react-icons/fa';
 import GroupList from '../components/GroupList';
 import StatCard from '../components/StatCard';
 import { Row, Col, Button, Card } from 'react-bootstrap';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useCurrency } from '../context/CurrencyContext';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const CATEGORY_COLORS = [
+    '#ef4444', '#3b82f6', '#f59e0b', '#8b5cf6',
+    '#ec4899', '#06b6d4', '#10b981', '#6366f1', '#6b7280', '#f97316'
+];
 
 const Dashboard = () => {
     const { user } = useAuth();
+    const { formatCurrency } = useCurrency();
     const [stats, setStats] = useState({
         totalExpenses: 0,
         youAreOwed: 0,
         activeGroups: 0
     });
+    const [categoryData, setCategoryData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await api.get('/dashboard/stats');
-                if (res.data.success) {
-                    setStats(res.data.data);
+                const [statsRes, groupsRes] = await Promise.all([
+                    api.get('/dashboard/stats'),
+                    api.get('/groups')
+                ]);
+                if (statsRes.data.success) setStats(statsRes.data.data);
+
+                // Load category analytics from first group (as a sample)
+                if (groupsRes.data.success && groupsRes.data.data.length > 0) {
+                    const firstGroupId = groupsRes.data.data[0]._id;
+                    const d = new Date();
+                    const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    try {
+                        const cRes = await api.get(`/groups/${firstGroupId}/analytics`, { params: { month } });
+                        if (cRes.data.success) setCategoryData(cRes.data.data);
+                    } catch { /* analytics optional */ }
                 }
             } catch (err) {
-                console.error("Failed to load dashboard stats", err);
+                console.error('Failed to load dashboard stats', err);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchStats();
     }, []);
 
@@ -91,17 +114,43 @@ const Dashboard = () => {
                 </Col>
             </Row>
 
-            {/* Recent Activity / Quick Actions */}
-            <Row>
-                <Col lg={12}>
+            {/* Spending Chart + Groups row */}
+            <Row className="g-4">
+                {categoryData.length > 0 && (
+                    <Col lg={4}>
+                        <div className="glass-card border-0 p-4 h-100">
+                            <h4 className="mb-0 fw-bold d-flex align-items-center gap-2 text-dark mb-3">
+                                <FaChartPie className="text-primary" /> This Month
+                            </h4>
+                            <Doughnut
+                                data={{
+                                    labels: categoryData.map(c => c.category),
+                                    datasets: [{
+                                        data: categoryData.map(c => c.total),
+                                        backgroundColor: CATEGORY_COLORS.slice(0, categoryData.length),
+                                        borderWidth: 2,
+                                        borderColor: '#fff',
+                                        hoverOffset: 6
+                                    }]
+                                }}
+                                options={{
+                                    cutout: '60%',
+                                    plugins: {
+                                        legend: { position: 'bottom', labels: { padding: 10, font: { size: 11 } } },
+                                        tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.toFixed(2)}` } }
+                                    }
+                                }}
+                            />
+                        </div>
+                    </Col>
+                )}
+                <Col lg={categoryData.length > 0 ? 8 : 12}>
                     <div className="glass-card border-0 p-4">
                         <div className="d-flex justify-content-between align-items-center mb-4">
                             <h4 className="mb-0 fw-bold d-flex align-items-center gap-2 text-dark">
                                 <FaUsers className="text-primary" /> Your Groups
                             </h4>
-                            <Link to="/groups/create" className="text-decoration-none fw-bold text-primary">
-                                View All
-                            </Link>
+                            <Link to="/groups/create" className="text-decoration-none fw-bold text-primary">View All</Link>
                         </div>
                         <GroupList />
                     </div>

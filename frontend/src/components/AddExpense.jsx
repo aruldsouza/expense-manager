@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Form, Button, InputGroup, Row, Col, Alert, Spinner } from 'react-bootstrap';
-import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle } from 'react-icons/fa';
+import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag } from 'react-icons/fa';
+
+const CATEGORIES = ['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom'];
 
 const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
     const { user } = useAuth();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
+    const [category, setCategory] = useState('Other');
     const [payer, setPayer] = useState(user?._id || '');
     const [splitType, setSplitType] = useState('EQUAL'); // EQUAL, UNEQUAL, PERCENT
     const [splits, setSplits] = useState({}); // { userId: amountOrPercent }
@@ -98,6 +101,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
                 amount: parseFloat(amount),
                 payer,
                 splitType,
+                category,
                 splits: []
             };
 
@@ -145,6 +149,17 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
                                     placeholder="e.g., Dinner, Taxi, Groceries"
                                     required
                                 />
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/* Category */}
+                        <Form.Group className="mb-3" controlId="category">
+                            <Form.Label className="fw-bold">Category</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FaTag /></InputGroup.Text>
+                                <Form.Select value={category} onChange={e => setCategory(e.target.value)}>
+                                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                </Form.Select>
                             </InputGroup>
                         </Form.Group>
                     </Col>

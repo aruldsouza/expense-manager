@@ -32,12 +32,12 @@ Support global users and international groups.
 Track spending categories and monthly limits.
 
 ### Tasks:
-[ ] Add expense categories (Food, Travel, Utilities, Custom)
-[ ] Add Budget model per group
-[ ] Track monthly spending per category
-[ ] Add "Budget Exceeded" warning system
-[ ] Create analytics endpoints
-[ ] Add dashboard charts
+[x] Add expense categories (Food, Travel, Utilities, Custom)
+[x] Add Budget model per group
+[x] Track monthly spending per category
+[x] Add "Budget Exceeded" warning system
+[x] Create analytics endpoints
+[x] Add dashboard charts
 
 ---
 
