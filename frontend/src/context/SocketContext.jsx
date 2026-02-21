@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
@@ -10,6 +11,7 @@ const SOCKET_URL = import.meta.env.VITE_API_URL
 
 export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);
+    const { user } = useAuth();
 
     useEffect(() => {
         // Create a single socket connection for the lifetime of the app
@@ -52,6 +54,13 @@ export const SocketProvider = ({ children }) => {
             socketRef.current.emit('join:user', userId);
         }
     };
+
+    // Auto-join user room when authenticated
+    useEffect(() => {
+        if (user?._id) {
+            joinUser(user._id);
+        }
+    }, [user?._id]);
 
     const on = (event, handler) => {
         socketRef.current?.on(event, handler);

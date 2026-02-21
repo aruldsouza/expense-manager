@@ -82,14 +82,14 @@ Live updates when someone adds expense or settles.
 In-app notification center.
 
 ### Tasks:
-[ ] Create Notification model
-[ ] Add unread counter
-[ ] Mark-as-read endpoint
-[ ] Trigger notifications on:
+[x] Create Notification model
+[x] Add unread counter
+[x] Mark-as-read endpoint
+[x] Trigger notifications on:
       - New expense
       - Settlement
       - Budget exceed
-[ ] Optional: Email notifications
+[x] Optional: Email notifications
 
 ---
 
