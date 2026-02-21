@@ -1,13 +1,19 @@
 const Expense = require('../models/Expense');
 const Group = require('../models/Group');
 const { cloudinary } = require('../middleware/upload');
+const { getIO } = require('../socket');
 
 // @desc    Add new expense to group
 // @route   POST /api/groups/:groupId/expenses
 // @access  Private
 const addExpense = async (req, res, next) => {
     try {
-        const { description, amount, payer, splitType, splits, category } = req.body;
+        // FormData sends splits as JSON string — parse if needed
+        let { description, amount, payer, splitType, category } = req.body;
+        let splits = req.body.splits;
+        if (typeof splits === 'string') {
+            try { splits = JSON.parse(splits); } catch { splits = []; }
+        }
         const groupId = req.params.groupId;
 
         // Validation: Check if group exists
@@ -94,6 +100,16 @@ const addExpense = async (req, res, next) => {
             success: true,
             data: expense
         });
+
+        // Emit to other group members after response sent
+        try {
+            const populated = await Expense.findById(expense._id)
+                .populate('payer', 'name email')
+                .populate('splits.user', 'name');
+            getIO().to(`group:${groupId}`).emit('expense:new', populated);
+        } catch (e) {
+            console.warn('Socket emit expense:new failed:', e.message);
+        }
 
     } catch (error) {
         next(error);

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
+import toast from 'react-hot-toast';
 import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
@@ -10,6 +11,8 @@ import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
 import CategoryAnalytics from '../components/CategoryAnalytics';
+import { useSocket } from '../context/SocketContext';
+import { useAuth } from '../context/AuthContext';
 import { Container, Row, Col, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
 
 // Memoized Components
@@ -20,17 +23,47 @@ const MemoizedTransactionList = React.memo(TransactionList);
 
 const GroupDetails = () => {
     const { groupId } = useParams();
+    const { user } = useAuth();
+    const { joinGroup, leaveGroup, on, off } = useSocket();
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('expenses');
-
-    // Moved these to top to avoid conditional hook call error
     const [showAddExpense, setShowAddExpense] = useState(false);
     const [showRecordSettlement, setShowRecordSettlement] = useState(false);
-    // State for pre-filling settlement modal
     const [settlementInitialData, setSettlementInitialData] = useState(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    // Socket.IO: join group room + listen for real-time events
+    useEffect(() => {
+        if (!groupId) return;
+        joinGroup(groupId);
+
+        const handleExpenseNew = (expense) => {
+            // Only show toast if someone ELSE added it
+            if (expense?.payer?._id !== user?._id) {
+                toast(`💸 ${expense?.payer?.name || 'Someone'} added "${expense?.description}"`, { icon: '🧾' });
+            }
+            setRefreshTrigger(prev => prev + 1);
+        };
+
+        const handleSettlementNew = ({ settlement, wasPartial }) => {
+            if (settlement?.payer?._id !== user?._id) {
+                const label = wasPartial ? 'partially settled' : 'fully settled';
+                toast(`✅ ${settlement?.payer?.name || 'Someone'} ${label} with ${settlement?.payee?.name || 'someone'}`, { icon: '💰' });
+            }
+            setRefreshTrigger(prev => prev + 1);
+        };
+
+        on('expense:new', handleExpenseNew);
+        on('settlement:new', handleSettlementNew);
+
+        return () => {
+            leaveGroup(groupId);
+            off('expense:new', handleExpenseNew);
+            off('settlement:new', handleSettlementNew);
+        };
+    }, [groupId, user?._id]);
 
     const handleExpenseAdded = () => {
         setRefreshTrigger(prev => prev + 1);

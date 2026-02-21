@@ -70,11 +70,11 @@ Allow users to upload bills.
 Live updates when someone adds expense or settles.
 
 ### Tasks:
-[ ] Integrate Socket.io
-[ ] Emit events on expense creation
-[ ] Emit settlement events
-[ ] Update dashboard in real-time
-[ ] Add toast notifications
+[x] Integrate Socket.io
+[x] Emit events on expense creation
+[x] Emit settlement events
+[x] Update dashboard in real-time
+[x] Add toast notifications
 
 ---
 

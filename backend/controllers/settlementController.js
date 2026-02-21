@@ -2,6 +2,7 @@ const Settlement = require('../models/Settlement');
 const Group = require('../models/Group');
 const Expense = require('../models/Expense');
 const mongoose = require('mongoose');
+const { getIO } = require('../socket');
 
 // ─── Shared: compute net balance between all members ─────────────────────────
 const computeNetBalances = async (groupId, members) => {
@@ -135,6 +136,20 @@ const createSettlement = async (req, res, next) => {
             data: settlement,
             meta: { wasPartial: isPartial, remainingDebt: remaining }
         });
+
+        // Emit to other group members after response sent
+        try {
+            const populated = await Settlement.findById(settlement._id)
+                .populate('payer', 'name email')
+                .populate('payee', 'name email');
+            getIO().to(`group:${groupId}`).emit('settlement:new', {
+                settlement: populated,
+                wasPartial: isPartial,
+                remainingDebt: remaining
+            });
+        } catch (e) {
+            console.warn('Socket emit settlement:new failed:', e.message);
+        }
     } catch (error) { next(error); }
 };
 
