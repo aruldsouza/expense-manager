@@ -45,11 +45,11 @@ Track spending categories and monthly limits.
 Allow users to pay part of what they owe.
 
 ### Tasks:
-[ ] Modify settlement logic
-[ ] Track remaining balance
-[ ] Update optimization algorithm
-[ ] Add partial payment UI
-[ ] Add history tracking
+[x] Modify settlement logic
+[x] Track remaining balance
+[x] Update optimization algorithm
+[x] Add partial payment UI
+[x] Add history tracking
 
 ---
 

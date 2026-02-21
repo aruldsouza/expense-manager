@@ -24,6 +24,16 @@ const settlementSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    note: {
+        type: String,
+        default: '',
+        trim: true,
+        maxlength: [200, 'Note cannot exceed 200 characters']
+    },
+    isPartial: {
+        type: Boolean,
+        default: true  // set false by controller when amount >= outstanding debt
     }
 }, {
     timestamps: true

@@ -1,80 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
-import { Form, Button, InputGroup, Alert, Spinner } from 'react-bootstrap';
-import { FaUser, FaMoneyBillWave } from 'react-icons/fa';
+import { Form, Button, InputGroup, Alert, Spinner, Badge, Card } from 'react-bootstrap';
+import { FaUser, FaMoneyBillWave, FaStickyNote, FaBolt, FaCheckCircle } from 'react-icons/fa';
+import { useCurrency } from '../context/CurrencyContext';
 
-const RecordSettlement = ({ groupId, groupMembers, initialData, onSuccess, onCancel }) => {
-    // Determine defaults from initialData if present
+const RecordSettlement = ({ groupId, groupMembers, groupCurrency, initialData, onSuccess, onCancel }) => {
     const [payer, setPayer] = useState(initialData?.from?._id || '');
     const [payee, setPayee] = useState(initialData?.to?._id || '');
-    const [amount, setAmount] = useState(initialData?.amount || '');
+    const [amount, setAmount] = useState(initialData?.amount ? String(initialData.amount) : '');
+    const [note, setNote] = useState('');
+    const [outstanding, setOutstanding] = useState(null);   // null = not fetched yet
+    const [fetchingDebt, setFetchingDebt] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [successMeta, setSuccessMeta] = useState(null);   // { wasPartial, remainingDebt }
+    const { formatCurrency } = useCurrency();
+    const gc = groupCurrency || 'USD';
 
-    // If initialData changes (e.g. modal reused), update state
-    React.useEffect(() => {
+    // Sync when initialData changes
+    useEffect(() => {
         if (initialData) {
             setPayer(initialData.from?._id || '');
             setPayee(initialData.to?._id || '');
-            setAmount(initialData.amount || '');
+            setAmount(initialData.amount ? String(initialData.amount) : '');
         } else {
-            // Reset if opened without data
-            setPayer('');
-            setPayee('');
-            setAmount('');
+            setPayer(''); setPayee(''); setAmount('');
         }
+        setNote('');
+        setOutstanding(null);
+        setSuccessMeta(null);
     }, [initialData]);
+
+    // Fetch outstanding debt when both payer + payee are selected
+    const fetchDebt = useCallback(async (p, q) => {
+        if (!p || !q || p === q) { setOutstanding(null); return; }
+        setFetchingDebt(true);
+        try {
+            const res = await api.get(`/groups/${groupId}/settlements/debt`, { params: { payer: p, payee: q } });
+            if (res.data.success) setOutstanding(res.data.data.outstanding);
+        } catch { setOutstanding(null); }
+        finally { setFetchingDebt(false); }
+    }, [groupId]);
+
+    useEffect(() => { fetchDebt(payer, payee); }, [payer, payee, fetchDebt]);
+
+    const handlePayFull = () => {
+        if (outstanding > 0) setAmount(String(outstanding));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setError(''); setSuccessMeta(null);
 
-        if (payer === payee) {
-            setError('Payer and Payee cannot be the same person.');
+        if (payer === payee) { setError('Payer and Payee cannot be the same person.'); return; }
+        const amtNum = parseFloat(amount);
+        if (isNaN(amtNum) || amtNum <= 0) { setError('Enter a valid amount.'); return; }
+        if (outstanding !== null && amtNum > outstanding + 0.005) {
+            setError(`Amount cannot exceed outstanding debt of ${formatCurrency(outstanding, gc)}`);
             return;
         }
 
-        // Payload expects user IDs. 
-        // Backend controller expects: { payee, amount } in body, and user is Payer from Auth token...
-        // WAIT. 
-        // The backend `createSettlement` controller says: `const payer = req.user._id;`
-        // This means I can ONLY settle debts where *I* am the payer.
-        // But in a group, anyone might record a settlement.
-        // If I am User A, and I see User B owes User A (Me), I click "Settle".
-        // Who is paying? User B is paying Me.
-        // So the "Payer" is User B.
-        // If the backend enforces `payer = req.user._id`, then ONLY the person who owes money can record the settlement.
-        // This is a restriction. Let's check `settlementController.js`.
-
-        // Yes: `const payer = req.user._id;`
-        // Validation: `if (payer.toString() === payee.toString()) ...`
-
-        // This means if I am Admin/User A, I cannot record that "User B paid User C".
-        // I can only record "I paid User X".
-
-        // If the user wants to "Settle Up" based on recommendations like "User B owes User A",
-        // and I am User A, I technically cannot record it if the backend forces me to be the payer.
-        // I would have to be User B to record "I paid User A".
-
-        // FIX: Check if we should allow recording on behalf of others.
-        // For now, I'll stick to the backend logic. 
-        // CAUTION: The UI has a "Payer" dropdown. This implies I can select who paid.
-        // If I select "User B", but the backend ignores it and uses "Me", that's a BUG.
-        // I need to fix the backend to accept `payer` from body if provided, or default to `req.user`.
-
-        // Let's assume for this step I will fix the backend to allow specifying payer.
-
         setLoading(true);
-
         try {
             const res = await api.post(`/groups/${groupId}/settlements`, {
-                payer: payer, // Changed from payerId to payer to match what I'll fix in backend
-                payee: payee,
-                amount: parseFloat(amount)
+                payer, payee, amount: amtNum, note
             });
-
             if (res.data.success) {
-                onSuccess();
+                setSuccessMeta(res.data.meta);
+                // brief delay so user sees confirmation, then call onSuccess
+                setTimeout(() => onSuccess(), 1800);
             }
         } catch (err) {
             setError(err.response?.data?.error || err.message || 'Failed to record settlement');
@@ -83,24 +77,39 @@ const RecordSettlement = ({ groupId, groupMembers, initialData, onSuccess, onCan
         }
     };
 
+    // Success confirmation card
+    if (successMeta) {
+        return (
+            <div className="p-4 text-center">
+                <FaCheckCircle className="text-success mb-3" style={{ fontSize: '3rem' }} />
+                <h5 className="fw-bold text-success mb-2">Settlement Recorded!</h5>
+                {successMeta.wasPartial ? (
+                    <p className="text-muted">
+                        This was a <Badge bg="warning" text="dark">Partial</Badge> payment.<br />
+                        <span className="fw-bold">{formatCurrency(successMeta.remainingDebt, gc)}</span> still outstanding.
+                    </p>
+                ) : (
+                    <p className="text-muted">
+                        <Badge bg="success">Fully Settled</Badge> — no remaining debt between these members.
+                    </p>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="p-4">
             {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
 
             <Form onSubmit={handleSubmit}>
+                {/* Payer */}
                 <Form.Group className="mb-3" controlId="payer">
-                    <Form.Label className="fw-bold">Payer (Who paid?)</Form.Label>
+                    <Form.Label className="fw-bold">Payer <span className="text-muted fw-normal">(Who paid?)</span></Form.Label>
                     <InputGroup>
                         <InputGroup.Text><FaUser className="text-danger" /></InputGroup.Text>
-                        <Form.Select
-                            value={payer}
-                            onChange={(e) => setPayer(e.target.value)}
-                            required
-                        >
+                        <Form.Select value={payer} onChange={e => setPayer(e.target.value)} required>
                             <option value="" disabled>Select Payer</option>
-                            {groupMembers?.map(m => (
-                                <option key={m._id} value={m._id}>{m.name}</option>
-                            ))}
+                            {groupMembers?.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
                         </Form.Select>
                     </InputGroup>
                 </Form.Group>
@@ -109,24 +118,45 @@ const RecordSettlement = ({ groupId, groupMembers, initialData, onSuccess, onCan
                     <span className="bg-light px-2 py-1 rounded">pays to</span>
                 </div>
 
+                {/* Payee */}
                 <Form.Group className="mb-3" controlId="payee">
-                    <Form.Label className="fw-bold">Payee (Who received?)</Form.Label>
+                    <Form.Label className="fw-bold">Payee <span className="text-muted fw-normal">(Who received?)</span></Form.Label>
                     <InputGroup>
                         <InputGroup.Text><FaUser className="text-success" /></InputGroup.Text>
-                        <Form.Select
-                            value={payee}
-                            onChange={(e) => setPayee(e.target.value)}
-                            required
-                        >
+                        <Form.Select value={payee} onChange={e => setPayee(e.target.value)} required>
                             <option value="" disabled>Select Payee</option>
-                            {groupMembers?.map(m => (
-                                <option key={m._id} value={m._id}>{m.name}</option>
-                            ))}
+                            {groupMembers?.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
                         </Form.Select>
                     </InputGroup>
                 </Form.Group>
 
-                <Form.Group className="mb-4" controlId="amount">
+                {/* Live outstanding debt callout */}
+                {payer && payee && payer !== payee && (
+                    <Card className="mb-3 border-0 bg-light">
+                        <Card.Body className="py-2 px-3">
+                            {fetchingDebt ? (
+                                <Spinner size="sm" animation="border" className="me-2" />
+                            ) : outstanding !== null && outstanding > 0.005 ? (
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <span className="text-muted small">
+                                        {groupMembers?.find(m => m._id === payer)?.name} owes{' '}
+                                        {groupMembers?.find(m => m._id === payee)?.name}:
+                                        {' '}<span className="fw-bold text-danger">{formatCurrency(outstanding, gc)}</span>
+                                    </span>
+                                    <Button size="sm" variant="outline-primary" className="rounded-pill px-3 d-flex align-items-center gap-1"
+                                        onClick={handlePayFull} type="button">
+                                        <FaBolt size={11} /> Pay Full
+                                    </Button>
+                                </div>
+                            ) : outstanding === 0 ? (
+                                <span className="text-success small fw-bold">✅ Already settled — no debt between these two.</span>
+                            ) : null}
+                        </Card.Body>
+                    </Card>
+                )}
+
+                {/* Amount with range slider */}
+                <Form.Group className="mb-3" controlId="amount">
                     <Form.Label className="fw-bold">Amount</Form.Label>
                     <InputGroup>
                         <InputGroup.Text><FaMoneyBillWave /></InputGroup.Text>
@@ -134,19 +164,54 @@ const RecordSettlement = ({ groupId, groupMembers, initialData, onSuccess, onCan
                             type="number"
                             min="0.01"
                             step="0.01"
+                            max={outstanding > 0 ? outstanding : undefined}
                             value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
+                            onChange={e => setAmount(e.target.value)}
                             placeholder="0.00"
                             required
                         />
                     </InputGroup>
+                    {outstanding > 0 && (
+                        <div className="mt-2">
+                            <Form.Range
+                                min={0}
+                                max={outstanding}
+                                step={0.01}
+                                value={parseFloat(amount) || 0}
+                                onChange={e => setAmount(e.target.value)}
+                            />
+                            <div className="d-flex justify-content-between small text-muted">
+                                <span>{formatCurrency(0, gc)}</span>
+                                <span className={parseFloat(amount) < outstanding ? 'text-warning fw-bold' : 'text-success fw-bold'}>
+                                    {parseFloat(amount) > 0 && parseFloat(amount) < outstanding
+                                        ? `Partial (${Math.round((parseFloat(amount) / outstanding) * 100)}%)`
+                                        : parseFloat(amount) >= outstanding ? '✅ Full settlement' : ''}
+                                </span>
+                                <span>{formatCurrency(outstanding, gc)}</span>
+                            </div>
+                        </div>
+                    )}
+                </Form.Group>
+
+                {/* Optional note */}
+                <Form.Group className="mb-4" controlId="note">
+                    <Form.Label className="fw-bold d-flex align-items-center gap-2">
+                        <FaStickyNote /> Note <span className="text-muted fw-normal small">(optional)</span>
+                    </Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={2}
+                        maxLength={200}
+                        value={note}
+                        onChange={e => setNote(e.target.value)}
+                        placeholder="e.g. Paid via UPI, Bank transfer, etc."
+                    />
+                    <Form.Text className="text-muted">{note.length}/200</Form.Text>
                 </Form.Group>
 
                 <div className="d-flex justify-content-end gap-2 border-top pt-3">
-                    <Button variant="light" onClick={onCancel} disabled={loading}>
-                        Cancel
-                    </Button>
-                    <Button variant="success" type="submit" disabled={loading}>
+                    <Button variant="light" onClick={onCancel} disabled={loading}>Cancel</Button>
+                    <Button variant="success" type="submit" disabled={loading || (outstanding === 0 && outstanding !== null)}>
                         {loading ? <Spinner size="sm" /> : 'Record Settlement'}
                     </Button>
                 </div>

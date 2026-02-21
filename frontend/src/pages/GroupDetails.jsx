@@ -125,6 +125,7 @@ const GroupDetails = () => {
                             <div className="p-3">
                                 <MemoizedSettlementList
                                     groupId={groupId}
+                                    groupCurrency={group.currency}
                                     refreshTrigger={refreshTrigger}
                                     onSettle={handleOpenSettlement}
                                 />
@@ -169,6 +170,7 @@ const GroupDetails = () => {
                     <RecordSettlement
                         groupId={groupId}
                         groupMembers={group.members}
+                        groupCurrency={group.currency}
                         initialData={settlementInitialData}
                         onSuccess={handleSettlementRecorded}
                         onCancel={() => setShowRecordSettlement(false)}
