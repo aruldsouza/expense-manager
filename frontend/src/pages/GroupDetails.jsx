@@ -11,7 +11,6 @@ import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
 import CategoryAnalytics from '../components/CategoryAnalytics';
-import CategoryAnalytics from '../components/CategoryAnalytics';
 import ManageMembers from '../components/ManageMembers';
 import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
