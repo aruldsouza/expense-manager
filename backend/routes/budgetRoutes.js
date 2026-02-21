@@ -3,7 +3,7 @@ const { protect } = require('../middleware/auth');
 const { requireRole } = require('../middleware/rbac');
 const {
     upsertBudget, getBudgets, updateBudget, deleteBudget,
-    getCategoryAnalytics, getBudgetStatus
+    getBudgetStatus
 } = require('../controllers/budgetController');
 
 // ─── Budget CRUD router (mounted at /:groupId/budgets) ────────────────────────
@@ -19,16 +19,9 @@ budgetRouter.route('/:id')
     .put(requireRole('Member'), updateBudget)
     .delete(requireRole('Member'), deleteBudget);
 
-// ─── Analytics router (mounted at /:groupId/analytics) ────────────────────────
-const analyticsRouter = express.Router({ mergeParams: true });
+// ─── Budget Status ────────────────────────
+// GET /:groupId/budgets/status → budget vs actual + exceeded flags
+// Mounted directly on budget router since it relates heavily to budgets
+budgetRouter.get('/status', requireRole('Viewer'), getBudgetStatus);
 
-analyticsRouter.use(protect);
-analyticsRouter.use(requireRole('Viewer'));
-
-// GET /:groupId/analytics              → spending per category
-analyticsRouter.get('/', getCategoryAnalytics);
-
-// GET /:groupId/analytics/budget-status → budget vs actual + exceeded flags
-analyticsRouter.get('/budget-status', getBudgetStatus);
-
-module.exports = { budgetRouter, analyticsRouter };
+module.exports = budgetRouter;

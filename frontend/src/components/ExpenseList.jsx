@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { ListGroup, Badge, Spinner, Alert, Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { FaMoneyBillWave, FaUser, FaExchangeAlt, FaPaperclip, FaTrash, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaMoneyBillWave, FaUser, FaExchangeAlt, FaPaperclip, FaTrash, FaExternalLinkAlt, FaEdit, FaHistory } from 'react-icons/fa';
 import { useCurrency } from '../context/CurrencyContext';
+import AddExpense from './AddExpense';
+import ExpenseHistoryModal from './ExpenseHistoryModal';
 
 const CATEGORY_ICONS = {
     Food: '🍔', Travel: '✈️', Utilities: '💡', Rent: '🏠',
@@ -10,7 +12,7 @@ const CATEGORY_ICONS = {
     Transport: '🚗', Other: '📦', Custom: '⭐'
 };
 
-const ExpenseList = ({ groupId, groupCurrency, refreshTrigger }) => {
+const ExpenseList = ({ groupId, groupCurrency, refreshTrigger, groupMembers, currentUserRole = 'Member' }) => {
     const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -18,6 +20,8 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger }) => {
     const [convertedAmounts, setConvertedAmounts] = useState({});
     const [receiptModal, setReceiptModal] = useState(null); // { url, isPdf }
     const [deletingReceipt, setDeletingReceipt] = useState(null); // expense id being processed
+    const [editExpenseData, setEditExpenseData] = useState(null);
+    const [showHistoryFor, setShowHistoryFor] = useState(null);
 
     const gc = groupCurrency || 'USD';
     const needsConversion = displayCurrency && displayCurrency !== gc;
@@ -65,6 +69,16 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger }) => {
             }
         } catch { setError('Failed to delete receipt'); }
         finally { setDeletingReceipt(null); }
+    };
+
+    const handleDeleteExpense = async (expenseId) => {
+        if (!window.confirm('Delete this expense entirely? This cannot be undone.')) return;
+        try {
+            const res = await api.delete(`/groups/${groupId}/expenses/${expenseId}`);
+            if (res.data.success) {
+                setExpenses(prev => prev.filter(e => e._id !== expenseId));
+            }
+        } catch { setError('Failed to delete expense'); }
     };
 
     if (loading) return <div className="text-center py-4"><Spinner animation="border" variant="primary" size="sm" /></div>;
@@ -131,6 +145,21 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger }) => {
                                     </OverlayTrigger>
                                 )}
                                 <small className="text-muted d-block">{new Date(expense.date).toLocaleDateString()}</small>
+                                <div className="d-flex gap-1 justify-content-end mt-2">
+                                    <Button variant="outline-info" size="sm" className="py-0 px-2 border-0" onClick={() => setShowHistoryFor(expense._id)}>
+                                        <FaHistory size={12} />
+                                    </Button>
+                                    {currentUserRole !== 'Viewer' && (
+                                        <>
+                                            <Button variant="outline-secondary" size="sm" className="py-0 px-2 border-0" onClick={() => setEditExpenseData(expense)}>
+                                                <FaEdit size={12} />
+                                            </Button>
+                                            <Button variant="outline-danger" size="sm" className="py-0 px-2 border-0" onClick={() => handleDeleteExpense(expense._id)}>
+                                                <FaTrash size={12} />
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </ListGroup.Item>
                     );
@@ -189,6 +218,33 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger }) => {
                     <Button variant="secondary" onClick={() => setReceiptModal(null)}>Close</Button>
                 </Modal.Footer>
             </Modal>
+
+            {/* Edit Expense Modal */}
+            <Modal show={!!editExpenseData} onHide={() => setEditExpenseData(null)} centered size="lg">
+                <Modal.Header closeButton className="border-0 pb-0">
+                    <Modal.Title className="fw-bold text-primary"><FaEdit className="me-2" />Edit Expense</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-0">
+                    {editExpenseData && (
+                        <AddExpense
+                            groupId={groupId}
+                            groupMembers={groupMembers}
+                            initialData={editExpenseData}
+                            onSuccess={() => { setEditExpenseData(null); fetchExpenses(); }}
+                            onCancel={() => setEditExpenseData(null)}
+                        />
+                    )}
+                </Modal.Body>
+            </Modal>
+
+            {/* Expense History Modal */}
+            <ExpenseHistoryModal
+                show={!!showHistoryFor}
+                onHide={() => setShowHistoryFor(null)}
+                expenseId={showHistoryFor}
+                groupId={groupId}
+                groupCurrency={groupCurrency}
+            />
         </>
     );
 };

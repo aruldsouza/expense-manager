@@ -8,7 +8,7 @@ const CATEGORIES = ['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Sho
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
 
-const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
+const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = null }) => {
     const { user } = useAuth();
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
@@ -22,18 +22,45 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
     const [receiptFile, setReceiptFile] = useState(null);
     const [localPreview, setLocalPreview] = useState(null);
 
-    // Initialize splits and involved members
+    // Initialize state from initialData if editing
     useEffect(() => {
-        if (groupMembers && groupMembers.length > 0) {
-            setInvolvedMembers(groupMembers.map(m => m._id));
+        if (initialData) {
+            setDescription(initialData.description || '');
+            setAmount(initialData.amount ? String(initialData.amount) : '');
+            setCategory(initialData.category || 'Other');
+            setPayer(initialData.payer?._id || initialData.payer || '');
+            setSplitType(initialData.splitType || 'EQUAL');
 
+            if (initialData.receiptUrl) {
+                setLocalPreview(initialData.receiptUrl); // Show existing receipt
+            }
+        }
+    }, [initialData]);
+    useEffect(() => {
+        if (initialData && initialData.splits && groupMembers?.length) {
+            const initialInvolved = [];
+            const initialSplitsObj = {};
+
+            // Populate all group members with empty string first
+            groupMembers.forEach(m => { initialSplitsObj[m._id] = ''; });
+
+            initialData.splits.forEach(s => {
+                const userId = s.user?._id || s.user;
+                initialInvolved.push(userId);
+                initialSplitsObj[userId] = initialData.splitType === 'PERCENT' ? s.percent : s.amount;
+            });
+
+            setInvolvedMembers(initialInvolved.length > 0 ? initialInvolved : groupMembers.map(m => m._id));
+            setSplits(initialSplitsObj);
+        } else if (groupMembers && groupMembers.length > 0) {
+            setInvolvedMembers(groupMembers.map(m => m._id));
             const initialSplits = {};
             groupMembers.forEach(m => {
                 initialSplits[m._id] = '';
             });
             setSplits(initialSplits);
         }
-    }, [groupMembers]);
+    }, [groupMembers, initialData]);
 
     // Set default payer
     useEffect(() => {
@@ -124,9 +151,17 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
             // Attach receipt file if selected
             if (receiptFile) formData.append('receipt', receiptFile);
 
-            const res = await api.post(`/groups/${groupId}/expenses`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            let res;
+            if (initialData && initialData._id) {
+                res = await api.put(`/groups/${groupId}/expenses/${initialData._id}`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            } else {
+                res = await api.post(`/groups/${groupId}/expenses`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            }
+
             if (res.data.success) {
                 setReceiptFile(null);
                 setLocalPreview(null);
@@ -337,7 +372,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel }) => {
                         Cancel
                     </Button>
                     <Button variant="primary" type="submit" disabled={loading}>
-                        {loading ? <Spinner size="sm" /> : 'Save Expense'}
+                        {loading ? <Spinner size="sm" /> : initialData ? 'Update Expense' : 'Save Expense'}
                     </Button>
                 </div>
             </Form>

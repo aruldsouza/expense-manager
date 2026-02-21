@@ -40,7 +40,7 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger, currentUserRole
     const fetchBudgets = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/groups/${groupId}/analytics/budget-status`, {
+            const res = await api.get(`/groups/${groupId}/budgets/status`, {
                 params: { month: selectedMonth }
             });
             if (res.data.success) setBudgets(res.data.data);

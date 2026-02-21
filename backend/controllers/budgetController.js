@@ -113,39 +113,6 @@ const deleteBudget = async (req, res, next) => {
 
 // ─── Analytics ───────────────────────────────────────────────────────────────
 
-// @desc  Spending per category for a month
-// @route GET /api/groups/:groupId/analytics?month=2026-02
-// @access Private
-const getCategoryAnalytics = async (req, res, next) => {
-    try {
-        await verifyMembership(req.params.groupId, req.user._id);
-        const monthYear = req.query.month || currentMonthYear();
-        const [year, month] = monthYear.split('-').map(Number);
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 1);
-
-        const pipeline = [
-            { $match: { group: require('mongoose').Types.ObjectId.createFromHexString(req.params.groupId), date: { $gte: startDate, $lt: endDate } } },
-            { $group: { _id: '$category', total: { $sum: '$amount' }, count: { $sum: 1 } } },
-            { $sort: { total: -1 } }
-        ];
-        const spending = await Expense.aggregate(pipeline);
-
-        // Ensure all categories are present (with 0 if no expenses)
-        const spendingMap = {};
-        spending.forEach(s => { spendingMap[s._id || 'Other'] = { total: s.total, count: s.count }; });
-        const result = CATEGORIES.map(cat => ({
-            category: cat,
-            total: parseFloat((spendingMap[cat]?.total || 0).toFixed(2)),
-            count: spendingMap[cat]?.count || 0
-        })).filter(c => c.total > 0); // only return categories with spending
-
-        res.json({ success: true, data: result, monthYear });
-    } catch (error) {
-        next(error);
-    }
-};
-
 // @desc  Budget vs actual spending — with "exceeded" warnings
 // @route GET /api/groups/:groupId/analytics/budget-status?month=2026-02
 // @access Private
@@ -191,4 +158,4 @@ const getBudgetStatus = async (req, res, next) => {
     }
 };
 
-module.exports = { upsertBudget, getBudgets, updateBudget, deleteBudget, getCategoryAnalytics, getBudgetStatus };
+module.exports = { upsertBudget, getBudgets, updateBudget, deleteBudget, getBudgetStatus };

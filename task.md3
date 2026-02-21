@@ -109,11 +109,11 @@ Add structured permissions inside groups.
 Track all modifications.
 
 ### Tasks:
-[ ] Add edit expense endpoint
-[ ] Create ExpenseHistory model
-[ ] Log previous states
-[ ] Add “View Change History” panel
-[ ] Restrict editing after settlement
+[x] Add edit expense endpoint
+[x] Create ExpenseHistory model
+[x] Log previous states
+[x] Add “View Change History” panel
+[x] Restrict editing after settlement
 
 ---
 
@@ -123,12 +123,12 @@ Track all modifications.
 Add financial insights.
 
 ### Tasks:
-[ ] Monthly spending trend analysis
-[ ] Top spender detection
-[ ] Frequent debtor detection
-[ ] Category-based charts
-[ ] Date range filtering
-[ ] Export analytics as CSV
+[x] Monthly spending trend analysis
+[x] Top spender detection
+[x] Frequent debtor detection
+[x] Category-based charts
+[x] Date range filtering
+[x] Export analytics as CSV
 
 ---
 

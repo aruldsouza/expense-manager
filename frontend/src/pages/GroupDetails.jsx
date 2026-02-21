@@ -10,7 +10,7 @@ import SettlementList from '../components/SettlementList';
 import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
-import CategoryAnalytics from '../components/CategoryAnalytics';
+import AdvancedAnalytics from '../components/AdvancedAnalytics';
 import ManageMembers from '../components/ManageMembers';
 import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
@@ -187,7 +187,7 @@ const GroupDetails = () => {
                             />
                         </Tab>
                         <Tab eventKey="analytics" title={<><FaChartPie className="me-2" />Analytics</>}>
-                            <CategoryAnalytics groupId={groupId} groupCurrency={group.currency} />
+                            <AdvancedAnalytics groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
                         </Tab>
                         {currentUserRole === 'Admin' && (
                             <Tab eventKey="members" title={<><FaUserShield className="me-2 text-danger" />Members</>}>
