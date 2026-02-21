@@ -1,25 +1,32 @@
 const express = require('express');
-const router = express.Router({ mergeParams: true }); // mergeParams to access :groupId
-const protect = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const {
     upsertBudget, getBudgets, updateBudget, deleteBudget,
     getCategoryAnalytics, getBudgetStatus
 } = require('../controllers/budgetController');
 
-// All routes protected
-router.use(protect);
+// ─── Budget CRUD router (mounted at /:groupId/budgets) ────────────────────────
+const budgetRouter = express.Router({ mergeParams: true });
 
-// Budget CRUD
-router.route('/')
+budgetRouter.use(protect);
+
+budgetRouter.route('/')
     .post(upsertBudget)
     .get(getBudgets);
 
-router.route('/:id')
+budgetRouter.route('/:id')
     .put(updateBudget)
     .delete(deleteBudget);
 
-// Analytics (mounted separately at /analytics under groupRoutes)
-router.get('/analytics', getCategoryAnalytics);
-router.get('/analytics/budget-status', getBudgetStatus);
+// ─── Analytics router (mounted at /:groupId/analytics) ────────────────────────
+const analyticsRouter = express.Router({ mergeParams: true });
 
-module.exports = router;
+analyticsRouter.use(protect);
+
+// GET /:groupId/analytics              → spending per category
+analyticsRouter.get('/', getCategoryAnalytics);
+
+// GET /:groupId/analytics/budget-status → budget vs actual + exceeded flags
+analyticsRouter.get('/budget-status', getBudgetStatus);
+
+module.exports = { budgetRouter, analyticsRouter };
