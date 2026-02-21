@@ -27,4 +27,12 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// ─── Recurring Expense API helpers ───────────────────────────────────────────
+export const getRecurringExpenses = (groupId) => api.get(`/groups/${groupId}/recurring`);
+export const createRecurringExpense = (groupId, data) => api.post(`/groups/${groupId}/recurring`, data);
+export const updateRecurringExpense = (groupId, id, data) => api.put(`/groups/${groupId}/recurring/${id}`, data);
+export const deleteRecurringExpense = (groupId, id) => api.delete(`/groups/${groupId}/recurring/${id}`);
+export const pauseRecurringExpense = (groupId, id) => api.patch(`/groups/${groupId}/recurring/${id}/pause`);
+export const resumeRecurringExpense = (groupId, id) => api.patch(`/groups/${groupId}/recurring/${id}/resume`);
+
 export default api;

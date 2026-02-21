@@ -34,6 +34,7 @@ const groupValidation = [
     check('description').optional().trim().escape(),
     check('type').optional().isIn(['TRIP', 'HOME', 'COUPLE', 'OTHER']),
     check('members').optional().isArray(),
+    check('currency').optional().isLength({ min: 3, max: 3 }).withMessage('Currency must be a 3-letter ISO 4217 code').toUpperCase(),
     validate
 ];
 
@@ -51,10 +52,23 @@ const settlementValidation = [
     validate
 ];
 
+const recurringExpenseValidation = [
+    check('description', 'Description is required').not().isEmpty().trim().escape(),
+    check('amount', 'Amount must be a positive number').isFloat({ min: 0.01 }),
+    check('payer', 'Valid payer ID is required').isMongoId(),
+    check('splitType').optional().isIn(['EQUAL', 'UNEQUAL', 'PERCENT']),
+    check('frequency', 'Frequency must be daily, weekly, monthly, or custom').isIn(['daily', 'weekly', 'monthly', 'custom']),
+    check('cronExpression')
+        .if(check('frequency').equals('custom'))
+        .not().isEmpty().withMessage('Cron expression is required for custom frequency'),
+    validate
+];
+
 module.exports = {
     registerValidation,
     loginValidation,
     groupValidation,
     expenseValidation,
-    settlementValidation
+    settlementValidation,
+    recurringExpenseValidation
 };

@@ -1,0 +1,240 @@
+# ✅ PHASE 1 — Financial Intelligence & Automation
+
+## 1️⃣ Recurring Expenses System
+Allow users to automate repeating payments like rent or subscriptions.
+
+ After task completion mark the task as completed here.
+
+### Tasks:
+[x] Create RecurringExpense model
+[x] Add frequency types (daily, weekly, monthly, custom cron)
+[x] Implement scheduler using node-cron
+[x] Auto-generate expenses at scheduled time
+[x] Add pause/resume functionality
+[x] Add UI management screen
+
+---
+
+## 2️⃣ Multi-Currency Support
+Support global users and international groups.
+
+### Tasks:
+[x] Add currency field to Group
+[x] Integrate exchange rate API
+[x] Store base currency per group
+[x] Convert amounts during balance calculation
+[x] Cache exchange rates
+[x] Display dual-currency view in UI
+
+---
+
+## 3️⃣ Category & Budget Tracking
+Track spending categories and monthly limits.
+
+### Tasks:
+[ ] Add expense categories (Food, Travel, Utilities, Custom)
+[ ] Add Budget model per group
+[ ] Track monthly spending per category
+[ ] Add "Budget Exceeded" warning system
+[ ] Create analytics endpoints
+[ ] Add dashboard charts
+
+---
+
+## 4️⃣ Partial Settlements
+Allow users to pay part of what they owe.
+
+### Tasks:
+[ ] Modify settlement logic
+[ ] Track remaining balance
+[ ] Update optimization algorithm
+[ ] Add partial payment UI
+[ ] Add history tracking
+
+---
+
+## 5️⃣ Expense Attachments (Receipt Upload)
+Allow users to upload bills.
+
+### Tasks:
+[ ] Integrate Cloudinary or AWS S3
+[ ] Add file upload middleware
+[ ] Store receipt URL in Expense model
+[ ] Add receipt preview modal
+
+---
+
+# ✅ PHASE 2 — Real-Time & Collaboration
+
+## 6️⃣ Real-Time Updates (WebSockets)
+Live updates when someone adds expense or settles.
+
+### Tasks:
+[ ] Integrate Socket.io
+[ ] Emit events on expense creation
+[ ] Emit settlement events
+[ ] Update dashboard in real-time
+[ ] Add toast notifications
+
+---
+
+## 7️⃣ Notification System
+In-app notification center.
+
+### Tasks:
+[ ] Create Notification model
+[ ] Add unread counter
+[ ] Mark-as-read endpoint
+[ ] Trigger notifications on:
+      - New expense
+      - Settlement
+      - Budget exceed
+[ ] Optional: Email notifications
+
+---
+
+## 8️⃣ Role-Based Access Control (RBAC)
+Add structured permissions inside groups.
+
+### Tasks:
+[ ] Add roles (Admin / Member / Viewer)
+[ ] Restrict group deletion to Admin
+[ ] Restrict expense editing
+[ ] Add middleware for role validation
+[ ] Add role management UI
+
+---
+
+## 9️⃣ Expense Editing with Audit History
+Track all modifications.
+
+### Tasks:
+[ ] Add edit expense endpoint
+[ ] Create ExpenseHistory model
+[ ] Log previous states
+[ ] Add “View Change History” panel
+[ ] Restrict editing after settlement
+
+---
+
+# ✅ PHASE 3 — Intelligence & Analytics
+
+## 🔟 Advanced Analytics Dashboard
+Add financial insights.
+
+### Tasks:
+[ ] Monthly spending trend analysis
+[ ] Top spender detection
+[ ] Frequent debtor detection
+[ ] Category-based charts
+[ ] Date range filtering
+[ ] Export analytics as CSV
+
+---
+
+## 1️⃣1️⃣ Financial Health Score
+Calculate a group-level metric.
+
+### Tasks:
+[ ] Define scoring logic
+[ ] Penalize late settlements
+[ ] Reward timely payments
+[ ] Display health score on dashboard
+[ ] Show improvement suggestions
+
+---
+
+## 1️⃣2️⃣ AI Insight Assistant (Optional Advanced)
+AI-powered expense insights.
+
+### Tasks:
+[ ] Integrate LLM API
+[ ] Generate monthly summary
+[ ] Answer queries like:
+      - "Who owes the most?"
+      - "Where are we spending the most?"
+[ ] Add chatbot UI panel
+
+---
+
+# ✅ PHASE 4 — Payment & Settlement Upgrades
+
+## 1️⃣3️⃣ Payment Gateway Integration
+Enable real money settlement.
+
+### Tasks:
+[ ] Integrate Stripe or Razorpay
+[ ] Create payment intent endpoint
+[ ] Implement webhook verification
+[ ] Auto-mark settlement on success
+[ ] Store transaction ID
+
+---
+
+## 1️⃣4️⃣ Split Templates
+Quick splitting presets.
+
+### Tasks:
+[ ] Save custom split configurations
+[ ] “Use Previous Split” button
+[ ] Default group split rule
+[ ] Favorite split template option
+
+---
+
+# ✅ PHASE 5 — Scalability & Production Hardening
+
+## 1️⃣5️⃣ Redis Caching
+Improve performance.
+
+### Tasks:
+[ ] Integrate Redis
+[ ] Cache dashboard stats
+[ ] Cache group balances
+[ ] Implement cache invalidation
+
+---
+
+## 1️⃣6️⃣ Rate Limiting & Advanced Security
+Harden production API.
+
+### Tasks:
+[ ] Add express-rate-limit
+[ ] Add refresh token system
+[ ] Implement account lock after failed attempts
+[ ] Add request logging middleware
+
+---
+
+## 1️⃣7️⃣ Group Reports & PDF Export
+Professional reporting.
+
+### Tasks:
+[ ] Generate PDF summary
+[ ] Add monthly email report
+[ ] Export CSV of expenses
+[ ] Include charts in report
+
+---
+
+## 1️⃣8️⃣ Offline Mode (PWA Support)
+Allow usage without internet.
+
+### Tasks:
+[ ] Convert frontend to PWA
+[ ] Enable service workers
+[ ] Cache API responses
+[ ] Sync pending actions on reconnect
+
+---
+
+# 🎯 Target Result
+
+After implementing these features, the system becomes:
+
+Production-ready
+SaaS-scalable
+Fintech-grade
+Algorithmically strong
+Real-time collaborative
+Enterprise-capable

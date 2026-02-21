@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const requestLogger = require('./middleware/logger');
 const errorHandler = require('./middleware/errorHandler');
+const { startScheduler } = require('./utils/scheduler');
 
 // Security Middleware Imports
 const helmet = require('helmet');
@@ -13,6 +14,9 @@ const app = express();
 
 // Connect to MongoDB
 connectDB();
+
+// Start recurring expense scheduler
+startScheduler();
 
 // Middleware
 // CORS configuration - allow frontend to make requests
@@ -54,6 +58,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 // Group routes
 app.use('/api/groups', require('./routes/groupRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+// Currency routes
+app.use('/api/currency', require('./routes/currencyRoutes'));
 
 // API Routes
 app.get('/', (req, res) => {

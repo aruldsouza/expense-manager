@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
@@ -90,6 +90,12 @@ const GroupDetails = () => {
                         >
                             <FaHandHoldingUsd /> Settle Up
                         </Button>
+                        <Link
+                            to={`/groups/${groupId}/recurring`}
+                            className="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-sm rounded-pill px-4 text-decoration-none"
+                        >
+                            <FaSync /> Recurring
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -105,12 +111,12 @@ const GroupDetails = () => {
                     >
                         <Tab eventKey="expenses" title={<><FaMoneyBillWave className="me-2" />Expenses</>}>
                             <div className="p-3">
-                                <MemoizedExpenseList groupId={groupId} refreshTrigger={refreshTrigger} />
+                                <MemoizedExpenseList groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
                             </div>
                         </Tab>
                         <Tab eventKey="balances" title={<><FaBalanceScale className="me-2" />Balances</>}>
                             <div className="p-3">
-                                <MemoizedBalanceList groupId={groupId} refreshTrigger={refreshTrigger} />
+                                <MemoizedBalanceList groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
                             </div>
                         </Tab>
                         <Tab eventKey="settlements" title={<><FaHandHoldingUsd className="me-2" />Settlements</>}>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaSignOutAlt, FaWallet } from 'react-icons/fa';
 import { Navbar as BsNavbar, Nav, Container, Button } from 'react-bootstrap';
+import CurrencySelector from './CurrencySelector';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Navbar = () => {
                             <>
                                 <Nav.Link as={Link} to="/dashboard" className="text-dark fw-medium">Dashboard</Nav.Link>
                                 <span className="text-muted d-none d-lg-inline px-2">|</span>
+                                <CurrencySelector />
                                 <span className="text-dark fw-bold">
                                     Hi, {userName}
                                 </span>

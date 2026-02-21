@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-// import { useAuth } from '../context/AuthContext'; // Unused
-import { FaUsers, FaPlus, FaTimes, FaUserPlus, FaSearch } from 'react-icons/fa';
-import { Container, Card, Form, Button, Row, Col, Badge, Spinner, Alert, ListGroup } from 'react-bootstrap';
+import { FaUsers, FaPlus, FaTimes, FaUserPlus, FaSearch, FaGlobe } from 'react-icons/fa';
+import { Container, Card, Form, Button, Row, Col, Badge, Spinner, Alert, ListGroup, InputGroup } from 'react-bootstrap';
+import { useCurrency } from '../context/CurrencyContext';
 
 const CreateGroup = () => {
     const navigate = useNavigate();
-    // const { user } = useAuth(); // Unused
+    const { supportedCurrencies } = useCurrency();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [currency, setCurrency] = useState('USD');
 
     // Member search/selection state
     const [searchQuery, setSearchQuery] = useState('');
@@ -62,7 +63,8 @@ const CreateGroup = () => {
             const res = await api.post('/groups', {
                 name,
                 description,
-                members: selectedMembers.map(m => m._id) // Send array of IDs
+                currency,
+                members: selectedMembers.map(m => m._id)
             });
 
             if (res.data.success) {
@@ -111,6 +113,35 @@ const CreateGroup = () => {
                                         onChange={(e) => setDescription(e.target.value)}
                                         placeholder="What is this group for?"
                                     />
+                                </Form.Group>
+
+                                {/* Currency Selector */}
+                                <Form.Group className="mb-3" controlId="currency">
+                                    <Form.Label className="fw-bold d-flex align-items-center gap-2"><FaGlobe /> Group Currency</Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text>🌐</InputGroup.Text>
+                                        <Form.Select value={currency} onChange={e => setCurrency(e.target.value)}>
+                                            {supportedCurrencies.length > 0
+                                                ? supportedCurrencies.map(c => (
+                                                    <option key={c.code} value={c.code}>
+                                                        {c.code} — {c.name} ({c.symbol})
+                                                    </option>
+                                                ))
+                                                : [
+                                                    { code: 'USD', name: 'US Dollar', symbol: '$' },
+                                                    { code: 'EUR', name: 'Euro', symbol: '€' },
+                                                    { code: 'GBP', name: 'British Pound', symbol: '£' },
+                                                    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+                                                    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+                                                ].map(c => (
+                                                    <option key={c.code} value={c.code}>
+                                                        {c.code} — {c.name} ({c.symbol})
+                                                    </option>
+                                                ))
+                                            }
+                                        </Form.Select>
+                                    </InputGroup>
+                                    <Form.Text className="text-muted">All expenses in this group will use this currency.</Form.Text>
                                 </Form.Group>
 
                                 <Form.Group className="mb-4">
