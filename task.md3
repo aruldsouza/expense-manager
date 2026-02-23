@@ -136,11 +136,11 @@ Add financial insights.
 Calculate a group-level metric.
 
 ### Tasks:
-[ ] Define scoring logic
-[ ] Penalize late settlements
-[ ] Reward timely payments
-[ ] Display health score on dashboard
-[ ] Show improvement suggestions
+[x] Define scoring logic
+[x] Penalize late settlements
+[x] Reward timely payments
+[x] Display health score on dashboard
+[x] Show improvement suggestions
 
 ---
 

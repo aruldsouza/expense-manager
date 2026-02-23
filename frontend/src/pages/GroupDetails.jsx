@@ -11,6 +11,7 @@ import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
 import AdvancedAnalytics from '../components/AdvancedAnalytics';
+import HealthScore from '../components/HealthScore';
 import ManageMembers from '../components/ManageMembers';
 import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
@@ -187,7 +188,11 @@ const GroupDetails = () => {
                             />
                         </Tab>
                         <Tab eventKey="analytics" title={<><FaChartPie className="me-2" />Analytics</>}>
-                            <AdvancedAnalytics groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
+                            <div className="p-3">
+                                <HealthScore groupId={groupId} refreshTrigger={refreshTrigger} />
+                                <hr className="my-4" />
+                                <AdvancedAnalytics groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
+                            </div>
                         </Tab>
                         {currentUserRole === 'Admin' && (
                             <Tab eventKey="members" title={<><FaUserShield className="me-2 text-danger" />Members</>}>

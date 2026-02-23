@@ -1,4 +1,5 @@
 const Expense = require('../models/Expense');
+const Settlement = require('../models/Settlement');
 const Group = require('../models/Group');
 const { CATEGORIES } = require('../models/Budget');
 
@@ -180,9 +181,155 @@ const exportExpensesCsv = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
+// @desc  Financial Health Score for the group (0-100)
+// @route GET /api/groups/:groupId/analytics/health-score
+// @access Private
+const getHealthScore = async (req, res, next) => {
+    try {
+        const group = await verifyMembership(req.params.groupId, req.user._id);
+        const groupId = req.params.groupId;
+
+        const [expenses, settlements] = await Promise.all([
+            Expense.find({ group: groupId }),
+            Settlement.find({ group: groupId })
+        ]);
+
+        // ─── Factor 1: Settlement Rate (40 pts) ───────────────────────────────
+        // More full (non-partial) settlements relative to total = better
+        let settlementScore = 0;
+        if (settlements.length > 0) {
+            const fullSettlements = settlements.filter(s => !s.isPartial).length;
+            settlementScore = Math.round((fullSettlements / settlements.length) * 40);
+        } else if (expenses.length === 0) {
+            settlementScore = 40; // Empty group, no debt yet
+        }
+
+        // ─── Factor 2: Debt Velocity (30 pts) ────────────────────────────────
+        // Gross outstanding debt vs total expenses — lower ratio = better
+        let debtScore = 30; // start optimistic
+        const totalExpenseAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
+        if (totalExpenseAmount > 0) {
+            // Compute net balances
+            const balances = {};
+            const memberIds = group.members.map(m => m.user ? m.user.toString() : m.toString());
+            memberIds.forEach(id => { balances[id] = 0; });
+
+            expenses.forEach(e => {
+                const pid = e.payer.toString();
+                if (balances[pid] !== undefined) balances[pid] += e.amount;
+                e.splits.forEach(s => {
+                    const sid = s.user.toString();
+                    if (balances[sid] !== undefined) balances[sid] -= s.amount;
+                });
+            });
+            settlements.forEach(s => {
+                if (balances[s.payer.toString()] !== undefined) balances[s.payer.toString()] += s.amount;
+                if (balances[s.payee.toString()] !== undefined) balances[s.payee.toString()] -= s.amount;
+            });
+
+            // Total outstanding debt = sum of negative balances
+            const totalOutstanding = Object.values(balances)
+                .filter(b => b < 0)
+                .reduce((sum, b) => sum + Math.abs(b), 0);
+
+            const debtRatio = totalOutstanding / totalExpenseAmount;
+            // Penalty: 0 debt = 30 pts, 50%+ debt = 0 pts
+            debtScore = Math.max(0, Math.round(30 * (1 - Math.min(debtRatio / 0.5, 1))));
+        }
+
+        // ─── Factor 3: Balance Spread (20 pts) ────────────────────────────────
+        // Low std deviation in balances per member = more evenly shared load
+        let spreadScore = 20;
+        if (expenses.length > 0 && group.members.length > 1) {
+            const memberBalances = {};
+            const mids = group.members.map(m => m.user ? m.user.toString() : m.toString());
+            mids.forEach(id => { memberBalances[id] = 0; });
+            expenses.forEach(e => {
+                const pid = e.payer.toString();
+                if (memberBalances[pid] !== undefined) memberBalances[pid] += e.amount;
+                e.splits.forEach(s => {
+                    const sid = s.user.toString();
+                    if (memberBalances[sid] !== undefined) memberBalances[sid] -= s.amount;
+                });
+            });
+            settlements.forEach(s => {
+                if (memberBalances[s.payer.toString()] !== undefined) memberBalances[s.payer.toString()] += s.amount;
+                if (memberBalances[s.payee.toString()] !== undefined) memberBalances[s.payee.toString()] -= s.amount;
+            });
+
+            const vals = Object.values(memberBalances);
+            const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+            const variance = vals.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / vals.length;
+            const stdDev = Math.sqrt(variance);
+
+            // Normalise: 0 stddev = 20pts, stddev >= 200 = 0pts
+            spreadScore = Math.max(0, Math.round(20 * (1 - Math.min(stdDev / 200, 1))));
+        }
+
+        // ─── Factor 4: Recent Activity (10 pts) ──────────────────────────────
+        // Has the group had any settlement in the last 30 days?
+        let activityScore = 0;
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const recentSettlement = settlements.some(s => new Date(s.createdAt) >= thirtyDaysAgo);
+        const recentExpense = expenses.some(e => new Date(e.createdAt) >= thirtyDaysAgo);
+        if (recentSettlement) activityScore = 10;
+        else if (recentExpense) activityScore = 5; // Active but no recent settlements
+
+        // ─── Total score & grade ──────────────────────────────────────────────
+        const score = Math.min(100, settlementScore + debtScore + spreadScore + activityScore);
+
+        let grade;
+        if (score >= 80) grade = 'A';
+        else if (score >= 60) grade = 'B';
+        else if (score >= 40) grade = 'C';
+        else grade = 'D';
+
+        // ─── Suggestions ─────────────────────────────────────────────────────
+        const suggestions = [];
+
+        if (settlementScore < 20) {
+            suggestions.push('Many debts remain partially settled. Encourage members to pay in full.');
+        }
+        if (debtScore < 15) {
+            suggestions.push('Outstanding debts are high relative to group spending. Settle up soon.');
+        }
+        if (spreadScore < 10) {
+            suggestions.push('One or more members carry a disproportionate share. Consider rebalancing expenses.');
+        }
+        if (activityScore === 0) {
+            suggestions.push('No recent activity. Log an expense or record a settlement to stay on track.');
+        } else if (activityScore === 5) {
+            suggestions.push('New expenses added recently but no settlements. Consider settling existing debts.');
+        }
+        if (suggestions.length === 0) {
+            suggestions.push('Great job! Your group finances are well-managed. Keep it up! 🎉');
+        }
+
+        res.json({
+            success: true,
+            data: {
+                score,
+                grade,
+                factors: {
+                    settlementRate: { score: settlementScore, max: 40 },
+                    debtVelocity: { score: debtScore, max: 30 },
+                    balanceSpread: { score: spreadScore, max: 20 },
+                    recentActivity: { score: activityScore, max: 10 }
+                },
+                suggestions,
+                meta: {
+                    totalExpenses: expenses.length,
+                    totalSettlements: settlements.length
+                }
+            }
+        });
+    } catch (error) { next(error); }
+};
+
 module.exports = {
     getCategoryAnalytics,
     getMonthlyTrends,
     getUserStats,
-    exportExpensesCsv
+    exportExpensesCsv,
+    getHealthScore
 };

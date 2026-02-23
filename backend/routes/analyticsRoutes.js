@@ -5,7 +5,8 @@ const {
     getCategoryAnalytics,
     getMonthlyTrends,
     getUserStats,
-    exportExpensesCsv
+    exportExpensesCsv,
+    getHealthScore
 } = require('../controllers/analyticsController');
 
 // Mounted at /:groupId/analytics
@@ -25,5 +26,8 @@ router.get('/users', getUserStats);
 
 // GET /api/groups/:groupId/analytics/export
 router.get('/export', exportExpensesCsv);
+
+// GET /api/groups/:groupId/analytics/health-score
+router.get('/health-score', getHealthScore);
 
 module.exports = router;
