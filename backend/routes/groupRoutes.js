@@ -14,6 +14,7 @@ const budgetRoutes = require('./budgetRoutes');
 const analyticsRoutes = require('./analyticsRoutes');
 const aiRoutes = require('./aiRoutes');
 const paymentRoutes = require('./paymentRoutes');
+const splitTemplateRoutes = require('./splitTemplateRoutes');
 
 // Re-route into other resource routers
 router.use('/:groupId/expenses', expenseRoutes);
@@ -25,6 +26,7 @@ router.use('/:groupId/budgets', budgetRoutes);
 router.use('/:groupId/analytics', analyticsRoutes);
 router.use('/:groupId/ai', aiRoutes);
 router.use('/:groupId/payments', paymentRoutes);
+router.use('/:groupId/templates', splitTemplateRoutes);
 
 router.route('/')
     .post(protect, groupValidation, createGroup)

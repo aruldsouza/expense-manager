@@ -175,10 +175,10 @@ Enable real money settlement.
 Quick splitting presets.
 
 ### Tasks:
-[ ] Save custom split configurations
-[ ] “Use Previous Split” button
-[ ] Default group split rule
-[ ] Favorite split template option
+[x] Save custom split configurations
+[x] "Use Previous Split" button
+[x] Default group split rule
+[x] Favorite split template option
 
 ---
 

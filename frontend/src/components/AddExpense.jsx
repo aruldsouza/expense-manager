@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Form, Button, InputGroup, Row, Col, Alert, Spinner, Image } from 'react-bootstrap';
-import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag, FaPaperclip, FaTimesCircle } from 'react-icons/fa';
+import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag, FaPaperclip, FaTimesCircle, FaMagic } from 'react-icons/fa';
+import SplitTemplatePicker from './SplitTemplatePicker';
 
 const CATEGORIES = ['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -21,6 +22,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
     const [error, setError] = useState('');
     const [receiptFile, setReceiptFile] = useState(null);
     const [localPreview, setLocalPreview] = useState(null);
+    const [showTemplatePicker, setShowTemplatePicker] = useState(false);
 
     // Initialize state from initialData if editing
     useEffect(() => {
@@ -81,13 +83,20 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
 
     const toggleMemberInvolvement = (userId) => {
         if (involvedMembers.includes(userId)) {
-            // Don't allow removing the last member
             if (involvedMembers.length > 1) {
                 setInvolvedMembers(involvedMembers.filter(id => id !== userId));
             }
         } else {
             setInvolvedMembers([...involvedMembers, userId]);
         }
+    };
+
+    // Apply a chosen split template to the form
+    const applyTemplate = ({ splitType: st, involvedMembers: inv, splits: sp, payer: p }) => {
+        if (st) setSplitType(st);
+        if (inv) setInvolvedMembers(inv);
+        if (sp) setSplits(prev => ({ ...prev, ...sp }));
+        if (p) setPayer(p);
     };
 
     const validateSplits = () => {
@@ -267,7 +276,18 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
                 </div>
 
                 <Form.Group className="mb-4" controlId="splitType">
-                    <Form.Label className="fw-bold">Split Method</Form.Label>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                        <Form.Label className="fw-bold mb-0">Split Method</Form.Label>
+                        <Button
+                            variant="outline-primary"
+                            size="sm"
+                            className="rounded-pill d-flex align-items-center gap-1"
+                            onClick={() => setShowTemplatePicker(true)}
+                            type="button"
+                        >
+                            <FaMagic size={11} /> Templates
+                        </Button>
+                    </div>
                     <div className="d-flex gap-3">
                         <Form.Check
                             type="radio"
@@ -376,6 +396,20 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
                     </Button>
                 </div>
             </Form>
+
+            {/* Split Template Picker Modal */}
+            <SplitTemplatePicker
+                show={showTemplatePicker}
+                onHide={() => setShowTemplatePicker(false)}
+                groupId={groupId}
+                groupMembers={groupMembers}
+                currentSplitType={splitType}
+                currentInvolvedMembers={involvedMembers}
+                currentSplits={splits}
+                currentPayer={payer}
+                onApply={applyTemplate}
+                canWrite={true}
+            />
         </div>
     );
 };
