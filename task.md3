@@ -221,10 +221,10 @@ Professional reporting.
 Allow usage without internet.
 
 ### Tasks:
-[ ] Convert frontend to PWA
-[ ] Enable service workers
-[ ] Cache API responses
-[ ] Sync pending actions on reconnect
+[x] Convert frontend to PWA
+[x] Enable service workers
+[x] Cache API responses
+[x] Sync pending actions on reconnect
 
 ---
 

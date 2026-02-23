@@ -14,6 +14,7 @@ const GroupDetails = React.lazy(() => import('./pages/GroupDetails'));
 const RecurringExpenses = React.lazy(() => import('./pages/RecurringExpenses'));
 import ProtectedRoute from './components/ProtectedRoute';
 import Spinner from './components/Spinner';
+import OfflineIndicator from './components/OfflineIndicator';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                 style: { borderRadius: '10px', fontFamily: 'inherit' }
               }}
             />
+            <OfflineIndicator />
             <React.Suspense fallback={<div className="h-screen flex justify-center items-center"><Spinner /></div>}>
               <Routes>
                 <Route path="/" element={<MainLayout />}>
