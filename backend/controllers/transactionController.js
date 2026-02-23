@@ -15,7 +15,9 @@ const getGroupTransactions = async (req, res, next) => {
             throw new Error('Group not found');
         }
 
-        if (!group.members.includes(req.user._id)) {
+        // members is [{ user: ObjectId, role }]
+        const isMember = group.members.some(m => m.user?.toString() === req.user._id.toString());
+        if (!isMember) {
             res.status(403);
             throw new Error('Not authorized to access transactions for this group');
         }

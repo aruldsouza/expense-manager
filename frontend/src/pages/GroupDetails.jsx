@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -102,6 +102,17 @@ const GroupDetails = () => {
         };
         fetchGroupDetails();
     }, [groupId, refreshTrigger]);
+
+    // Flatten group.members to reliably have _id and name for drop-downs
+    const normalizedMembers = useMemo(() => {
+        if (!group?.members) return [];
+        return group.members.map(m => ({
+            ...m,
+            _id: m.user?._id || m._id,
+            name: m.user?.name || m.name || 'Unknown',
+            email: m.user?.email || m.email || ''
+        }));
+    }, [group?.members]);
 
     if (loading) return <Container className="text-center py-5"><Spinner animation="border" variant="primary" /></Container>;
     if (error) return <Container className="py-5"><Alert variant="danger">{error}</Alert></Container>;
@@ -213,7 +224,7 @@ const GroupDetails = () => {
                                 <div className="p-3">
                                     <ManageMembers
                                         groupId={groupId}
-                                        members={group.members}
+                                        members={normalizedMembers}
                                         currentUserId={user?._id}
                                         creatorId={group.creator?._id || group.creator}
                                         onUpdate={() => setRefreshTrigger(prev => prev + 1)}
@@ -243,7 +254,7 @@ const GroupDetails = () => {
                 <Modal.Body className="p-0">
                     <AddExpense
                         groupId={groupId}
-                        groupMembers={group.members}
+                        groupMembers={normalizedMembers}
                         onSuccess={handleExpenseAdded}
                         onCancel={() => setShowAddExpense(false)}
                     />
@@ -258,7 +269,7 @@ const GroupDetails = () => {
                 <Modal.Body className="p-0">
                     <RecordSettlement
                         groupId={groupId}
-                        groupMembers={group.members}
+                        groupMembers={normalizedMembers}
                         groupCurrency={group.currency}
                         initialData={settlementInitialData}
                         onSuccess={handleSettlementRecorded}

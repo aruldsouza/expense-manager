@@ -33,7 +33,10 @@ const requireRole = (requiredRole) => {
             // Find the user's membership object
             // Backwards compatibility: handle raw ObjectIds if database hasn't been fully migrated
             let membership = group.members.find(m => {
-                if (m.user) return m.user.toString() === userId.toString();
+                if (m.user) {
+                    const userRef = m.user._id ? m.user._id : m.user;
+                    return userRef.toString() === userId.toString();
+                }
                 // Legacy support
                 return m.toString() === userId.toString();
             });

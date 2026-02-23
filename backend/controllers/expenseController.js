@@ -35,13 +35,16 @@ const addExpense = async (req, res, next) => {
         }
 
         // Validation: Verify membership
-        if (!group.members.includes(req.user._id)) {
+        // members is [{ user: ObjectId, role }]
+        const isMember = group.members.some(m => m.user?.toString() === req.user._id.toString());
+        if (!isMember) {
             res.status(403);
             throw new Error('Not authorized to add expense to this group');
         }
 
         // Validation: Payer must be in group
-        if (!group.members.includes(payer)) {
+        const isPayerMember = group.members.some(m => m.user?.toString() === payer.toString());
+        if (!isPayerMember) {
             res.status(400);
             throw new Error('Payer must be a member of the group');
         }
@@ -157,7 +160,9 @@ const getGroupExpenses = async (req, res, next) => {
             throw new Error('Group not found');
         }
 
-        if (!group.members.includes(req.user._id)) {
+        // Validation: Verify membership
+        const isMember = group.members.some(m => m.user?.toString() === req.user._id.toString());
+        if (!isMember) {
             res.status(403);
             throw new Error('Not authorized to access expenses for this group');
         }

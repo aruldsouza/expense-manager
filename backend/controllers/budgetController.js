@@ -8,7 +8,11 @@ const { createNotifications } = require('../utils/notificationHelper');
 const verifyMembership = async (groupId, userId) => {
     const group = await Group.findById(groupId);
     if (!group) { const e = new Error('Group not found'); e.statusCode = 404; throw e; }
-    if (!group.members.some(m => m.toString() === userId.toString())) {
+    // members is [{ user: ObjectId, role }] — check m.user, not m itself
+    if (!group.members.some(m => {
+        const ref = m.user?._id || m.user;
+        return ref && ref.toString() === userId.toString();
+    })) {
         const e = new Error('Not authorized'); e.statusCode = 403; throw e;
     }
     return group;

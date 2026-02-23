@@ -36,7 +36,7 @@ const AddRecurringExpense = ({ show, onHide, groupId, groupMembers, onSuccess })
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (groupMembers?.length > 0) {
+        if (groupMembers?.length > 0 && involvedMembers.length === 0) {
             setInvolvedMembers(groupMembers.map(m => m._id));
             const init = {};
             groupMembers.forEach(m => { init[m._id] = ''; });

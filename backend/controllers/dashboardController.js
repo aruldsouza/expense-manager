@@ -19,8 +19,8 @@ const getDashboardStats = async (req, res, next) => {
             return res.json({ success: true, data: cached, fromCache: true });
         }
 
-        // 1. Active Groups
-        const groups = await Group.find({ members: { $in: [userId] } });
+        // 1. Active Groups (members is an array of objects: { user, role })
+        const groups = await Group.find({ 'members.user': userId });
         const activeGroupsCount = groups.length;
         const groupIds = groups.map(g => g._id);
 

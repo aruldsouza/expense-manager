@@ -54,7 +54,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
 
             setInvolvedMembers(initialInvolved.length > 0 ? initialInvolved : groupMembers.map(m => m._id));
             setSplits(initialSplitsObj);
-        } else if (groupMembers && groupMembers.length > 0) {
+        } else if (groupMembers?.length > 0 && involvedMembers.length === 0) {
             setInvolvedMembers(groupMembers.map(m => m._id));
             const initialSplits = {};
             groupMembers.forEach(m => {

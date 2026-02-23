@@ -25,13 +25,14 @@ const getGroupBalances = async (req, res, next) => {
             }
         }
 
-        const group = await Group.findById(groupId).populate('members', 'name email');
+        const group = await Group.findById(groupId).populate('members.user', 'name email');
         if (!group) {
             res.status(404);
             throw new Error('Group not found');
         }
 
-        if (!group.members.some(member => member._id.toString() === req.user._id.toString())) {
+        // members is [{ user: {_id, name, email}, role }]
+        if (!group.members.some(m => m.user && m.user._id.toString() === req.user._id.toString())) {
             res.status(403);
             throw new Error('Not authorized to access balances for this group');
         }
@@ -40,10 +41,10 @@ const getGroupBalances = async (req, res, next) => {
         const expenses = await Expense.find({ group: groupId });
         const settlements = await Settlement.find({ group: groupId });
 
-        // Initialize balances
+        // Initialize balances — each member entry is { user: {...}, role }
         const balances = {};
-        group.members.forEach(member => {
-            balances[member._id.toString()] = { user: member, balance: 0 };
+        group.members.forEach(m => {
+            if (m.user) balances[m.user._id.toString()] = { user: m.user, balance: 0 };
         });
 
         // Calculate balances from expenses

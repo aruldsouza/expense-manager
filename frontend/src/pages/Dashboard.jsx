@@ -19,7 +19,7 @@ const CATEGORY_COLORS = [
 
 const Dashboard = () => {
     const { user } = useAuth();
-    const { formatCurrency } = useCurrency();
+    const { formatCurrency, displayCurrency } = useCurrency();
     const [stats, setStats] = useState({
         totalExpenses: 0,
         youAreOwed: 0,
@@ -43,7 +43,7 @@ const Dashboard = () => {
                     const d = new Date();
                     const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
                     try {
-                        const cRes = await api.get(`/groups/${firstGroupId}/analytics`, { params: { month } });
+                        const cRes = await api.get(`/groups/${firstGroupId}/analytics/category`, { params: { month } });
                         if (cRes.data.success) setCategoryData(cRes.data.data);
                     } catch { /* analytics optional */ }
                 }
@@ -83,7 +83,7 @@ const Dashboard = () => {
                 <Col md={4}>
                     <StatCard
                         title="You Spent"
-                        value={`$${stats.totalExpenses.toFixed(2)}`}
+                        value={formatCurrency(stats.totalExpenses, displayCurrency)}
                         icon={<FaMoneyBillWave className="text-white fs-4" />}
                         color="linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)"
                         loading={loading}
@@ -93,7 +93,7 @@ const Dashboard = () => {
                 <Col md={4}>
                     <StatCard
                         title={stats.netBalance > 0 ? "You are owed" : "You owe"}
-                        value={`$${Math.abs(stats.netBalance || 0).toFixed(2)}`}
+                        value={formatCurrency(Math.abs(stats.netBalance || 0), displayCurrency)}
                         icon={<FaChartPie className="text-white fs-4" />}
                         color={stats.netBalance >= 0
                             ? "linear-gradient(135deg, #10b981 0%, #059669 100%)"
@@ -137,7 +137,7 @@ const Dashboard = () => {
                                     cutout: '60%',
                                     plugins: {
                                         legend: { position: 'bottom', labels: { padding: 10, font: { size: 11 } } },
-                                        tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.toFixed(2)}` } }
+                                        tooltip: { callbacks: { label: ctx => ` ${formatCurrency(ctx.parsed, displayCurrency)}` } }
                                     }
                                 }}
                             />

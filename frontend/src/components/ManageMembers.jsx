@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Table, Button, Form, Spinner, Badge } from 'react-bootstrap';
-import { FaTrash, FaUserShield, FaUser, FaEye } from 'react-icons/fa';
+import { Card, Table, Button, Form, Spinner, Badge, InputGroup, ListGroup } from 'react-bootstrap';
+import { FaTrash, FaUserShield, FaUser, FaEye, FaSearch, FaUserPlus } from 'react-icons/fa';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -18,6 +18,51 @@ const ROLE_COLORS = {
 
 const ManageMembers = ({ groupId, members, currentUserId, creatorId, onUpdate }) => {
     const [loadingId, setLoadingId] = useState(null);
+
+    // Add Member State
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searching, setSearching] = useState(false);
+    const [addingUser, setAddingUser] = useState(null);
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        if (!searchQuery.trim()) return;
+
+        setSearching(true);
+        try {
+            const res = await api.get('/auth/users', {
+                params: { query: searchQuery }
+            });
+            if (res.data.success) {
+                // Filter out existing members from search results
+                const existingUserIds = members.map(m => (m.user?._id || m._id).toString());
+                const filteredResults = res.data.data.filter(u => !existingUserIds.includes(u._id.toString()));
+                setSearchResults(filteredResults);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setSearching(false);
+        }
+    };
+
+    const handleAddMember = async (user) => {
+        setAddingUser(user._id);
+        try {
+            const res = await api.post(`/groups/${groupId}/members`, { userId: user._id, role: 'Member' });
+            if (res.data.success) {
+                toast.success('Member added successfully');
+                setSearchQuery('');
+                setSearchResults([]);
+                onUpdate(); // refresh group members
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Failed to add member');
+        } finally {
+            setAddingUser(null);
+        }
+    };
 
     const handleRoleChange = async (userId, newRole) => {
         setLoadingId(userId);
@@ -56,7 +101,67 @@ const ManageMembers = ({ groupId, members, currentUserId, creatorId, onUpdate })
                 <h5 className="mb-4 text-primary d-flex align-items-center gap-2">
                     <FaUserShield /> Manage Members
                 </h5>
-                <Table responsive hover className="align-middle">
+
+                {/* Add Member Section */}
+                <div className="mb-4 p-3 bg-light rounded-3 border">
+                    <h6 className="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <FaUserPlus /> Invite New Member
+                    </h6>
+                    <div className="d-flex gap-2 mb-2">
+                        <Form.Control
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search by name or email"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleSearch(e);
+                                }
+                            }}
+                        />
+                        <Button
+                            variant="primary"
+                            onClick={handleSearch}
+                            disabled={searching}
+                            className="d-flex align-items-center gap-1 px-3"
+                        >
+                            {searching ? <Spinner size="sm" /> : <FaSearch />} <span className="d-none d-md-inline">Search</span>
+                        </Button>
+                    </div>
+
+                    {/* Search Results */}
+                    {searchResults.length > 0 && (
+                        <ListGroup className="shadow-sm border mt-2" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                            {searchResults.map(user => (
+                                <ListGroup.Item
+                                    key={user._id}
+                                    className="d-flex justify-content-between align-items-center"
+                                >
+                                    <div>
+                                        <div className="fw-bold">{user.name}</div>
+                                        <small className="text-muted">{user.email}</small>
+                                    </div>
+                                    <Button
+                                        variant="outline-primary"
+                                        size="sm"
+                                        onClick={() => handleAddMember(user)}
+                                        disabled={addingUser === user._id}
+                                    >
+                                        {addingUser === user._id ? <Spinner size="sm" /> : 'Invite'}
+                                    </Button>
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    )}
+                    {searchQuery && searchResults.length === 0 && !searching && (
+                        <div className="text-muted small mt-2">No users found or they are already in the group.</div>
+                    )}
+                </div>
+
+                <hr className="my-4" />
+
+                <Table responsive hover className="align-middle border-top">
                     <thead className="table-light">
                         <tr>
                             <th>User</th>

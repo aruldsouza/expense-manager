@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createGroup, getGroups, getGroupById, deleteGroup, updateGroup, updateRole, removeMember } = require('../controllers/groupController');
+const { createGroup, getGroups, getGroupById, deleteGroup, updateGroup, updateRole, removeMember, addMember } = require('../controllers/groupController');
 const { protect } = require('../middleware/auth');
 const { requireRole } = require('../middleware/rbac');
 const { groupValidation } = require('../middleware/validate');
@@ -49,6 +49,7 @@ router.route('/:id')
     }, requireRole('Admin'), deleteGroup);
 
 // Admin member management routes
+router.post('/:groupId/members', protect, requireRole('Admin'), addMember);
 router.patch('/:groupId/members/:userId/role', protect, requireRole('Admin'), updateRole);
 router.delete('/:groupId/members/:userId', protect, requireRole('Admin'), removeMember);
 

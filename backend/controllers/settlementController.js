@@ -45,10 +45,11 @@ const computeNetBalances = async (groupId, members) => {
 // ─── Shared: outstanding debt that payer owes payee ──────────────────────────
 // Returns positive number (how much payer owes payee), or 0 if settled / reversed.
 const computeDebtBetween = async (groupId, payerId, payeeId) => {
-    const group = await Group.findById(groupId).populate('members', 'name email');
+    const group = await Group.findById(groupId).populate('members.user', 'name email');
     if (!group) return 0;
 
-    const balances = await computeNetBalances(groupId, group.members);
+    const memberUsers = group.members.map(m => m.user).filter(Boolean);
+    const balances = await computeNetBalances(groupId, memberUsers);
 
     // Run greedy algorithm to get pairwise debts
     const debtors = [];
@@ -208,10 +209,11 @@ const deleteSettlement = async (req, res, next) => {
 const getOptimizedSettlements = async (req, res, next) => {
     try {
         const groupId = req.params.groupId;
-        const group = await Group.findById(groupId).populate('members', 'name email');
+        const group = await Group.findById(groupId).populate('members.user', 'name email');
         if (!group) { res.status(404); throw new Error('Group not found'); }
 
-        const balances = await computeNetBalances(groupId, group.members);
+        const memberUsers = group.members.map(m => m.user).filter(Boolean);
+        const balances = await computeNetBalances(groupId, memberUsers);
 
         let debtors = [];
         let creditors = [];

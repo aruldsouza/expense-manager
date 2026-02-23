@@ -48,7 +48,16 @@ const RecurringExpenses = () => {
                 api.get(`/groups/${groupId}`)
             ]);
             setRecurring(recRes.data.data);
-            setGroupMembers(grpRes.data.data?.members || []);
+
+            // Flatten group.members natively for drop-downs
+            const membersData = grpRes.data.data?.members || [];
+            const normalized = membersData.map(m => ({
+                ...m,
+                _id: m.user?._id || m._id,
+                name: m.user?.name || m.name || 'Unknown',
+                email: m.user?.email || m.email || ''
+            }));
+            setGroupMembers(normalized);
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to load recurring expenses');
         } finally {

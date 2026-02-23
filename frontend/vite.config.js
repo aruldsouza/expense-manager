@@ -21,16 +21,16 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'icons/icon-192.png',
+            src: 'icons/icon-192.svg',
             sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any maskable'
+            type: 'image/svg+xml',
+            purpose: 'any'
           },
           {
-            src: 'icons/icon-512.png',
+            src: 'icons/icon-512.svg',
             sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable'
+            type: 'image/svg+xml',
+            purpose: 'any'
           }
         ],
         screenshots: [
@@ -119,9 +119,10 @@ export default defineConfig({
             }
           }
         ],
-        // Offline fallback page (served when navigation fails)
+        // Offline fallback — all SPA routes should be handled by the SW
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//]
+        navigateFallbackAllowlist: [/^(?!\/__).*/], // Allow all navigation requests to fallback to index.html
+        navigateFallbackDenylist: [/^\/api\//, /\/icons\//, /\/assets\//, /\.js$/, /\.css$/, /\.svg$/, /\.png$/, /\.ico$/, /workbox/]
       },
       devOptions: {
         enabled: true,

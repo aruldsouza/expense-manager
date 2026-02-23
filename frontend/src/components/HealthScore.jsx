@@ -58,7 +58,7 @@ const HealthScore = ({ groupId, refreshTrigger }) => {
 
                             {/* Radial gauge using recharts */}
                             <div style={{ width: 200, height: 200, position: 'relative' }}>
-                                <ResponsiveContainer width="100%" height="100%">
+                                <ResponsiveContainer width="100%" height={200}>
                                     <RadialBarChart
                                         innerRadius="75%"
                                         outerRadius="100%"

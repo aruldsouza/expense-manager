@@ -5,7 +5,11 @@ const Settlement = require('../models/Settlement');
 // Helper: check if a user is in the members array (handles legacy ObjectId strings and new {user, role} format)
 const isMember = (members, userId) => {
     return members.some(m => {
-        if (m.user) return m.user.toString() === userId.toString();
+        if (m.user) {
+            // If populated, m.user is an object with _id. Otherwise it's an ObjectId.
+            const userRef = m.user._id ? m.user._id : m.user;
+            return userRef.toString() === userId.toString();
+        }
         return m.toString() === userId.toString();
     });
 };
@@ -202,6 +206,34 @@ const removeMember = async (req, res, next) => {
     } catch (err) { next(err); }
 };
 
+// @desc    Add member to group
+// @route   POST /api/groups/:groupId/members
+// @access  Private (Admin only)
+const addMember = async (req, res, next) => {
+    try {
+        const { userId, role } = req.body;
+        if (!userId) { res.status(400); throw new Error('User ID is required'); }
+
+        const assignedRole = ['Admin', 'Member', 'Viewer'].includes(role) ? role : 'Member';
+
+        const group = await Group.findById(req.params.groupId);
+        if (!group) { res.status(404); throw new Error('Group not found'); }
+
+        // Check if member already exists
+        if (isMember(group.members, userId)) {
+            res.status(400); throw new Error('User is already a member of this group');
+        }
+
+        // Add to array in the new format
+        group.members.push({ user: userId, role: assignedRole });
+
+        await group.save();
+
+        res.json({ success: true, message: 'Member added successfully', data: group.members });
+    } catch (err) { next(err); }
+};
+
+
 // @desc    Update group settings
 // @route   PUT /api/groups/:id
 // @access  Private (Admin only)
@@ -252,6 +284,7 @@ module.exports = {
     getGroupById,
     updateRole,
     removeMember,
+    addMember,
     updateGroup,
     deleteGroup
 };

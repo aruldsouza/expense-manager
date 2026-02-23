@@ -1,0 +1,713 @@
+[dotenv@17.2.4] injecting env (4) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+⏰ Recurring expense scheduler started (runs every minute)
+
+==================================================
+🚀 Smart Expense Splitter API Server
+==================================================
+📡 Server running on port: 5002
+🔌 Socket.IO: enabled
+🌍 Environment: development
+🔗 API Base URL: http://localhost:5002/api
+💚 Health Check: http://localhost:5002/api/health
+==================================================
+
+✅ MongoDB Connected: localhost
+📊 Database: expense-splitter
+🔌 Socket connected: r6B8IHLYHdNIuU48AAAB
+🔌 Socket connected: vnpoJqe8JQadDNlLAAAD
+🔌 Socket disconnected: r6B8IHLYHdNIuU48AAAB
+✅ [2026-02-23T10:39:42.375Z] GET /api/currency/supported → 304 (8ms) IP:::1
+🔌 Socket connected: jwPpe83HiZ58Yd7AAAAF
+🔌 Socket disconnected: jwPpe83HiZ58Yd7AAAAF
+🔌 Socket disconnected: vnpoJqe8JQadDNlLAAAD
+🔌 Socket connected: rdfhnAU5aw6oeysRAAAH
+✅ [2026-02-23T10:40:19.299Z] GET /api/currency/supported → 304 (7ms) IP:::1
+🔌 Socket connected: -F1MT3FhrUA1gUTgAAAJ
+✅ [2026-02-23T10:40:19.300Z] GET /api/currency/supported → 304 (0ms) IP:::1
+[2026-02-23T10:55:32.840Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:11:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.876Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:12:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.880Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:13:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.881Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:14:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.883Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:15:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.884Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:16:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.886Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:17:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.887Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:18:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.888Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:19:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.889Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:20:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.889Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:21:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.890Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:22:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.892Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:23:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.893Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:24:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T10:55:32.895Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:25:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.825Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:27:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.833Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:28:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.835Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:29:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.836Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.837Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:31:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.838Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:32:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.839Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:33:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.840Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:34:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.840Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:35:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.841Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:36:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.842Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:37:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.843Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:38:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.844Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:39:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.845Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:40:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.846Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:41:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.851Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:42:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:13:06.851Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:43:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.823Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:48:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.826Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:49:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.827Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:50:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.828Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:51:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.829Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:52:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.830Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:53:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.831Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:54:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.831Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:55:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.832Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:56:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.833Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:57:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.834Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:58:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.834Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 16:59:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.835Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.836Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:01:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.837Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:02:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:33:04.837Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:03:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+⚠️  MongoDB disconnected
+[2026-02-23T11:40:56.459Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:07:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:40:56.461Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:08:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:40:56.462Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:09:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:40:56.463Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:10:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+⚠️  MongoDB disconnected
+[2026-02-23T11:47:54.743Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:12:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:47:54.840Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:13:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:47:54.843Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:14:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:47:54.849Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:15:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:47:54.855Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:16:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-02-23T11:47:54.860Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:17:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+⚠️  MongoDB disconnected
+🔌 Socket disconnected: -F1MT3FhrUA1gUTgAAAJ
+✅ [2026-02-23T11:48:42.236Z] GET /api/currency/supported → 304 (3ms) IP:::1
+🔌 Socket connected: WiI_HznQwStThPv7AAAL
+✅ [2026-02-23T11:48:53.817Z] POST /api/auth/login → 200 (204ms) IP:::1
+✅ [2026-02-23T11:48:53.875Z] GET /api/notifications → 304 (23ms) IP:::1
+✅ [2026-02-23T11:48:53.898Z] GET /api/groups → 304 (21ms) IP:::1
+✅ [2026-02-23T11:48:53.902Z] GET /api/groups → 304 (3ms) IP:::1
+✅ [2026-02-23T11:48:55.117Z] GET /api/dashboard/stats → 304 (1239ms) IP:::1
+✅ [2026-02-23T11:48:55.187Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (57ms) IP:::1
+📌 Socket WiI_HznQwStThPv7AAAL joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:48:57.476Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (15ms) IP:::1
+✅ [2026-02-23T11:48:57.521Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+✅ [2026-02-23T11:48:57.522Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (19ms) IP:::1
+✅ [2026-02-23T11:48:57.522Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (18ms) IP:::1
+✅ [2026-02-23T11:48:57.524Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (19ms) IP:::1
+✅ [2026-02-23T11:48:57.525Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (24ms) IP:::1
+✅ [2026-02-23T11:48:57.525Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (19ms) IP:::1
+✅ [2026-02-23T11:48:57.529Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (3ms) IP:::1
+✅ [2026-02-23T11:48:57.533Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (9ms) IP:::1
+✅ [2026-02-23T11:48:57.534Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (8ms) IP:::1
+✅ [2026-02-23T11:48:57.534Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+📤 Socket WiI_HznQwStThPv7AAAL left group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:48:58.609Z] GET /api/groups → 304 (14ms) IP:::1
+✅ [2026-02-23T11:48:58.610Z] GET /api/dashboard/stats → 304 (12ms) IP:::1
+✅ [2026-02-23T11:48:58.616Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T11:48:58.627Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (9ms) IP:::1
+🔌 Socket disconnected: rdfhnAU5aw6oeysRAAAH
+✅ [2026-02-23T11:49:02.752Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: nUnQlDPihOjXMUnFAAAN
+✅ [2026-02-23T11:49:08.175Z] POST /api/auth/login → 200 (104ms) IP:::1
+✅ [2026-02-23T11:49:08.212Z] GET /api/notifications → 304 (4ms) IP:::1
+✅ [2026-02-23T11:49:08.230Z] GET /api/groups → 304 (3ms) IP:::1
+✅ [2026-02-23T11:49:08.233Z] GET /api/groups → 304 (1ms) IP:::1
+✅ [2026-02-23T11:49:08.234Z] GET /api/dashboard/stats → 304 (6ms) IP:::1
+🔌 Socket disconnected: nUnQlDPihOjXMUnFAAAN
+✅ [2026-02-23T11:49:10.895Z] GET /api/auth/me → 304 (5ms) IP:::1
+🔌 Socket connected: GNvYNquCB6AyocDpAAAP
+✅ [2026-02-23T11:49:10.904Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T11:49:11.215Z] GET /api/notifications → 304 (9ms) IP:::1
+✅ [2026-02-23T11:49:11.217Z] GET /api/groups → 304 (9ms) IP:::1
+✅ [2026-02-23T11:49:11.223Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:11.224Z] GET /api/dashboard/stats → 304 (15ms) IP:::1
+🔌 Socket disconnected: WiI_HznQwStThPv7AAAL
+✅ [2026-02-23T11:49:33.568Z] GET /api/auth/me → 304 (8ms) IP:::1
+✅ [2026-02-23T11:49:33.591Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: EoenUfyj3XwC2is5AAAR
+✅ [2026-02-23T11:49:33.916Z] GET /api/notifications → 304 (6ms) IP:::1
+✅ [2026-02-23T11:49:33.918Z] GET /api/groups → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:33.922Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
+✅ [2026-02-23T11:49:33.922Z] GET /api/groups → 304 (3ms) IP:::1
+✅ [2026-02-23T11:49:33.935Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (5ms) IP:::1
+🔌 Socket disconnected: EoenUfyj3XwC2is5AAAR
+✅ [2026-02-23T11:49:36.109Z] GET /api/auth/me → 304 (6ms) IP:::1
+✅ [2026-02-23T11:49:36.135Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: IiBq4Bs5WFy8pvRNAAAT
+✅ [2026-02-23T11:49:36.449Z] GET /api/notifications → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:36.451Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:36.456Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
+✅ [2026-02-23T11:49:36.457Z] GET /api/groups → 304 (4ms) IP:::1
+✅ [2026-02-23T11:49:36.465Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (4ms) IP:::1
+📌 Socket IiBq4Bs5WFy8pvRNAAAT joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:49:39.988Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:40.031Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (13ms) IP:::1
+✅ [2026-02-23T11:49:40.032Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (16ms) IP:::1
+✅ [2026-02-23T11:49:40.035Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (18ms) IP:::1
+✅ [2026-02-23T11:49:40.035Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (15ms) IP:::1
+✅ [2026-02-23T11:49:40.037Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (16ms) IP:::1
+✅ [2026-02-23T11:49:40.037Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (17ms) IP:::1
+✅ [2026-02-23T11:49:40.041Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:40.042Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (4ms) IP:::1
+✅ [2026-02-23T11:49:40.042Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (6ms) IP:::1
+✅ [2026-02-23T11:49:40.042Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (4ms) IP:::1
+🔌 Socket disconnected: IiBq4Bs5WFy8pvRNAAAT
+✅ [2026-02-23T11:49:46.667Z] GET /api/auth/me → 304 (5ms) IP:::1
+🔌 Socket connected: h07d_uUZ_ZIE8LfNAAAV
+✅ [2026-02-23T11:49:46.697Z] GET /api/currency/supported → 304 (2ms) IP:::1
+📌 Socket h07d_uUZ_ZIE8LfNAAAV joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:49:47.001Z] GET /api/notifications → 304 (4ms) IP:::1
+✅ [2026-02-23T11:49:47.005Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:47.069Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (8ms) IP:::1
+✅ [2026-02-23T11:49:47.069Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:47.070Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:47.073Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (11ms) IP:::1
+✅ [2026-02-23T11:49:47.075Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (11ms) IP:::1
+✅ [2026-02-23T11:49:47.077Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (11ms) IP:::1
+✅ [2026-02-23T11:49:47.079Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:47.079Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:47.080Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:49:47.085Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+🔌 Socket disconnected: h07d_uUZ_ZIE8LfNAAAV
+✅ [2026-02-23T11:49:47.985Z] GET /api/auth/me → 304 (6ms) IP:::1
+✅ [2026-02-23T11:49:48.010Z] GET /api/currency/supported → 304 (0ms) IP:::1
+🔌 Socket connected: ycTv1nXQlB8TEb0tAAAX
+📌 Socket ycTv1nXQlB8TEb0tAAAX joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:49:48.322Z] GET /api/notifications → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:48.324Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (6ms) IP:::1
+✅ [2026-02-23T11:49:48.389Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (11ms) IP:::1
+✅ [2026-02-23T11:49:48.390Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (16ms) IP:::1
+✅ [2026-02-23T11:49:48.391Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (12ms) IP:::1
+✅ [2026-02-23T11:49:48.393Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (17ms) IP:::1
+✅ [2026-02-23T11:49:48.395Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (15ms) IP:::1
+✅ [2026-02-23T11:49:48.398Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (19ms) IP:::1
+✅ [2026-02-23T11:49:48.401Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (10ms) IP:::1
+✅ [2026-02-23T11:49:48.401Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:48.404Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (10ms) IP:::1
+✅ [2026-02-23T11:49:48.404Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (10ms) IP:::1
+🔌 Socket disconnected: ycTv1nXQlB8TEb0tAAAX
+✅ [2026-02-23T11:49:49.569Z] GET /api/auth/me → 304 (3ms) IP:::1
+✅ [2026-02-23T11:49:49.584Z] GET /api/currency/supported → 304 (0ms) IP:::1
+🔌 Socket connected: DzW-qV-hOSY3PSqaAAAZ
+📌 Socket DzW-qV-hOSY3PSqaAAAZ joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:49:49.895Z] GET /api/notifications → 304 (4ms) IP:::1
+✅ [2026-02-23T11:49:49.897Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:49.964Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (15ms) IP:::1
+✅ [2026-02-23T11:49:49.969Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (21ms) IP:::1
+✅ [2026-02-23T11:49:49.970Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (19ms) IP:::1
+✅ [2026-02-23T11:49:49.971Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (26ms) IP:::1
+✅ [2026-02-23T11:49:49.972Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (20ms) IP:::1
+✅ [2026-02-23T11:49:49.977Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T11:49:49.977Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (3ms) IP:::1
+✅ [2026-02-23T11:49:49.977Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (3ms) IP:::1
+✅ [2026-02-23T11:49:49.985Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (35ms) IP:::1
+✅ [2026-02-23T11:49:49.988Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (20ms) IP:::1
+🔌 Socket disconnected: DzW-qV-hOSY3PSqaAAAZ
+✅ [2026-02-23T11:53:02.551Z] GET /api/auth/me → 304 (27ms) IP:::1
+🔌 Socket connected: oZC-ipITn6uln2iWAAAb
+✅ [2026-02-23T11:53:02.576Z] GET /api/currency/supported → 304 (2ms) IP:::1
+📌 Socket oZC-ipITn6uln2iWAAAb joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:53:02.890Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (14ms) IP:::1
+✅ [2026-02-23T11:53:02.892Z] GET /api/notifications → 304 (17ms) IP:::1
+✅ [2026-02-23T11:53:03.013Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (63ms) IP:::1
+✅ [2026-02-23T11:53:03.014Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (67ms) IP:::1
+✅ [2026-02-23T11:53:03.016Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (67ms) IP:::1
+✅ [2026-02-23T11:53:03.019Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (72ms) IP:::1
+✅ [2026-02-23T11:53:03.019Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (74ms) IP:::1
+✅ [2026-02-23T11:53:03.025Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (9ms) IP:::1
+✅ [2026-02-23T11:53:03.025Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:53:03.048Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (96ms) IP:::1
+✅ [2026-02-23T11:53:03.049Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (29ms) IP:::1
+✅ [2026-02-23T11:53:03.049Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (30ms) IP:::1
+🔌 Socket disconnected: oZC-ipITn6uln2iWAAAb
+✅ [2026-02-23T11:53:03.899Z] GET /api/auth/me → 304 (4ms) IP:::1
+✅ [2026-02-23T11:53:03.925Z] GET /api/currency/supported → 304 (2ms) IP:::1
+🔌 Socket connected: h0Hd9ClJHjYuyUZ1AAAd
+📌 Socket h0Hd9ClJHjYuyUZ1AAAd joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:53:04.249Z] GET /api/notifications → 304 (14ms) IP:::1
+✅ [2026-02-23T11:53:04.253Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (15ms) IP:::1
+✅ [2026-02-23T11:53:04.334Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (30ms) IP:::1
+✅ [2026-02-23T11:53:04.336Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (25ms) IP:::1
+✅ [2026-02-23T11:53:04.337Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (29ms) IP:::1
+✅ [2026-02-23T11:53:04.338Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (28ms) IP:::1
+✅ [2026-02-23T11:53:04.340Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (28ms) IP:::1
+✅ [2026-02-23T11:53:04.345Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (23ms) IP:::1
+✅ [2026-02-23T11:53:04.348Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (10ms) IP:::1
+✅ [2026-02-23T11:53:04.351Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (12ms) IP:::1
+✅ [2026-02-23T11:53:04.352Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+✅ [2026-02-23T11:53:04.352Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (11ms) IP:::1
+🔌 Socket disconnected: h0Hd9ClJHjYuyUZ1AAAd
+✅ [2026-02-23T11:53:04.995Z] GET /api/auth/me → 304 (3ms) IP:::1
+✅ [2026-02-23T11:53:05.023Z] GET /api/currency/supported → 304 (2ms) IP:::1
+🔌 Socket connected: 2NOt6vMDJ2wI2c01AAAf
+📌 Socket 2NOt6vMDJ2wI2c01AAAf joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:53:05.328Z] GET /api/notifications → 304 (5ms) IP:::1
+✅ [2026-02-23T11:53:05.332Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:53:05.398Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (12ms) IP:::1
+✅ [2026-02-23T11:53:05.401Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (18ms) IP:::1
+✅ [2026-02-23T11:53:05.405Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (20ms) IP:::1
+✅ [2026-02-23T11:53:05.405Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (18ms) IP:::1
+✅ [2026-02-23T11:53:05.409Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (21ms) IP:::1
+✅ [2026-02-23T11:53:05.410Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (22ms) IP:::1
+✅ [2026-02-23T11:53:05.418Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (15ms) IP:::1
+✅ [2026-02-23T11:53:05.418Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:53:05.420Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (13ms) IP:::1
+✅ [2026-02-23T11:53:05.421Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+🔌 Socket disconnected: 2NOt6vMDJ2wI2c01AAAf
+✅ [2026-02-23T11:53:10.032Z] GET /api/auth/me → 304 (3ms) IP:::1
+🔌 Socket connected: gZNHPOHSveqorsZmAAAh
+✅ [2026-02-23T11:53:10.046Z] GET /api/currency/supported → 304 (1ms) IP:::1
+📌 Socket gZNHPOHSveqorsZmAAAh joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:53:10.357Z] GET /api/notifications → 304 (4ms) IP:::1
+✅ [2026-02-23T11:53:10.361Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (6ms) IP:::1
+✅ [2026-02-23T11:53:10.405Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (17ms) IP:::1
+✅ [2026-02-23T11:53:10.405Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (13ms) IP:::1
+✅ [2026-02-23T11:53:10.408Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (14ms) IP:::1
+✅ [2026-02-23T11:53:10.414Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (21ms) IP:::1
+✅ [2026-02-23T11:53:10.416Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (26ms) IP:::1
+✅ [2026-02-23T11:53:10.417Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (22ms) IP:::1
+✅ [2026-02-23T11:53:10.420Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (10ms) IP:::1
+✅ [2026-02-23T11:53:10.420Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+✅ [2026-02-23T11:53:10.421Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T11:53:10.421Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (3ms) IP:::1
+🔌 Socket disconnected: gZNHPOHSveqorsZmAAAh
+✅ [2026-02-23T11:53:19.361Z] GET /api/auth/me → 304 (14ms) IP:::1
+🔌 Socket connected: Zcs49qjDSQGHsmT8AAAj
+✅ [2026-02-23T11:53:19.387Z] GET /api/currency/supported → 304 (2ms) IP:::1
+📌 Socket Zcs49qjDSQGHsmT8AAAj joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:53:19.695Z] GET /api/notifications → 304 (9ms) IP:::1
+✅ [2026-02-23T11:53:19.698Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (10ms) IP:::1
+✅ [2026-02-23T11:53:19.772Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (19ms) IP:::1
+✅ [2026-02-23T11:53:19.773Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (17ms) IP:::1
+✅ [2026-02-23T11:53:19.777Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (22ms) IP:::1
+✅ [2026-02-23T11:53:19.782Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (23ms) IP:::1
+✅ [2026-02-23T11:53:19.785Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (20ms) IP:::1
+✅ [2026-02-23T11:53:19.785Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (24ms) IP:::1
+✅ [2026-02-23T11:53:19.789Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (10ms) IP:::1
+✅ [2026-02-23T11:53:19.790Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T11:53:19.790Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+✅ [2026-02-23T11:53:19.793Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+🔌 Socket disconnected: Zcs49qjDSQGHsmT8AAAj
+✅ [2026-02-23T11:55:56.396Z] GET /api/auth/me → 304 (13ms) IP:::1
+🔌 Socket connected: cylls6k6kavWry4PAAAl
+✅ [2026-02-23T11:55:56.428Z] GET /api/currency/supported → 304 (2ms) IP:::1
+📌 Socket cylls6k6kavWry4PAAAl joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:55:56.729Z] GET /api/notifications → 304 (13ms) IP:::1
+✅ [2026-02-23T11:55:56.739Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (19ms) IP:::1
+✅ [2026-02-23T11:55:56.813Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (14ms) IP:::1
+✅ [2026-02-23T11:55:56.815Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (17ms) IP:::1
+✅ [2026-02-23T11:55:56.816Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (14ms) IP:::1
+✅ [2026-02-23T11:55:56.820Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (20ms) IP:::1
+✅ [2026-02-23T11:55:56.822Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (19ms) IP:::1
+✅ [2026-02-23T11:55:56.824Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (20ms) IP:::1
+✅ [2026-02-23T11:55:56.836Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (18ms) IP:::1
+✅ [2026-02-23T11:55:56.836Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (15ms) IP:::1
+✅ [2026-02-23T11:55:56.836Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (14ms) IP:::1
+✅ [2026-02-23T11:55:56.837Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (14ms) IP:::1
+🔌 Socket disconnected: cylls6k6kavWry4PAAAl
+✅ [2026-02-23T11:57:16.398Z] GET /api/auth/me → 304 (5ms) IP:::1
+🔌 Socket connected: 8OQLrm_oucRE_KXGAAAn
+✅ [2026-02-23T11:57:16.412Z] GET /api/currency/supported → 304 (1ms) IP:::1
+📌 Socket 8OQLrm_oucRE_KXGAAAn joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:57:16.721Z] GET /api/notifications → 304 (6ms) IP:::1
+✅ [2026-02-23T11:57:16.727Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (11ms) IP:::1
+✅ [2026-02-23T11:57:16.774Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (14ms) IP:::1
+✅ [2026-02-23T11:57:16.775Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (14ms) IP:::1
+✅ [2026-02-23T11:57:16.777Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (14ms) IP:::1
+✅ [2026-02-23T11:57:16.778Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (19ms) IP:::1
+✅ [2026-02-23T11:57:16.782Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (21ms) IP:::1
+✅ [2026-02-23T11:57:16.784Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (20ms) IP:::1
+✅ [2026-02-23T11:57:16.784Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (5ms) IP:::1
+✅ [2026-02-23T11:57:16.785Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T11:57:16.786Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T11:57:16.786Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+📤 Socket 8OQLrm_oucRE_KXGAAAn left group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:57:20.653Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (4ms) IP:::1
+❌ Error: Not authorized to access this group
+Stack: Error: Not authorized to access this group
+    at verifyMembership (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/recurringExpenseController.js:14:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async getRecurringExpenses (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/recurringExpenseController.js:77:9)
+❌ [2026-02-23T11:57:20.662Z] GET /api/groups/699c2523bde8a1c77db98898/recurring → 500 (13ms) IP:::1
+📌 Socket 8OQLrm_oucRE_KXGAAAn joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T11:57:33.230Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (8ms) IP:::1
+✅ [2026-02-23T11:57:33.264Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (11ms) IP:::1
+✅ [2026-02-23T11:57:33.269Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (18ms) IP:::1
+✅ [2026-02-23T11:57:33.272Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (20ms) IP:::1
+✅ [2026-02-23T11:57:33.274Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (20ms) IP:::1
+✅ [2026-02-23T11:57:33.275Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (16ms) IP:::1
+✅ [2026-02-23T11:57:33.275Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (20ms) IP:::1
+✅ [2026-02-23T11:57:33.279Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (9ms) IP:::1
+✅ [2026-02-23T11:57:33.279Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (3ms) IP:::1
+✅ [2026-02-23T11:57:33.280Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T11:57:33.281Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+📤 Socket 8OQLrm_oucRE_KXGAAAn left group:699c2523bde8a1c77db98898
+📌 Socket 8OQLrm_oucRE_KXGAAAn joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:02:52.596Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (14ms) IP:::1
+✅ [2026-02-23T12:02:52.658Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (20ms) IP:::1
+✅ [2026-02-23T12:02:52.660Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (19ms) IP:::1
+✅ [2026-02-23T12:02:52.662Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (22ms) IP:::1
+✅ [2026-02-23T12:02:52.663Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (20ms) IP:::1
+✅ [2026-02-23T12:02:52.665Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (22ms) IP:::1
+✅ [2026-02-23T12:02:52.667Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (17ms) IP:::1
+✅ [2026-02-23T12:02:52.669Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (8ms) IP:::1
+✅ [2026-02-23T12:02:52.670Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:02:52.670Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:02:52.671Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (5ms) IP:::1
+🔌 Socket disconnected: 8OQLrm_oucRE_KXGAAAn
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:117:3)
+    at handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:295:15
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+⚠️  [2026-02-23T12:04:14.926Z] GET /api/auth/me → 401 (9ms) IP:::1
+✅ [2026-02-23T12:04:14.944Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: 5GaMKF8HqE-bOyYnAAAq
+✅ [2026-02-23T12:04:14.994Z] GET /api/currency/supported → 304 (0ms) IP:::1
+🔌 Socket disconnected: GNvYNquCB6AyocDpAAAP
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:117:3)
+    at handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:295:15
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+⚠️  [2026-02-23T12:04:18.955Z] GET /api/auth/me → 401 (1ms) IP:::1
+✅ [2026-02-23T12:04:18.967Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: xEnMVjsgOvJc40V4AAAs
+🔌 Socket disconnected: xEnMVjsgOvJc40V4AAAs
+🔌 Socket connected: JSvmKuXBhDV6TSstAAAu
+✅ [2026-02-23T12:04:19.008Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:04:34.400Z] POST /api/auth/login → 200 (122ms) IP:::1
+✅ [2026-02-23T12:04:34.458Z] GET /api/notifications → 304 (17ms) IP:::1
+✅ [2026-02-23T12:04:34.469Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
+✅ [2026-02-23T12:04:34.471Z] GET /api/groups → 304 (11ms) IP:::1
+✅ [2026-02-23T12:04:34.473Z] GET /api/groups → 304 (2ms) IP:::1
+✅ [2026-02-23T12:04:34.513Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (36ms) IP:::1
+📌 Socket 5GaMKF8HqE-bOyYnAAAq joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:04:37.079Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (8ms) IP:::1
+✅ [2026-02-23T12:04:37.126Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (18ms) IP:::1
+✅ [2026-02-23T12:04:37.129Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (19ms) IP:::1
+✅ [2026-02-23T12:04:37.130Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (19ms) IP:::1
+✅ [2026-02-23T12:04:37.132Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (21ms) IP:::1
+✅ [2026-02-23T12:04:37.135Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (22ms) IP:::1
+✅ [2026-02-23T12:04:37.136Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (24ms) IP:::1
+✅ [2026-02-23T12:04:37.139Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:04:37.139Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (3ms) IP:::1
+✅ [2026-02-23T12:04:37.142Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (11ms) IP:::1
+✅ [2026-02-23T12:04:37.151Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (17ms) IP:::1
+📤 Socket 5GaMKF8HqE-bOyYnAAAq left group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:04:58.153Z] GET /api/groups → 304 (6ms) IP:::1
+✅ [2026-02-23T12:04:58.159Z] GET /api/dashboard/stats → 304 (10ms) IP:::1
+✅ [2026-02-23T12:04:58.160Z] GET /api/groups → 304 (4ms) IP:::1
+✅ [2026-02-23T12:04:58.172Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (9ms) IP:::1
+📌 Socket 5GaMKF8HqE-bOyYnAAAq joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:05:05.303Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (9ms) IP:::1
+✅ [2026-02-23T12:05:05.352Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (15ms) IP:::1
+✅ [2026-02-23T12:05:05.353Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (11ms) IP:::1
+✅ [2026-02-23T12:05:05.358Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (18ms) IP:::1
+✅ [2026-02-23T12:05:05.362Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
+✅ [2026-02-23T12:05:05.363Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (18ms) IP:::1
+✅ [2026-02-23T12:05:05.364Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (14ms) IP:::1
+✅ [2026-02-23T12:05:05.366Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (11ms) IP:::1
+✅ [2026-02-23T12:05:05.366Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (10ms) IP:::1
+✅ [2026-02-23T12:05:05.367Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (6ms) IP:::1
+✅ [2026-02-23T12:05:05.368Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (3ms) IP:::1
+🔌 Socket disconnected: 5GaMKF8HqE-bOyYnAAAq
+✅ [2026-02-23T12:08:02.378Z] GET /api/auth/me → 304 (6ms) IP:::1
+🔌 Socket connected: QirZm-fV4sD2S9__AAAw
+✅ [2026-02-23T12:08:02.389Z] GET /api/currency/supported → 304 (1ms) IP:::1
+📌 Socket QirZm-fV4sD2S9__AAAw joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:08:02.700Z] GET /api/notifications → 304 (6ms) IP:::1
+✅ [2026-02-23T12:08:02.715Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (19ms) IP:::1
+✅ [2026-02-23T12:08:02.779Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (35ms) IP:::1
+✅ [2026-02-23T12:08:02.782Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (37ms) IP:::1
+✅ [2026-02-23T12:08:02.782Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (31ms) IP:::1
+✅ [2026-02-23T12:08:02.783Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (31ms) IP:::1
+✅ [2026-02-23T12:08:02.783Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (36ms) IP:::1
+✅ [2026-02-23T12:08:02.788Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (29ms) IP:::1
+✅ [2026-02-23T12:08:02.789Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (4ms) IP:::1
+✅ [2026-02-23T12:08:02.790Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:08:02.790Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:08:02.791Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:08:28.528Z] POST /api/groups/699c2523bde8a1c77db98898/expenses → 201 (42ms) IP:::1
+createNotifications error: Notification validation failed: recipient: Cast to ObjectId failed for value "{\n' +
+  "  user: new ObjectId('698b118e2215a9a7bee9dad4'),\n" +
+  "  role: 'Admin',\n" +
+  "  _id: new ObjectId('699c2523bde8a1c77db98899')\n" +
+  '}" (type string) at path "recipient" because of "BSONError"
+✅ [2026-02-23T12:08:28.583Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 200 (11ms) IP:::1
+✅ [2026-02-23T12:08:28.586Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (9ms) IP:::1
+✅ [2026-02-23T12:08:28.587Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (8ms) IP:::1
+✅ [2026-02-23T12:08:28.587Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (7ms) IP:::1
+✅ [2026-02-23T12:08:28.590Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 200 (9ms) IP:::1
+✅ [2026-02-23T12:08:28.591Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 200 (7ms) IP:::1
+✅ [2026-02-23T12:08:28.603Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (15ms) IP:::1
+✅ [2026-02-23T12:08:28.604Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (11ms) IP:::1
+✅ [2026-02-23T12:08:28.605Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (23ms) IP:::1
+✅ [2026-02-23T12:08:28.606Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (17ms) IP:::1
+✅ [2026-02-23T12:08:28.610Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (21ms) IP:::1
+✅ [2026-02-23T12:08:28.619Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (23ms) IP:::1
+✅ [2026-02-23T12:08:28.620Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (11ms) IP:::1
+✅ [2026-02-23T12:08:28.623Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (16ms) IP:::1
+✅ [2026-02-23T12:08:28.624Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (16ms) IP:::1
+✅ [2026-02-23T12:08:28.624Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (7ms) IP:::1
+✅ [2026-02-23T12:08:28.626Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (15ms) IP:::1
+✅ [2026-02-23T12:08:28.627Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:08:28.629Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (8ms) IP:::1
+✅ [2026-02-23T12:08:28.630Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:08:28.631Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:08:28.632Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:09:11.377Z] POST /api/auth/login → 200 (110ms) IP:::1
+✅ [2026-02-23T12:09:11.409Z] GET /api/notifications → 304 (3ms) IP:::1
+✅ [2026-02-23T12:09:11.443Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T12:09:11.453Z] GET /api/dashboard/stats → 304 (15ms) IP:::1
+✅ [2026-02-23T12:09:11.456Z] GET /api/groups → 304 (12ms) IP:::1
+✅ [2026-02-23T12:09:21.665Z] GET /api/groups → 304 (6ms) IP:::1
+✅ [2026-02-23T12:09:21.667Z] GET /api/dashboard/stats → 304 (7ms) IP:::1
+✅ [2026-02-23T12:09:21.669Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: QirZm-fV4sD2S9__AAAw
+✅ [2026-02-23T12:18:28.503Z] GET /api/auth/me → 304 (11ms) IP:::1
+🔌 Socket connected: ozwQBI72geDVT1itAAAy
+✅ [2026-02-23T12:18:28.523Z] GET /api/currency/supported → 304 (3ms) IP:::1
+📌 Socket ozwQBI72geDVT1itAAAy joined group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:18:28.855Z] GET /api/notifications → 304 (18ms) IP:::1
+✅ [2026-02-23T12:18:28.859Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (24ms) IP:::1
+✅ [2026-02-23T12:18:28.922Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (37ms) IP:::1
+✅ [2026-02-23T12:18:28.922Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (35ms) IP:::1
+✅ [2026-02-23T12:18:28.924Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (40ms) IP:::1
+✅ [2026-02-23T12:18:28.925Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (37ms) IP:::1
+✅ [2026-02-23T12:18:28.926Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (37ms) IP:::1
+✅ [2026-02-23T12:18:28.928Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (38ms) IP:::1
+✅ [2026-02-23T12:18:28.931Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:18:28.931Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:18:28.932Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:18:28.932Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (4ms) IP:::1
+🔌 Socket disconnected: JSvmKuXBhDV6TSstAAAu
+✅ [2026-02-23T12:18:49.633Z] GET /api/auth/me → 304 (8ms) IP:::1
+🔌 Socket connected: u9gp3pwJJO-p5LubAAA0
+✅ [2026-02-23T12:18:49.642Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T12:18:49.957Z] GET /api/notifications → 304 (7ms) IP:::1
+✅ [2026-02-23T12:18:49.961Z] GET /api/groups → 304 (9ms) IP:::1
+✅ [2026-02-23T12:18:49.964Z] GET /api/dashboard/stats → 304 (8ms) IP:::1
+✅ [2026-02-23T12:18:49.965Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: u9gp3pwJJO-p5LubAAA0
+✅ [2026-02-23T12:18:50.851Z] GET /api/auth/me → 304 (4ms) IP:::1
+🔌 Socket connected: H-viUN_Z8Iit3XZXAAA2
+✅ [2026-02-23T12:18:50.859Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T12:18:51.172Z] GET /api/notifications → 304 (8ms) IP:::1
+✅ [2026-02-23T12:18:51.172Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T12:18:51.175Z] GET /api/groups → 304 (2ms) IP:::1
+✅ [2026-02-23T12:18:51.176Z] GET /api/dashboard/stats → 304 (8ms) IP:::1
+📤 Socket ozwQBI72geDVT1itAAAy left group:699c2523bde8a1c77db98898
+✅ [2026-02-23T12:18:58.593Z] GET /api/groups → 304 (6ms) IP:::1
+✅ [2026-02-23T12:18:58.597Z] GET /api/dashboard/stats → 200 (7ms) IP:::1
+✅ [2026-02-23T12:18:58.598Z] GET /api/groups → 304 (4ms) IP:::1
+✅ [2026-02-23T12:18:58.610Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 200 (7ms) IP:::1
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:117:3)
+    at handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:295:15
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+⚠️  [2026-02-23T12:19:52.651Z] POST /api/groups → 401 (7ms) IP:::1
+🔌 Socket disconnected: ozwQBI72geDVT1itAAAy
+🔌 Socket connected: RJCOkJtsqW9Ipt1eAAA4
+✅ [2026-02-23T12:19:52.746Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:20:03.572Z] POST /api/auth/login → 200 (118ms) IP:::1
+✅ [2026-02-23T12:20:03.607Z] GET /api/notifications → 304 (3ms) IP:::1
+✅ [2026-02-23T12:20:03.627Z] GET /api/groups → 304 (2ms) IP:::1
+✅ [2026-02-23T12:20:03.633Z] GET /api/dashboard/stats → 304 (8ms) IP:::1
+✅ [2026-02-23T12:20:03.633Z] GET /api/groups → 304 (3ms) IP:::1
+✅ [2026-02-23T12:20:03.645Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (4ms) IP:::1
+✅ [2026-02-23T12:20:36.865Z] POST /api/groups → 201 (15ms) IP:::1
+✅ [2026-02-23T12:20:36.888Z] GET /api/groups → 200 (6ms) IP:::1
+✅ [2026-02-23T12:20:36.894Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T12:20:36.894Z] GET /api/dashboard/stats → 200 (9ms) IP:::1
+✅ [2026-02-23T12:20:36.904Z] GET /api/groups/699c4614c375fe14bd89dfb1/analytics/category?month=2026-02 → 200 (6ms) IP:::1
+🔌 Socket disconnected: H-viUN_Z8Iit3XZXAAA2
+✅ [2026-02-23T12:20:41.745Z] GET /api/auth/me → 304 (4ms) IP:::1
+🔌 Socket connected: KhjKrTGMwP8VaQpCAAA6
+✅ [2026-02-23T12:20:41.754Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:20:42.069Z] GET /api/notifications → 304 (8ms) IP:::1
+✅ [2026-02-23T12:20:42.071Z] GET /api/groups → 304 (8ms) IP:::1
+✅ [2026-02-23T12:20:42.074Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
+✅ [2026-02-23T12:20:42.075Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: KhjKrTGMwP8VaQpCAAA6
+✅ [2026-02-23T12:20:42.867Z] GET /api/auth/me → 304 (4ms) IP:::1
+🔌 Socket connected: tlT9V7UcnwT5T3O6AAA8
+✅ [2026-02-23T12:20:42.874Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T12:20:43.189Z] GET /api/notifications → 304 (9ms) IP:::1
+✅ [2026-02-23T12:20:43.190Z] GET /api/groups → 304 (7ms) IP:::1
+✅ [2026-02-23T12:20:43.194Z] GET /api/dashboard/stats → 304 (10ms) IP:::1
+✅ [2026-02-23T12:20:43.194Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: tlT9V7UcnwT5T3O6AAA8
+✅ [2026-02-23T12:20:43.746Z] GET /api/auth/me → 304 (3ms) IP:::1
+🔌 Socket connected: OYfjza8EG0PvZBy5AAA-
+✅ [2026-02-23T12:20:43.753Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T12:20:44.066Z] GET /api/notifications → 304 (6ms) IP:::1
+✅ [2026-02-23T12:20:44.068Z] GET /api/groups → 304 (6ms) IP:::1
+✅ [2026-02-23T12:20:44.070Z] GET /api/dashboard/stats → 304 (7ms) IP:::1
+✅ [2026-02-23T12:20:44.072Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: OYfjza8EG0PvZBy5AAA-
+✅ [2026-02-23T12:20:44.452Z] GET /api/auth/me → 304 (3ms) IP:::1
+🔌 Socket connected: W0eWMkyK2Jowm9I8AABA
+✅ [2026-02-23T12:20:44.460Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T12:20:44.774Z] GET /api/notifications → 304 (8ms) IP:::1
+✅ [2026-02-23T12:20:44.775Z] GET /api/groups → 304 (7ms) IP:::1
+✅ [2026-02-23T12:20:44.779Z] GET /api/dashboard/stats → 304 (10ms) IP:::1
+✅ [2026-02-23T12:20:44.779Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: W0eWMkyK2Jowm9I8AABA
+✅ [2026-02-23T12:20:44.918Z] GET /api/auth/me → 304 (3ms) IP:::1
+🔌 Socket connected: B7QOsTGuDWkM4KxMAABC
+✅ [2026-02-23T12:20:44.926Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:20:45.238Z] GET /api/notifications → 304 (6ms) IP:::1
+✅ [2026-02-23T12:20:45.240Z] GET /api/groups → 304 (6ms) IP:::1
+✅ [2026-02-23T12:20:45.244Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
+✅ [2026-02-23T12:20:45.244Z] GET /api/groups → 304 (3ms) IP:::1
+🔌 Socket disconnected: B7QOsTGuDWkM4KxMAABC
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:117:3)
+    at handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:295:15
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+⚠️  [2026-02-23T12:26:04.912Z] GET /api/auth/me → 401 (9ms) IP:::1
+✅ [2026-02-23T12:26:04.930Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:26:04.963Z] GET /api/currency/supported → 200 (1ms) IP:::1
+🔌 Socket connected: ykEqAQLuSqIb4IpcAABF
+✅ [2026-02-23T12:26:16.959Z] POST /api/auth/login → 200 (151ms) IP:::1
+✅ [2026-02-23T12:26:17.023Z] GET /api/notifications → 304 (23ms) IP:::1
+✅ [2026-02-23T12:26:17.029Z] GET /api/dashboard/stats → 304 (10ms) IP:::1
+✅ [2026-02-23T12:26:17.030Z] GET /api/groups → 304 (12ms) IP:::1
+✅ [2026-02-23T12:26:17.032Z] GET /api/groups → 304 (1ms) IP:::1
+🔌 Socket disconnected: ykEqAQLuSqIb4IpcAABF
+✅ [2026-02-23T12:26:20.167Z] GET /api/auth/me → 304 (71ms) IP:::1
+✅ [2026-02-23T12:26:20.175Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: 86S7rDD9w7bKbKupAABH
+✅ [2026-02-23T12:26:20.490Z] GET /api/notifications → 304 (20ms) IP:::1
+✅ [2026-02-23T12:26:20.491Z] GET /api/groups → 304 (18ms) IP:::1
+✅ [2026-02-23T12:26:20.503Z] GET /api/dashboard/stats → 304 (29ms) IP:::1
+✅ [2026-02-23T12:26:20.504Z] GET /api/groups → 304 (8ms) IP:::1
+🔌 Socket disconnected: RJCOkJtsqW9Ipt1eAAA4
+✅ [2026-02-23T12:26:23.728Z] GET /api/auth/me → 304 (369ms) IP:::1
+🔌 Socket connected: op_2r_T185CnbM2bAABJ
+✅ [2026-02-23T12:26:23.740Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:26:24.079Z] GET /api/notifications → 304 (23ms) IP:::1
+✅ [2026-02-23T12:26:24.089Z] GET /api/groups → 304 (31ms) IP:::1
+✅ [2026-02-23T12:26:24.092Z] GET /api/dashboard/stats → 304 (32ms) IP:::1
+✅ [2026-02-23T12:26:24.097Z] GET /api/groups → 304 (6ms) IP:::1
+✅ [2026-02-23T12:26:24.148Z] GET /api/groups/699c4614c375fe14bd89dfb1/analytics/category?month=2026-02 → 304 (47ms) IP:::1
+✅ [2026-02-23T12:26:31.310Z] DELETE /api/groups/699c4614c375fe14bd89dfb1 → 200 (42ms) IP:::1
+✅ [2026-02-23T12:26:34.051Z] DELETE /api/groups/699c2523bde8a1c77db98898 → 200 (15ms) IP:::1
+🔌 Socket disconnected: op_2r_T185CnbM2bAABJ
+✅ [2026-02-23T12:26:37.751Z] GET /api/auth/me → 304 (4ms) IP:::1
+🔌 Socket connected: nq-fsC3xtmOz6IHFAABL
+✅ [2026-02-23T12:26:37.761Z] GET /api/currency/supported → 304 (0ms) IP:::1
+✅ [2026-02-23T12:26:38.087Z] GET /api/notifications → 304 (7ms) IP:::1
+✅ [2026-02-23T12:26:38.088Z] GET /api/groups → 200 (6ms) IP:::1
+✅ [2026-02-23T12:26:38.096Z] GET /api/dashboard/stats → 200 (13ms) IP:::1
+✅ [2026-02-23T12:26:38.097Z] GET /api/groups → 304 (7ms) IP:::1
+✅ [2026-02-23T12:27:07.352Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 200 (18ms) IP:::1
+✅ [2026-02-23T12:27:08.142Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (8ms) IP:::1
+✅ [2026-02-23T12:27:20.557Z] GET /api/auth/users?query=aruldsouzaj%40gmail.com → 200 (6ms) IP:::1
+✅ [2026-02-23T12:27:37.551Z] POST /api/groups → 201 (14ms) IP:::1
+✅ [2026-02-23T12:27:37.586Z] GET /api/groups → 200 (7ms) IP:::1
+✅ [2026-02-23T12:27:37.593Z] GET /api/dashboard/stats → 200 (10ms) IP:::1
+✅ [2026-02-23T12:27:37.597Z] GET /api/groups → 304 (9ms) IP:::1
+✅ [2026-02-23T12:27:37.633Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 200 (32ms) IP:::1
+🔌 Socket disconnected: 86S7rDD9w7bKbKupAABH
+✅ [2026-02-23T12:27:40.862Z] GET /api/auth/me → 304 (3ms) IP:::1
+🔌 Socket connected: mp0Mlfe1eeVKZtwwAABN
+✅ [2026-02-23T12:27:40.872Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:27:41.187Z] GET /api/notifications → 304 (7ms) IP:::1
+✅ [2026-02-23T12:27:41.189Z] GET /api/groups → 200 (7ms) IP:::1
+✅ [2026-02-23T12:27:41.193Z] GET /api/dashboard/stats → 200 (10ms) IP:::1
+✅ [2026-02-23T12:27:41.195Z] GET /api/groups → 304 (4ms) IP:::1
+✅ [2026-02-23T12:27:41.215Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 200 (5ms) IP:::1
+📌 Socket nq-fsC3xtmOz6IHFAABL joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:27:46.024Z] GET /api/groups/699c47b9c375fe14bd89e072 → 200 (13ms) IP:::1
+✅ [2026-02-23T12:27:46.063Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 200 (14ms) IP:::1
+✅ [2026-02-23T12:27:46.065Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 200 (18ms) IP:::1
+✅ [2026-02-23T12:27:46.066Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 200 (18ms) IP:::1
+✅ [2026-02-23T12:27:46.068Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 200 (16ms) IP:::1
+✅ [2026-02-23T12:27:46.068Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 200 (18ms) IP:::1
+✅ [2026-02-23T12:27:46.069Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 200 (19ms) IP:::1
+✅ [2026-02-23T12:27:46.073Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 200 (7ms) IP:::1
+✅ [2026-02-23T12:27:46.073Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (5ms) IP:::1
+✅ [2026-02-23T12:27:46.073Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (3ms) IP:::1
+✅ [2026-02-23T12:27:46.078Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (9ms) IP:::1
+✅ [2026-02-23T12:28:18.395Z] POST /api/groups/699c47b9c375fe14bd89e072/expenses → 201 (15ms) IP:::1
+createNotifications error: Notification validation failed: recipient: Cast to ObjectId failed for value "{\n' +
+  "  user: new ObjectId('698b0cb1f584c0a22bec9a93'),\n" +
+  "  role: 'Member',\n" +
+  "  _id: new ObjectId('699c47b9c375fe14bd89e073')\n" +
+  '}" (type string) at path "recipient" because of "BSONError"
+✅ [2026-02-23T12:28:18.429Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 200 (9ms) IP:::1
+✅ [2026-02-23T12:28:18.431Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (4ms) IP:::1
+✅ [2026-02-23T12:28:18.434Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 200 (5ms) IP:::1
+✅ [2026-02-23T12:28:18.435Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 200 (7ms) IP:::1
+✅ [2026-02-23T12:28:18.438Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 200 (10ms) IP:::1
+✅ [2026-02-23T12:28:18.440Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 200 (11ms) IP:::1
+✅ [2026-02-23T12:28:18.445Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (15ms) IP:::1
+✅ [2026-02-23T12:28:18.445Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (12ms) IP:::1
+✅ [2026-02-23T12:28:18.449Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:28:18.450Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:28:18.451Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (8ms) IP:::1
+✅ [2026-02-23T12:28:18.455Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (11ms) IP:::1
+✅ [2026-02-23T12:28:18.455Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (8ms) IP:::1
+✅ [2026-02-23T12:28:18.458Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (10ms) IP:::1
+✅ [2026-02-23T12:28:18.459Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (7ms) IP:::1
+✅ [2026-02-23T12:28:18.460Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (6ms) IP:::1
+✅ [2026-02-23T12:28:18.462Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (9ms) IP:::1
+✅ [2026-02-23T12:28:18.463Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:28:18.463Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:28:18.464Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:28:18.465Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (4ms) IP:::1
+✅ [2026-02-23T12:28:18.466Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (4ms) IP:::1
+📌 Socket mp0Mlfe1eeVKZtwwAABN joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:28:30.197Z] GET /api/groups/699c47b9c375fe14bd89e072 → 200 (7ms) IP:::1
+✅ [2026-02-23T12:28:30.246Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 200 (10ms) IP:::1
+✅ [2026-02-23T12:28:30.247Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 200 (12ms) IP:::1
+✅ [2026-02-23T12:28:30.248Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 200 (15ms) IP:::1
+✅ [2026-02-23T12:28:30.249Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 200 (14ms) IP:::1
+✅ [2026-02-23T12:28:30.251Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 200 (14ms) IP:::1
+✅ [2026-02-23T12:28:30.251Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 200 (15ms) IP:::1
+✅ [2026-02-23T12:28:30.253Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 200 (4ms) IP:::1
+✅ [2026-02-23T12:28:30.253Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
+✅ [2026-02-23T12:28:30.254Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
+✅ [2026-02-23T12:28:30.254Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
