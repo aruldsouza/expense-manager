@@ -210,10 +210,10 @@ Harden production API.
 Professional reporting.
 
 ### Tasks:
-[ ] Generate PDF summary
-[ ] Add monthly email report
-[ ] Export CSV of expenses
-[ ] Include charts in report
+[x] Generate PDF summary
+[x] Add monthly email report
+[x] Export CSV of expenses
+[x] Include charts in report
 
 ---
 

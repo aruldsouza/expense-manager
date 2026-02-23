@@ -13,12 +13,13 @@ import BudgetManager from '../components/BudgetManager';
 import AdvancedAnalytics from '../components/AdvancedAnalytics';
 import HealthScore from '../components/HealthScore';
 import AIInsightChat from '../components/AIInsightChat';
+import GroupReport from '../components/GroupReport';
 import ManageMembers from '../components/ManageMembers';
 import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
 import { Container, Row, Col, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
-import { FaUserShield, FaCog } from 'react-icons/fa';
+import { FaUserShield, FaCog, FaFileAlt } from 'react-icons/fa';
 
 // Memoized Components
 const MemoizedExpenseList = React.memo(ExpenseList);
@@ -199,6 +200,13 @@ const GroupDetails = () => {
                             <div className="p-3">
                                 <AIInsightChat groupId={groupId} />
                             </div>
+                        </Tab>
+                        <Tab eventKey="reports" title={<><FaFileAlt className="me-2" />Reports</>}>
+                            <GroupReport
+                                groupId={groupId}
+                                groupName={group.name}
+                                userRole={currentUserRole}
+                            />
                         </Tab>
                         {currentUserRole === 'Admin' && (
                             <Tab eventKey="members" title={<><FaUserShield className="me-2 text-danger" />Members</>}>
