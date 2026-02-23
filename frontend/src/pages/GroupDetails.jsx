@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet } from 'react-icons/fa';
+import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet, FaRobot } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
@@ -12,6 +12,7 @@ import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
 import AdvancedAnalytics from '../components/AdvancedAnalytics';
 import HealthScore from '../components/HealthScore';
+import AIInsightChat from '../components/AIInsightChat';
 import ManageMembers from '../components/ManageMembers';
 import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
@@ -192,6 +193,11 @@ const GroupDetails = () => {
                                 <HealthScore groupId={groupId} refreshTrigger={refreshTrigger} />
                                 <hr className="my-4" />
                                 <AdvancedAnalytics groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
+                            </div>
+                        </Tab>
+                        <Tab eventKey="ai" title={<><FaRobot className="me-2" />AI Assistant</>}>
+                            <div className="p-3">
+                                <AIInsightChat groupId={groupId} />
                             </div>
                         </Tab>
                         {currentUserRole === 'Admin' && (

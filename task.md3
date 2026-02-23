@@ -148,12 +148,12 @@ Calculate a group-level metric.
 AI-powered expense insights.
 
 ### Tasks:
-[ ] Integrate LLM API
-[ ] Generate monthly summary
-[ ] Answer queries like:
+[x] Integrate LLM API
+[x] Generate monthly summary
+[x] Answer queries like:
       - "Who owes the most?"
       - "Where are we spending the most?"
-[ ] Add chatbot UI panel
+[x] Add chatbot UI panel
 
 ---
 
