@@ -29,11 +29,26 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, 'Password is required'],
             minlength: [6, 'Password must be at least 6 characters'],
-            select: false, // Don't return password by default in queries
+            select: false,
         },
+        // ─── Account lock / brute-force protection ────────────────────────────
+        loginAttempts: {
+            type: Number,
+            default: 0
+        },
+        lockUntil: {
+            type: Date,
+            default: null
+        },
+        // ─── Refresh token (hashed) ───────────────────────────────────────────
+        refreshToken: {
+            type: String,
+            select: false,
+            default: null
+        }
     },
     {
-        timestamps: true, // Adds createdAt and updatedAt fields
+        timestamps: true,
     }
 );
 

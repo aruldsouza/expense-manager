@@ -199,10 +199,10 @@ Improve performance.
 Harden production API.
 
 ### Tasks:
-[ ] Add express-rate-limit
-[ ] Add refresh token system
-[ ] Implement account lock after failed attempts
-[ ] Add request logging middleware
+[x] Add express-rate-limit
+[x] Add refresh token system
+[x] Implement account lock after failed attempts
+[x] Add request logging middleware
 
 ---
 

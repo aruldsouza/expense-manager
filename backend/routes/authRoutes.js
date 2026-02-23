@@ -3,38 +3,23 @@ const router = express.Router();
 const {
     registerUser,
     loginUser,
+    refreshAccessToken,
+    logoutUser,
     getCurrentUser,
     searchUsers
 } = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const { registerValidation, loginValidation } = require('../middleware/validate');
+const { authLimiter } = require('../middleware/rateLimiter');
 
-/**
- * @route   POST /api/auth/register
- * @desc    Register a new user
- * @access  Public
- */
-router.post('/register', registerValidation, registerUser);
+// Public auth routes — protected by authLimiter (10 req / 15 min)
+router.post('/register', authLimiter, registerValidation, registerUser);
+router.post('/login', authLimiter, loginValidation, loginUser);
+router.post('/refresh', authLimiter, refreshAccessToken);
 
-/**
- * @route   POST /api/auth/login
- * @desc    Login user and get token
- * @access  Public
- */
-router.post('/login', loginValidation, loginUser);
-
-/**
- * @route   GET /api/auth/me
- * @desc    Get current logged-in user
- * @access  Private (requires authentication)
- */
+// Private routes
+router.post('/logout', protect, logoutUser);
 router.get('/me', protect, getCurrentUser);
-
-/**
- * @route   GET /api/auth/users
- * @desc    Search users
- * @access  Private
- */
 router.get('/users', protect, searchUsers);
 
 module.exports = router;

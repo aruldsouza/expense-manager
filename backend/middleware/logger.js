@@ -1,20 +1,20 @@
 /**
  * Request Logger Middleware
- * Logs incoming HTTP requests with method, path, and timestamp
+ * Logs structured request/response lines:
+ * [ISO-TS] METHOD /path IP:x.x.x.x STATUS Xms
  */
 const requestLogger = (req, res, next) => {
-    const timestamp = new Date().toISOString();
+    const start = Date.now();
     const method = req.method;
     const url = req.originalUrl || req.url;
-
-    console.log(`[${timestamp}] ${method} ${url}`);
-
-    // Log response time
-    const start = Date.now();
+    const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
 
     res.on('finish', () => {
         const duration = Date.now() - start;
-        console.log(`[${timestamp}] ${method} ${url} - ${res.statusCode} (${duration}ms)`);
+        const status = res.statusCode;
+        const timestamp = new Date().toISOString();
+        const level = status >= 500 ? '❌' : status >= 400 ? '⚠️ ' : '✅';
+        console.log(`${level} [${timestamp}] ${method} ${url} → ${status} (${duration}ms) IP:${ip}`);
     });
 
     next();

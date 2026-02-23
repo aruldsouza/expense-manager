@@ -57,6 +57,10 @@ app.use(helmet());
 // Request logging
 app.use(requestLogger);
 
+// Apply global API rate limiting to all /api routes
+const { apiLimiter } = require('./middleware/rateLimiter');
+app.use('/api', apiLimiter);
+
 // Initialize Socket.IO (must be after http server creation)
 initSocket(httpServer, whitelist);
 
