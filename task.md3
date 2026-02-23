@@ -188,10 +188,10 @@ Quick splitting presets.
 Improve performance.
 
 ### Tasks:
-[ ] Integrate Redis
-[ ] Cache dashboard stats
-[ ] Cache group balances
-[ ] Implement cache invalidation
+[x] Integrate Redis
+[x] Cache dashboard stats
+[x] Cache group balances
+[x] Implement cache invalidation
 
 ---
 

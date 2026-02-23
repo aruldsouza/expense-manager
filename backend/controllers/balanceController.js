@@ -2,6 +2,9 @@ const Expense = require('../models/Expense');
 const Group = require('../models/Group');
 const Settlement = require('../models/Settlement');
 const { convertAmount, getCurrencySymbol } = require('../utils/exchangeRate');
+const cache = require('../utils/cache');
+
+const BALANCE_TTL = 90; // seconds
 
 // @desc    Get group balances (with optional currency conversion)
 // @route   GET /api/groups/:groupId/balances?convertTo=EUR
@@ -10,6 +13,17 @@ const getGroupBalances = async (req, res, next) => {
     try {
         const groupId = req.params.groupId;
         const convertTo = req.query.convertTo ? req.query.convertTo.toUpperCase() : null;
+
+        // Skip cache when FX conversion is requested (rates change frequently)
+        const useCache = !convertTo;
+        const cacheKey = `balances:${groupId}`;
+
+        if (useCache) {
+            const cached = await cache.get(cacheKey);
+            if (cached) {
+                return res.json({ success: true, data: cached, fromCache: true });
+            }
+        }
 
         const group = await Group.findById(groupId).populate('members', 'name email');
         if (!group) {
@@ -83,6 +97,11 @@ const getGroupBalances = async (req, res, next) => {
         );
 
         res.json({ success: true, data: balanceList });
+
+        // Cache after response sent (only when no FX conversion)
+        if (useCache) {
+            cache.set(cacheKey, balanceList, BALANCE_TTL).catch(() => { });
+        }
     } catch (error) {
         next(error);
     }

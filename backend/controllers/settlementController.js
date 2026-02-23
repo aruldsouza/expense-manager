@@ -4,6 +4,14 @@ const Expense = require('../models/Expense');
 const mongoose = require('mongoose');
 const { getIO } = require('../socket');
 const { createNotifications } = require('../utils/notificationHelper');
+const cache = require('../utils/cache');
+
+// Invalidate balance + per-member dashboard caches for a group
+const invalidateGroupCache = async (groupId, memberIds = []) => {
+    const keys = [`balances:${groupId}`];
+    memberIds.forEach(id => keys.push(`dashboard:stats:${id}`));
+    if (keys.length > 0) await cache.del(...keys);
+};
 
 // ─── Shared: compute net balance between all members ─────────────────────────
 const computeNetBalances = async (groupId, members) => {
@@ -143,6 +151,11 @@ const createSettlement = async (req, res, next) => {
             const populated = await Settlement.findById(settlement._id)
                 .populate('payer', 'name email')
                 .populate('payee', 'name email');
+
+            // Invalidate cached balances and dashboard stats
+            const grp = await Group.findById(groupId);
+            const memberIds = grp ? grp.members.map(m => m.user ? m.user.toString() : m.toString()) : [];
+            await invalidateGroupCache(groupId, memberIds);
             getIO().to(`group:${groupId}`).emit('settlement:new', {
                 settlement: populated,
                 wasPartial: isPartial,
@@ -180,6 +193,10 @@ const deleteSettlement = async (req, res, next) => {
             group: req.params.groupId
         });
         if (!settlement) { res.status(404); throw new Error('Settlement not found'); }
+
+        // Invalidate cached balances and dashboard stats
+        const memberIds = group.members.map(m => m.user ? m.user.toString() : m.toString());
+        await invalidateGroupCache(req.params.groupId, memberIds).catch(() => { });
 
         res.json({ success: true, data: {} });
     } catch (error) { next(error); }

@@ -1,13 +1,23 @@
 const Group = require('../models/Group');
 const Expense = require('../models/Expense');
 const Settlement = require('../models/Settlement');
+const cache = require('../utils/cache');
+
+const DASHBOARD_TTL = 120; // seconds
 
 // @desc    Get dashboard statistics
 // @route   GET /api/dashboard/stats
 // @access  Private
 const getDashboardStats = async (req, res, next) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user._id.toString();
+        const cacheKey = `dashboard:stats:${userId}`;
+
+        // ── Cache hit ─────────────────────────────────────────────────────────
+        const cached = await cache.get(cacheKey);
+        if (cached) {
+            return res.json({ success: true, data: cached, fromCache: true });
+        }
 
         // 1. Active Groups
         const groups = await Group.find({ members: { $in: [userId] } });
@@ -76,16 +86,18 @@ const getDashboardStats = async (req, res, next) => {
             })
         });
 
-        res.json({
-            success: true,
-            data: {
-                activeGroups: activeGroupsCount,
-                totalExpenses: parseFloat(myTotalShare.toFixed(2)), // "My Cost"
-                totalPaid: parseFloat(totalSpend.toFixed(2)),       // "My Cash Outflow"
-                netBalance: parseFloat(totalBalance.toFixed(2)),    // + means owed to me, - means I owe
-                youAreOwed: totalBalance > 0 ? parseFloat(totalBalance.toFixed(2)) : 0
-            }
-        });
+        const result = {
+            activeGroups: activeGroupsCount,
+            totalExpenses: parseFloat(myTotalShare.toFixed(2)),
+            totalPaid: parseFloat(totalSpend.toFixed(2)),
+            netBalance: parseFloat(totalBalance.toFixed(2)),
+            youAreOwed: totalBalance > 0 ? parseFloat(totalBalance.toFixed(2)) : 0
+        };
+
+        // ── Cache the result ─────────────────────────────────────────────────
+        await cache.set(cacheKey, result, DASHBOARD_TTL);
+
+        res.json({ success: true, data: result });
 
     } catch (error) {
         next(error);

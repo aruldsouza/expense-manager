@@ -5,6 +5,14 @@ const Settlement = require('../models/Settlement');
 const { cloudinary } = require('../middleware/upload');
 const { getIO } = require('../socket');
 const { createNotifications } = require('../utils/notificationHelper');
+const cache = require('../utils/cache');
+
+// Invalidate cached data related to a group (balances + dashboard for all members)
+const invalidateGroupCache = async (groupId, memberIds = []) => {
+    const keys = [`balances:${groupId}`];
+    memberIds.forEach(id => keys.push(`dashboard:stats:${id}`));
+    await cache.del(...keys);
+};
 
 // @desc    Add new expense to group
 // @route   POST /api/groups/:groupId/expenses
@@ -110,6 +118,10 @@ const addExpense = async (req, res, next) => {
                 .populate('payer', 'name email')
                 .populate('splits.user', 'name');
             getIO().to(`group:${groupId}`).emit('expense:new', populated);
+
+            // Invalidate cached balances and dashboard stats
+            const memberIds = group.members.map(m => m.user ? m.user.toString() : m.toString());
+            await invalidateGroupCache(groupId, memberIds);
 
             // Notify all members except the payer
             const recipients = group.members
