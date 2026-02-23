@@ -13,6 +13,7 @@ const recurringExpenseRoutes = require('./recurringExpenseRoutes');
 const budgetRoutes = require('./budgetRoutes');
 const analyticsRoutes = require('./analyticsRoutes');
 const aiRoutes = require('./aiRoutes');
+const paymentRoutes = require('./paymentRoutes');
 
 // Re-route into other resource routers
 router.use('/:groupId/expenses', expenseRoutes);
@@ -23,6 +24,7 @@ router.use('/:groupId/recurring', recurringExpenseRoutes);
 router.use('/:groupId/budgets', budgetRoutes);
 router.use('/:groupId/analytics', analyticsRoutes);
 router.use('/:groupId/ai', aiRoutes);
+router.use('/:groupId/payments', paymentRoutes);
 
 router.route('/')
     .post(protect, groupValidation, createGroup)

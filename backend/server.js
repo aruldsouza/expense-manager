@@ -43,6 +43,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Stripe webhook MUST use raw body — mount BEFORE express.json()
+const { stripeWebhook } = require('./controllers/paymentController');
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

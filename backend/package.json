@@ -29,6 +29,7 @@
     "node-cron": "^4.2.1",
     "nodemon": "^3.1.11",
     "socket.io": "^4.8.3",
+    "stripe": "^20.3.1",
     "xss-clean": "^0.1.4"
   }
 }

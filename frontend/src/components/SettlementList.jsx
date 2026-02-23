@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { ListGroup, Badge, Spinner, Alert, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { FaHandHoldingUsd, FaArrowRight, FaTrash } from 'react-icons/fa';
+import { FaHandHoldingUsd, FaArrowRight, FaTrash, FaCreditCard } from 'react-icons/fa';
 import { useCurrency } from '../context/CurrencyContext';
+import StripePaymentModal from './StripePaymentModal';
 
 const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) => {
     const [settlements, setSettlements] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [stripeModal, setStripeModal] = useState(null); // { payeeId, payeeName, amount }
     const { formatCurrency } = useCurrency();
     const gc = groupCurrency || 'USD';
 
@@ -68,8 +70,13 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
                                             <div className="fw-bold text-success">{formatCurrency(rec.amount, gc)}</div>
                                         </div>
                                     </div>
-                                    <div className="d-flex gap-2">
-                                        {/* Pay Partial — opens modal without pre-filling amount */}
+                                    <div className="d-flex gap-2 flex-wrap">
+                                        {/* Pay via Stripe */}
+                                        <button className="btn btn-sm btn-outline-primary fw-bold px-3 d-flex align-items-center gap-1"
+                                            onClick={() => setStripeModal({ payeeId: rec.to._id, payeeName: rec.to.name, amount: rec.amount })}>
+                                            <FaCreditCard size={12} /> Stripe
+                                        </button>
+                                        {/* Pay Partial — opens record settlement modal */}
                                         <button className="btn btn-sm btn-outline-secondary fw-bold px-3"
                                             onClick={() => onSettle({ from: rec.from, to: rec.to, amount: '' })}>
                                             Partial
@@ -132,6 +139,20 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
+            )}
+
+            {/* Stripe Payment Modal */}
+            {stripeModal && (
+                <StripePaymentModal
+                    show={!!stripeModal}
+                    onHide={() => setStripeModal(null)}
+                    groupId={groupId}
+                    payeeId={stripeModal.payeeId}
+                    payeeName={stripeModal.payeeName}
+                    amount={stripeModal.amount}
+                    currency={gc}
+                    onSuccess={() => { setStripeModal(null); fetchData(); }}
+                />
             )}
         </div>
     );

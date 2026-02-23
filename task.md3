@@ -163,11 +163,11 @@ AI-powered expense insights.
 Enable real money settlement.
 
 ### Tasks:
-[ ] Integrate Stripe or Razorpay
-[ ] Create payment intent endpoint
-[ ] Implement webhook verification
-[ ] Auto-mark settlement on success
-[ ] Store transaction ID
+[x] Integrate Stripe or Razorpay
+[x] Create payment intent endpoint
+[x] Implement webhook verification
+[x] Auto-mark settlement on success
+[x] Store transaction ID
 
 ---
 

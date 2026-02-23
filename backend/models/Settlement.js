@@ -34,6 +34,11 @@ const settlementSchema = new mongoose.Schema({
     isPartial: {
         type: Boolean,
         default: true  // set false by controller when amount >= outstanding debt
+    },
+    transactionId: {
+        type: String,
+        default: null,
+        trim: true
     }
 }, {
     timestamps: true
