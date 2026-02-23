@@ -86,6 +86,27 @@ const computeDebtBetween = async (groupId, payerId, payeeId) => {
     return parseFloat(outstanding.toFixed(2));
 };
 
+// Helper to check if user is in group members array safely
+const isMember = (members, userId) => {
+    if (!members || !userId) return false;
+    const target = userId.toString();
+    return members.some(m => {
+        if (!m) return false;
+
+        // m could be an ObjectId (legacy)
+        // m could be { user: ObjectId, role: '...' }
+        // m could be { user: { _id: ObjectId, name: '...' }, role: '...' }
+        let refId;
+        if (m.user) {
+            refId = m.user._id ? m.user._id.toString() : m.user.toString();
+        } else {
+            refId = m.toString();
+        }
+
+        return refId === target;
+    });
+};
+
 // @desc  GET debt between two specific users
 // @route GET /api/groups/:groupId/settlements/debt?payer=X&payee=Y
 // @access Private
@@ -95,9 +116,9 @@ const getDebtBetween = async (req, res, next) => {
         if (!payer || !payee) {
             res.status(400); throw new Error('payer and payee query params are required');
         }
-        const group = await Group.findById(req.params.groupId);
+        const group = await Group.findById(req.params.groupId).populate('members.user');
         if (!group) { res.status(404); throw new Error('Group not found'); }
-        if (!group.members.map(m => m.toString()).includes(req.user._id.toString())) {
+        if (!isMember(group.members, req.user._id)) {
             res.status(403); throw new Error('Not authorized');
         }
         const outstanding = await computeDebtBetween(req.params.groupId, payer, payee);
@@ -114,12 +135,15 @@ const createSettlement = async (req, res, next) => {
         const payer = req.body.payer || req.user._id;
         const groupId = req.params.groupId;
 
-        const group = await Group.findById(groupId);
+        const group = await Group.findById(groupId).populate('members.user');
         if (!group) { res.status(404); throw new Error('Group not found'); }
 
-        const memberIds = group.members.map(m => m.toString());
-        if (!memberIds.includes(payer.toString()) || !memberIds.includes(payee.toString())) {
-            res.status(400); throw new Error('Payer and payee must be members of the group');
+        const payerIsMember = isMember(group.members, payer);
+        const payeeIsMember = isMember(group.members, payee);
+
+        if (!payerIsMember || !payeeIsMember) {
+            res.status(400);
+            throw new Error(`Payer (${payer}) or payee (${payee}) must be members of the group. Payer is member: ${payerIsMember}, Payee is member: ${payeeIsMember}`);
         }
         if (payer.toString() === payee.toString()) {
             res.status(400); throw new Error('Cannot settle with yourself');
@@ -185,7 +209,7 @@ const deleteSettlement = async (req, res, next) => {
     try {
         const group = await Group.findById(req.params.groupId);
         if (!group) { res.status(404); throw new Error('Group not found'); }
-        if (!group.members.map(m => m.toString()).includes(req.user._id.toString())) {
+        if (!isMember(group.members, req.user._id)) {
             res.status(403); throw new Error('Not authorized');
         }
 

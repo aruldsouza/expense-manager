@@ -74,111 +74,226 @@
 [2026-02-23T11:33:04.837Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:03:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
 ⚠️  MongoDB disconnected
 [2026-02-23T11:40:56.459Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:07:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:40:56.461Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:08:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:40:56.462Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:09:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:40:56.463Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:10:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-⚠️  MongoDB disconnected
-[2026-02-23T11:47:54.743Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:12:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:47:54.840Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:13:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:47:54.843Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:14:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:47:54.849Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:15:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:47:54.855Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:16:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-[2026-02-23T11:47:54.860Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:17:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
-⚠️  MongoDB disconnected
-🔌 Socket disconnected: -F1MT3FhrUA1gUTgAAAJ
-✅ [2026-02-23T11:48:42.236Z] GET /api/currency/supported → 304 (3ms) IP:::1
-🔌 Socket connected: WiI_HznQwStThPv7AAAL
-✅ [2026-02-23T11:48:53.817Z] POST /api/auth/login → 200 (204ms) IP:::1
-✅ [2026-02-23T11:48:53.875Z] GET /api/notifications → 304 (23ms) IP:::1
-✅ [2026-02-23T11:48:53.898Z] GET /api/groups → 304 (21ms) IP:::1
-✅ [2026-02-23T11:48:53.902Z] GET /api/groups → 304 (3ms) IP:::1
-✅ [2026-02-23T11:48:55.117Z] GET /api/dashboard/stats → 304 (1239ms) IP:::1
-✅ [2026-02-23T11:48:55.187Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (57ms) IP:::1
-📌 Socket WiI_HznQwStThPv7AAAL joined group:699c2523bde8a1c77db98898
-✅ [2026-02-23T11:48:57.476Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (15ms) IP:::1
-✅ [2026-02-23T11:48:57.521Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
-✅ [2026-02-23T11:48:57.522Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (19ms) IP:::1
-✅ [2026-02-23T11:48:57.522Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (18ms) IP:::1
-✅ [2026-02-23T11:48:57.524Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (19ms) IP:::1
-✅ [2026-02-23T11:48:57.525Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (24ms) IP:::1
-✅ [2026-02-23T11:48:57.525Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (19ms) IP:::1
-✅ [2026-02-23T11:48:57.529Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (3ms) IP:::1
-✅ [2026-02-23T11:48:57.533Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (9ms) IP:::1
-✅ [2026-02-23T11:48:57.534Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (8ms) IP:::1
-✅ [2026-02-23T11:48:57.534Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
-📤 Socket WiI_HznQwStThPv7AAAL left group:699c2523bde8a1c77db98898
-✅ [2026-02-23T11:48:58.609Z] GET /api/groups → 304 (14ms) IP:::1
-✅ [2026-02-23T11:48:58.610Z] GET /api/dashboard/stats → 304 (12ms) IP:::1
-✅ [2026-02-23T11:48:58.616Z] GET /api/groups → 304 (5ms) IP:::1
-✅ [2026-02-23T11:48:58.627Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (9ms) IP:::1
-🔌 Socket disconnected: rdfhnAU5aw6oeysRAAAH
-✅ [2026-02-23T11:49:02.752Z] GET /api/currency/supported → 304 (1ms) IP:::1
-🔌 Socket connected: nUnQlDPihOjXMUnFAAAN
-✅ [2026-02-23T11:49:08.175Z] POST /api/auth/login → 200 (104ms) IP:::1
-✅ [2026-02-23T11:49:08.212Z] GET /api/notifications → 304 (4ms) IP:::1
-✅ [2026-02-23T11:49:08.230Z] GET /api/groups → 304 (3ms) IP:::1
-✅ [2026-02-23T11:49:08.233Z] GET /api/groups → 304 (1ms) IP:::1
-✅ [2026-02-23T11:49:08.234Z] GET /api/dashboard/stats → 304 (6ms) IP:::1
-🔌 Socket disconnected: nUnQlDPihOjXMUnFAAAN
-✅ [2026-02-23T11:49:10.895Z] GET /api/auth/me → 304 (5ms) IP:::1
-🔌 Socket connected: GNvYNquCB6AyocDpAAAP
-✅ [2026-02-23T11:49:10.904Z] GET /api/currency/supported → 304 (0ms) IP:::1
-✅ [2026-02-23T11:49:11.215Z] GET /api/notifications → 304 (9ms) IP:::1
-✅ [2026-02-23T11:49:11.217Z] GET /api/groups → 304 (9ms) IP:::1
-✅ [2026-02-23T11:49:11.223Z] GET /api/groups → 304 (5ms) IP:::1
-✅ [2026-02-23T11:49:11.224Z] GET /api/dashboard/stats → 304 (15ms) IP:::1
-🔌 Socket disconnected: WiI_HznQwStThPv7AAAL
-✅ [2026-02-23T11:49:33.568Z] GET /api/auth/me → 304 (8ms) IP:::1
-✅ [2026-02-23T11:49:33.591Z] GET /api/currency/supported → 304 (1ms) IP:::1
-🔌 Socket connected: EoenUfyj3XwC2is5AAAR
-✅ [2026-02-23T11:49:33.916Z] GET /api/notifications → 304 (6ms) IP:::1
-✅ [2026-02-23T11:49:33.918Z] GET /api/groups → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:33.922Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
-✅ [2026-02-23T11:49:33.922Z] GET /api/groups → 304 (3ms) IP:::1
-✅ [2026-02-23T11:49:33.935Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (5ms) IP:::1
-🔌 Socket disconnected: EoenUfyj3XwC2is5AAAR
-✅ [2026-02-23T11:49:36.109Z] GET /api/auth/me → 304 (6ms) IP:::1
-✅ [2026-02-23T11:49:36.135Z] GET /api/currency/supported → 304 (1ms) IP:::1
-🔌 Socket connected: IiBq4Bs5WFy8pvRNAAAT
-✅ [2026-02-23T11:49:36.449Z] GET /api/notifications → 304 (5ms) IP:::1
-✅ [2026-02-23T11:49:36.451Z] GET /api/groups → 304 (5ms) IP:::1
-✅ [2026-02-23T11:49:36.456Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
-✅ [2026-02-23T11:49:36.457Z] GET /api/groups → 304 (4ms) IP:::1
-✅ [2026-02-23T11:49:36.465Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?month=2026-02 → 304 (4ms) IP:::1
-📌 Socket IiBq4Bs5WFy8pvRNAAAT joined group:699c2523bde8a1c77db98898
-✅ [2026-02-23T11:49:39.988Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:40.031Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (13ms) IP:::1
-✅ [2026-02-23T11:49:40.032Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (16ms) IP:::1
-✅ [2026-02-23T11:49:40.035Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (18ms) IP:::1
-✅ [2026-02-23T11:49:40.035Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (15ms) IP:::1
-✅ [2026-02-23T11:49:40.037Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (16ms) IP:::1
-✅ [2026-02-23T11:49:40.037Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (17ms) IP:::1
-✅ [2026-02-23T11:49:40.041Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:40.042Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (4ms) IP:::1
-✅ [2026-02-23T11:49:40.042Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (6ms) IP:::1
-✅ [2026-02-23T11:49:40.042Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (4ms) IP:::1
-🔌 Socket disconnected: IiBq4Bs5WFy8pvRNAAAT
-✅ [2026-02-23T11:49:46.667Z] GET /api/auth/me → 304 (5ms) IP:::1
-🔌 Socket connected: h07d_uUZ_ZIE8LfNAAAV
-✅ [2026-02-23T11:49:46.697Z] GET /api/currency/supported → 304 (2ms) IP:::1
-📌 Socket h07d_uUZ_ZIE8LfNAAAV joined group:699c2523bde8a1c77db98898
-✅ [2026-02-23T11:49:47.001Z] GET /api/notifications → 304 (4ms) IP:::1
-✅ [2026-02-23T11:49:47.005Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:47.069Z] GET /api/groups/699c2523bde8a1c77db98898/transactions → 304 (8ms) IP:::1
-✅ [2026-02-23T11:49:47.069Z] GET /api/groups/699c2523bde8a1c77db98898/expenses → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:47.070Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:47.073Z] GET /api/groups/699c2523bde8a1c77db98898/balances → 304 (11ms) IP:::1
-✅ [2026-02-23T11:49:47.075Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/health-score → 304 (11ms) IP:::1
-✅ [2026-02-23T11:49:47.077Z] GET /api/groups/699c2523bde8a1c77db98898/settlements/optimized → 304 (11ms) IP:::1
-✅ [2026-02-23T11:49:47.079Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:47.079Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:47.080Z] GET /api/groups/699c2523bde8a1c77db98898/budgets/status?month=2026-02 → 304 (7ms) IP:::1
-✅ [2026-02-23T11:49:47.085Z] GET /api/groups/699c2523bde8a1c77db98898/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (9ms) IP:::1
-🔌 Socket disconnected: h07d_uUZ_ZIE8LfNAAAV
-✅ [2026-02-23T11:49:47.985Z] GET /api/auth/me → 304 (6ms) IP:::1
-✅ [2026-02-23T11:49:48.010Z] GET /api/currency/supported → 304 (0ms) IP:::1
-🔌 Socket connected: ycTv1nXQlB8TEb0tAAAX
-📌 Socket ycTv1nXQlB8TEb0tAAAX joined group:699c2523bde8a1c77db98898
+[2026-02-23T11:40:56.461Z] [PID: 14682] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon Feb 23 2026 17:08:00 GMT+0530 (India Standard Time)! Possible blocking IO or[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+(node:13961) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 exit listeners added to [Bus]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+[dotenv@17.2.4] injecting env (4) from .env -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.4] injecting env (4) from .env -- tip: 🗂️ backup and recover secrets: https://dotenvx.com/ops
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.4] injecting env (4) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.4] injecting env (4) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.4] injecting env (4) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.4] injecting env (4) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[dotenv@17.2.4] injecting env (4) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+⏰ Recurring expense scheduler started (runs every minute)
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at Object.<anonymous> (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/server.js:101:12)
+    at Module._compile (node:internal/modules/cjs/loader:1809:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1940:10)
+    at Module.load (node:internal/modules/cjs/loader:1530:32)
+    at Module._load (node:internal/modules/cjs/loader:1332:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:2044:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v25.6.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+ group:699c2523bde8a1c77db98898
 ✅ [2026-02-23T11:49:48.322Z] GET /api/notifications → 304 (5ms) IP:::1
 ✅ [2026-02-23T11:49:48.324Z] GET /api/groups/699c2523bde8a1c77db98898 → 304 (6ms) IP:::1
 ✅ [2026-02-23T11:49:48.389Z] GET /api/groups/699c2523bde8a1c77db98898/settlements → 304 (11ms) IP:::1
@@ -711,3 +826,449 @@ createNotifications error: Notification validation failed: recipient: Cast to Ob
 ✅ [2026-02-23T12:28:30.253Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
 ✅ [2026-02-23T12:28:30.254Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
 ✅ [2026-02-23T12:28:30.254Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:30:38.965Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b118e2215a9a7bee9dad4&payee=698b0cb1f584c0a22bec9a93 → 403 (37ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:30:43.963Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (15ms) IP:::1
+📤 Socket mp0Mlfe1eeVKZtwwAABN left group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:31:12.622Z] GET /api/groups → 304 (12ms) IP:::1
+✅ [2026-02-23T12:31:12.626Z] GET /api/dashboard/stats → 200 (15ms) IP:::1
+✅ [2026-02-23T12:31:12.629Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T12:31:12.643Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 200 (10ms) IP:::1
+📌 Socket mp0Mlfe1eeVKZtwwAABN joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:31:17.381Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (9ms) IP:::1
+✅ [2026-02-23T12:31:17.426Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (14ms) IP:::1
+✅ [2026-02-23T12:31:17.429Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (16ms) IP:::1
+✅ [2026-02-23T12:31:17.431Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (20ms) IP:::1
+✅ [2026-02-23T12:31:17.433Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (20ms) IP:::1
+✅ [2026-02-23T12:31:17.438Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (28ms) IP:::1
+✅ [2026-02-23T12:31:17.442Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (27ms) IP:::1
+✅ [2026-02-23T12:31:17.446Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (16ms) IP:::1
+✅ [2026-02-23T12:31:17.447Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (7ms) IP:::1
+✅ [2026-02-23T12:31:17.450Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (9ms) IP:::1
+✅ [2026-02-23T12:31:17.454Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (21ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:31:37.836Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b118e2215a9a7bee9dad4&payee=698b0cb1f584c0a22bec9a93 → 403 (11ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:31:42.538Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (10ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:32:09.866Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (9ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:32:13.944Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (8ms) IP:::1
+🔌 Socket disconnected: nq-fsC3xtmOz6IHFAABL
+✅ [2026-02-23T12:32:26.909Z] GET /api/auth/me → 304 (3ms) IP:::1
+🔌 Socket connected: B0AxHjCNs4fttW8uAABP
+✅ [2026-02-23T12:32:26.931Z] GET /api/currency/supported → 304 (0ms) IP:::1
+📌 Socket B0AxHjCNs4fttW8uAABP joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:32:27.235Z] GET /api/notifications → 304 (5ms) IP:::1
+✅ [2026-02-23T12:32:27.238Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (9ms) IP:::1
+✅ [2026-02-23T12:32:27.283Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (16ms) IP:::1
+✅ [2026-02-23T12:32:27.287Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (21ms) IP:::1
+✅ [2026-02-23T12:32:27.292Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (29ms) IP:::1
+✅ [2026-02-23T12:32:27.294Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (26ms) IP:::1
+✅ [2026-02-23T12:32:27.295Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (19ms) IP:::1
+✅ [2026-02-23T12:32:27.296Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (24ms) IP:::1
+✅ [2026-02-23T12:32:27.297Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (7ms) IP:::1
+✅ [2026-02-23T12:32:27.299Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:32:27.300Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (4ms) IP:::1
+✅ [2026-02-23T12:32:27.301Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (7ms) IP:::1
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:342:13)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:297:9
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+    at router (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:60:12)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:342:13)
+⚠️  [2026-02-23T12:35:20.942Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 401 (2ms) IP:::1
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:342:13)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:297:9
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+    at router (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:60:12)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:342:13)
+⚠️  [2026-02-23T12:35:20.944Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 401 (1ms) IP:::1
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:342:13)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:297:9
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+    at router (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:60:12)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:342:13)
+⚠️  [2026-02-23T12:35:20.946Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 401 (1ms) IP:::1
+✅ [2026-02-23T12:35:21.128Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (189ms) IP:::1
+✅ [2026-02-23T12:35:21.132Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (194ms) IP:::1
+✅ [2026-02-23T12:35:21.140Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (210ms) IP:::1
+🔌 Socket disconnected: B0AxHjCNs4fttW8uAABP
+✅ [2026-02-23T12:35:21.291Z] GET /api/currency/supported → 304 (0ms) IP:::1
+🔌 Socket connected: WfNk6XnJhuF3W5CgAABR
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:35:43.382Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (32ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:35:44.025Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (6ms) IP:::1
+🔌 Socket disconnected: mp0Mlfe1eeVKZtwwAABN
+✅ [2026-02-23T12:35:47.730Z] GET /api/auth/me → 304 (6ms) IP:::1
+🔌 Socket connected: svmGw5tZ58hilfa3AABT
+✅ [2026-02-23T12:35:47.773Z] GET /api/currency/supported → 304 (1ms) IP:::1
+📌 Socket svmGw5tZ58hilfa3AABT joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:35:48.103Z] GET /api/notifications → 304 (39ms) IP:::1
+✅ [2026-02-23T12:35:48.105Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (39ms) IP:::1
+✅ [2026-02-23T12:35:48.178Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (22ms) IP:::1
+✅ [2026-02-23T12:35:48.196Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (37ms) IP:::1
+✅ [2026-02-23T12:35:48.240Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (78ms) IP:::1
+✅ [2026-02-23T12:35:48.247Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (89ms) IP:::1
+✅ [2026-02-23T12:35:48.254Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (83ms) IP:::1
+✅ [2026-02-23T12:35:48.256Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (61ms) IP:::1
+✅ [2026-02-23T12:35:48.262Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (72ms) IP:::1
+✅ [2026-02-23T12:35:48.264Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (15ms) IP:::1
+✅ [2026-02-23T12:35:48.264Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (14ms) IP:::1
+✅ [2026-02-23T12:35:48.265Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (13ms) IP:::1
+✅ [2026-02-23T12:36:06.921Z] POST /api/auth/login → 200 (124ms) IP:::1
+✅ [2026-02-23T12:36:06.963Z] GET /api/notifications → 304 (4ms) IP:::1
+✅ [2026-02-23T12:36:07.012Z] GET /api/dashboard/stats → 200 (26ms) IP:::1
+✅ [2026-02-23T12:36:07.476Z] GET /api/groups → 304 (491ms) IP:::1
+✅ [2026-02-23T12:36:07.481Z] GET /api/groups → 304 (5ms) IP:::1
+✅ [2026-02-23T12:36:07.494Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 200 (10ms) IP:::1
+📌 Socket WfNk6XnJhuF3W5CgAABR joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:36:09.825Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:36:09.873Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (24ms) IP:::1
+✅ [2026-02-23T12:36:09.875Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (25ms) IP:::1
+✅ [2026-02-23T12:36:09.875Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (22ms) IP:::1
+✅ [2026-02-23T12:36:09.876Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (22ms) IP:::1
+✅ [2026-02-23T12:36:09.877Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (26ms) IP:::1
+✅ [2026-02-23T12:36:09.881Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (28ms) IP:::1
+✅ [2026-02-23T12:36:09.882Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:36:09.882Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:36:09.883Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:36:09.884Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:36:31.951Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (8ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:36:36.696Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (8ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:36:54.915Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (6ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:36:58.658Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (8ms) IP:::1
+🔌 Socket disconnected: svmGw5tZ58hilfa3AABT
+Auth Middleware Error: jwt expired
+❌ Error: Not authorized - token expired
+Stack: Error: Not authorized - token expired
+    at protect (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/middleware/auth.js:40:29)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/route.js:117:3)
+    at handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/lib/layer.js:152:17)
+    at /Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:295:15
+    at processParams (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:582:12)
+    at next (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:291:5)
+    at router.handle (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/node_modules/router/index.js:186:3)
+⚠️  [2026-02-23T12:42:04.104Z] GET /api/auth/me → 401 (4ms) IP:::1
+✅ [2026-02-23T12:42:04.116Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: xdYQ0cNxZMjGGL9EAABV
+🔌 Socket disconnected: xdYQ0cNxZMjGGL9EAABV
+✅ [2026-02-23T12:42:04.160Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: HMT2goC3kL6xLo6pAABX
+✅ [2026-02-23T12:42:09.645Z] POST /api/auth/login → 200 (118ms) IP:::1
+✅ [2026-02-23T12:42:09.690Z] GET /api/notifications → 304 (8ms) IP:::1
+✅ [2026-02-23T12:42:09.710Z] GET /api/dashboard/stats → 304 (9ms) IP:::1
+✅ [2026-02-23T12:42:09.711Z] GET /api/groups → 304 (11ms) IP:::1
+✅ [2026-02-23T12:42:09.714Z] GET /api/groups → 304 (3ms) IP:::1
+✅ [2026-02-23T12:42:09.772Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 304 (49ms) IP:::1
+🔌 Socket disconnected: WfNk6XnJhuF3W5CgAABR
+✅ [2026-02-23T12:42:12.564Z] GET /api/auth/me → 304 (51ms) IP:::1
+🔌 Socket connected: KOTgu-318C-tlgP1AABZ
+✅ [2026-02-23T12:42:12.586Z] GET /api/currency/supported → 304 (3ms) IP:::1
+📌 Socket KOTgu-318C-tlgP1AABZ joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:42:12.904Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (14ms) IP:::1
+✅ [2026-02-23T12:42:12.905Z] GET /api/notifications → 304 (17ms) IP:::1
+✅ [2026-02-23T12:42:12.957Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (21ms) IP:::1
+✅ [2026-02-23T12:42:12.958Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (17ms) IP:::1
+✅ [2026-02-23T12:42:12.959Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (13ms) IP:::1
+✅ [2026-02-23T12:42:12.963Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (23ms) IP:::1
+✅ [2026-02-23T12:42:12.964Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (19ms) IP:::1
+✅ [2026-02-23T12:42:12.968Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (5ms) IP:::1
+✅ [2026-02-23T12:42:12.973Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (8ms) IP:::1
+✅ [2026-02-23T12:42:12.976Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (15ms) IP:::1
+✅ [2026-02-23T12:42:12.976Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (34ms) IP:::1
+✅ [2026-02-23T12:42:12.995Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (33ms) IP:::1
+📌 Socket HMT2goC3kL6xLo6pAABX joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:42:31.256Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (8ms) IP:::1
+✅ [2026-02-23T12:42:31.295Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (14ms) IP:::1
+✅ [2026-02-23T12:42:31.302Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (22ms) IP:::1
+✅ [2026-02-23T12:42:31.302Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (20ms) IP:::1
+✅ [2026-02-23T12:42:31.304Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (24ms) IP:::1
+✅ [2026-02-23T12:42:31.307Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (24ms) IP:::1
+✅ [2026-02-23T12:42:31.307Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (23ms) IP:::1
+✅ [2026-02-23T12:42:31.311Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (11ms) IP:::1
+✅ [2026-02-23T12:42:31.312Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (6ms) IP:::1
+✅ [2026-02-23T12:42:31.312Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:42:31.312Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (6ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:42:42.999Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b118e2215a9a7bee9dad4&payee=698b0cb1f584c0a22bec9a93 → 403 (5ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:42:49.016Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (5ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:42:52.913Z] POST /api/groups/699c47b9c375fe14bd89e072/settlements → 400 (9ms) IP:::1
+📤 Socket HMT2goC3kL6xLo6pAABX left group:699c47b9c375fe14bd89e072
+❌ Error: Not authorized to access this group
+Stack: Error: Not authorized to access this group
+    at verifyMembership (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/recurringExpenseController.js:14:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async getRecurringExpenses (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/recurringExpenseController.js:77:9)
+❌ [2026-02-23T12:43:14.782Z] GET /api/groups/699c47b9c375fe14bd89e072/recurring → 500 (5ms) IP:::1
+✅ [2026-02-23T12:43:14.784Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (5ms) IP:::1
+📌 Socket HMT2goC3kL6xLo6pAABX joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:43:18.615Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (10ms) IP:::1
+✅ [2026-02-23T12:43:18.661Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (16ms) IP:::1
+✅ [2026-02-23T12:43:18.670Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (28ms) IP:::1
+✅ [2026-02-23T12:43:18.674Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (31ms) IP:::1
+✅ [2026-02-23T12:43:18.675Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (28ms) IP:::1
+✅ [2026-02-23T12:43:18.677Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (31ms) IP:::1
+✅ [2026-02-23T12:43:18.677Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (28ms) IP:::1
+✅ [2026-02-23T12:43:18.683Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (5ms) IP:::1
+✅ [2026-02-23T12:43:18.683Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:43:18.684Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (16ms) IP:::1
+✅ [2026-02-23T12:43:18.685Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+📤 Socket HMT2goC3kL6xLo6pAABX left group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:44:26.792Z] GET /api/groups → 304 (8ms) IP:::1
+✅ [2026-02-23T12:44:26.812Z] GET /api/dashboard/stats → 304 (25ms) IP:::1
+✅ [2026-02-23T12:44:26.813Z] GET /api/groups → 304 (17ms) IP:::1
+✅ [2026-02-23T12:44:26.824Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 304 (8ms) IP:::1
+🔌 Socket disconnected: KOTgu-318C-tlgP1AABZ
+✅ [2026-02-23T12:44:31.715Z] GET /api/auth/me → 304 (7ms) IP:::1
+🔌 Socket connected: wEFYvshR28RmkPANAABb
+✅ [2026-02-23T12:44:31.741Z] GET /api/currency/supported → 304 (1ms) IP:::1
+📌 Socket wEFYvshR28RmkPANAABb joined group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:44:32.052Z] GET /api/notifications → 304 (14ms) IP:::1
+✅ [2026-02-23T12:44:32.055Z] GET /api/groups/699c47b9c375fe14bd89e072 → 304 (19ms) IP:::1
+✅ [2026-02-23T12:44:32.101Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements → 304 (24ms) IP:::1
+✅ [2026-02-23T12:44:32.102Z] GET /api/groups/699c47b9c375fe14bd89e072/expenses → 304 (27ms) IP:::1
+✅ [2026-02-23T12:44:32.102Z] GET /api/groups/699c47b9c375fe14bd89e072/settlements/optimized → 304 (26ms) IP:::1
+✅ [2026-02-23T12:44:32.104Z] GET /api/groups/699c47b9c375fe14bd89e072/budgets/status?month=2026-02 → 304 (19ms) IP:::1
+✅ [2026-02-23T12:44:32.106Z] GET /api/groups/699c47b9c375fe14bd89e072/balances → 304 (27ms) IP:::1
+✅ [2026-02-23T12:44:32.108Z] GET /api/groups/699c47b9c375fe14bd89e072/transactions → 304 (27ms) IP:::1
+✅ [2026-02-23T12:44:32.110Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/health-score → 304 (8ms) IP:::1
+✅ [2026-02-23T12:44:32.111Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:44:32.112Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (8ms) IP:::1
+✅ [2026-02-23T12:44:32.113Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (7ms) IP:::1
+📤 Socket wEFYvshR28RmkPANAABb left group:699c47b9c375fe14bd89e072
+✅ [2026-02-23T12:44:34.288Z] GET /api/groups → 304 (10ms) IP:::1
+✅ [2026-02-23T12:44:34.294Z] GET /api/dashboard/stats → 304 (13ms) IP:::1
+✅ [2026-02-23T12:44:34.296Z] GET /api/groups → 304 (7ms) IP:::1
+✅ [2026-02-23T12:44:34.311Z] GET /api/groups/699c47b9c375fe14bd89e072/analytics/category?month=2026-02 → 304 (11ms) IP:::1
+✅ [2026-02-23T12:45:00.018Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (18ms) IP:::1
+✅ [2026-02-23T12:45:01.301Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (5ms) IP:::1
+✅ [2026-02-23T12:45:03.075Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (7ms) IP:::1
+✅ [2026-02-23T12:45:03.270Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (8ms) IP:::1
+✅ [2026-02-23T12:45:03.452Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (8ms) IP:::1
+✅ [2026-02-23T12:45:14.321Z] GET /api/auth/users?query=aruldsouzaj%40gmail.com → 304 (7ms) IP:::1
+✅ [2026-02-23T12:45:21.472Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (7ms) IP:::1
+✅ [2026-02-23T12:45:22.203Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (6ms) IP:::1
+✅ [2026-02-23T12:45:22.401Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (6ms) IP:::1
+✅ [2026-02-23T12:45:22.552Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (6ms) IP:::1
+✅ [2026-02-23T12:45:22.737Z] GET /api/auth/users?query=aruldsouza.26it%40licet.ac.in → 304 (7ms) IP:::1
+✅ [2026-02-23T12:45:35.877Z] GET /api/auth/users?query=ARUL+D+SOUZA+J+22IT → 200 (5ms) IP:::1
+✅ [2026-02-23T12:45:36.455Z] GET /api/auth/users?query=ARUL+D+SOUZA+J+22IT → 304 (8ms) IP:::1
+✅ [2026-02-23T12:45:36.588Z] GET /api/auth/users?query=ARUL+D+SOUZA+J+22IT → 304 (7ms) IP:::1
+✅ [2026-02-23T12:45:36.664Z] GET /api/auth/users?query=ARUL+D+SOUZA+J+22IT → 304 (6ms) IP:::1
+✅ [2026-02-23T12:45:36.763Z] GET /api/auth/users?query=ARUL+D+SOUZA+J+22IT → 304 (6ms) IP:::1
+✅ [2026-02-23T12:45:42.167Z] POST /api/groups → 201 (16ms) IP:::1
+✅ [2026-02-23T12:45:42.198Z] GET /api/groups → 200 (5ms) IP:::1
+✅ [2026-02-23T12:45:42.204Z] GET /api/groups → 304 (4ms) IP:::1
+✅ [2026-02-23T12:45:42.205Z] GET /api/dashboard/stats → 200 (9ms) IP:::1
+✅ [2026-02-23T12:45:42.213Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?month=2026-02 → 200 (6ms) IP:::1
+📌 Socket wEFYvshR28RmkPANAABb joined group:699c4bf6c375fe14bd89e63d
+✅ [2026-02-23T12:45:46.425Z] GET /api/groups/699c4bf6c375fe14bd89e63d → 200 (8ms) IP:::1
+✅ [2026-02-23T12:45:46.466Z] GET /api/groups/699c4bf6c375fe14bd89e63d/expenses → 200 (18ms) IP:::1
+✅ [2026-02-23T12:45:46.467Z] GET /api/groups/699c4bf6c375fe14bd89e63d/transactions → 200 (17ms) IP:::1
+✅ [2026-02-23T12:45:46.469Z] GET /api/groups/699c4bf6c375fe14bd89e63d/budgets/status?month=2026-02 → 200 (18ms) IP:::1
+✅ [2026-02-23T12:45:46.469Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/optimized → 200 (20ms) IP:::1
+✅ [2026-02-23T12:45:46.470Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements → 200 (17ms) IP:::1
+✅ [2026-02-23T12:45:46.476Z] GET /api/groups/699c4bf6c375fe14bd89e63d/balances → 200 (24ms) IP:::1
+✅ [2026-02-23T12:45:46.478Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/health-score → 200 (8ms) IP:::1
+✅ [2026-02-23T12:45:46.479Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (7ms) IP:::1
+✅ [2026-02-23T12:45:46.479Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (5ms) IP:::1
+✅ [2026-02-23T12:45:46.480Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (5ms) IP:::1
+✅ [2026-02-23T12:46:13.135Z] POST /api/groups/699c4bf6c375fe14bd89e63d/expenses → 201 (16ms) IP:::1
+createNotifications error: Notification validation failed: recipient: Cast to ObjectId failed for value "{\n' +
+  "  user: new ObjectId('698b0cb1f584c0a22bec9a93'),\n" +
+  "  role: 'Member',\n" +
+  "  _id: new ObjectId('699c4bf6c375fe14bd89e63e')\n" +
+  '}" (type string) at path "recipient" because of "BSONError"
+✅ [2026-02-23T12:46:13.191Z] GET /api/groups/699c4bf6c375fe14bd89e63d/expenses → 200 (19ms) IP:::1
+✅ [2026-02-23T12:46:13.194Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements → 304 (10ms) IP:::1
+✅ [2026-02-23T12:46:13.196Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/health-score → 200 (11ms) IP:::1
+✅ [2026-02-23T12:46:13.198Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/optimized → 200 (11ms) IP:::1
+✅ [2026-02-23T12:46:13.200Z] GET /api/groups/699c4bf6c375fe14bd89e63d/balances → 200 (18ms) IP:::1
+✅ [2026-02-23T12:46:13.201Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (7ms) IP:::1
+✅ [2026-02-23T12:46:13.201Z] GET /api/groups/699c4bf6c375fe14bd89e63d/transactions → 200 (14ms) IP:::1
+✅ [2026-02-23T12:46:13.204Z] GET /api/groups/699c4bf6c375fe14bd89e63d/budgets/status?month=2026-02 → 304 (7ms) IP:::1
+✅ [2026-02-23T12:46:13.205Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (6ms) IP:::1
+✅ [2026-02-23T12:46:13.206Z] GET /api/groups/699c4bf6c375fe14bd89e63d → 304 (5ms) IP:::1
+✅ [2026-02-23T12:46:13.206Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (4ms) IP:::1
+🔌 Socket disconnected: HMT2goC3kL6xLo6pAABX
+✅ [2026-02-23T12:46:17.056Z] GET /api/auth/me → 304 (4ms) IP:::1
+🔌 Socket connected: CiiBai6Lw03O56LLAABd
+✅ [2026-02-23T12:46:17.068Z] GET /api/currency/supported → 304 (1ms) IP:::1
+✅ [2026-02-23T12:46:17.382Z] GET /api/notifications → 304 (8ms) IP:::1
+✅ [2026-02-23T12:46:17.385Z] GET /api/groups → 200 (8ms) IP:::1
+✅ [2026-02-23T12:46:17.388Z] GET /api/dashboard/stats → 200 (12ms) IP:::1
+✅ [2026-02-23T12:46:17.390Z] GET /api/groups → 304 (3ms) IP:::1
+✅ [2026-02-23T12:46:17.409Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?month=2026-02 → 200 (6ms) IP:::1
+📌 Socket CiiBai6Lw03O56LLAABd joined group:699c4bf6c375fe14bd89e63d
+✅ [2026-02-23T12:46:19.616Z] GET /api/groups/699c4bf6c375fe14bd89e63d → 200 (8ms) IP:::1
+✅ [2026-02-23T12:46:19.656Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements → 200 (14ms) IP:::1
+✅ [2026-02-23T12:46:19.663Z] GET /api/groups/699c4bf6c375fe14bd89e63d/balances → 200 (22ms) IP:::1
+✅ [2026-02-23T12:46:19.665Z] GET /api/groups/699c4bf6c375fe14bd89e63d/expenses → 200 (25ms) IP:::1
+✅ [2026-02-23T12:46:19.665Z] GET /api/groups/699c4bf6c375fe14bd89e63d/budgets/status?month=2026-02 → 200 (20ms) IP:::1
+✅ [2026-02-23T12:46:19.667Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/optimized → 200 (23ms) IP:::1
+✅ [2026-02-23T12:46:19.668Z] GET /api/groups/699c4bf6c375fe14bd89e63d/transactions → 200 (23ms) IP:::1
+✅ [2026-02-23T12:46:19.670Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/health-score → 200 (4ms) IP:::1
+✅ [2026-02-23T12:46:19.671Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 200 (10ms) IP:::1
+✅ [2026-02-23T12:46:19.672Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 200 (6ms) IP:::1
+✅ [2026-02-23T12:46:19.673Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 200 (5ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:46:31.848Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (7ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:46:35.604Z] POST /api/groups/699c4bf6c375fe14bd89e63d/settlements → 400 (7ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:50:15.801Z] POST /api/groups/699c4bf6c375fe14bd89e63d/settlements → 400 (12ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:50:16.380Z] POST /api/groups/699c4bf6c375fe14bd89e63d/settlements → 400 (17ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:50:16.518Z] POST /api/groups/699c4bf6c375fe14bd89e63d/settlements → 400 (8ms) IP:::1
+🔌 Socket disconnected: CiiBai6Lw03O56LLAABd
+✅ [2026-02-23T12:50:18.150Z] GET /api/auth/me → 304 (5ms) IP:::1
+✅ [2026-02-23T12:50:18.163Z] GET /api/currency/supported → 304 (1ms) IP:::1
+🔌 Socket connected: MFztEyVxcb2Qs23CAABf
+📌 Socket MFztEyVxcb2Qs23CAABf joined group:699c4bf6c375fe14bd89e63d
+✅ [2026-02-23T12:50:18.465Z] GET /api/notifications → 304 (5ms) IP:::1
+✅ [2026-02-23T12:50:18.470Z] GET /api/groups/699c4bf6c375fe14bd89e63d → 304 (8ms) IP:::1
+✅ [2026-02-23T12:50:18.520Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements → 304 (16ms) IP:::1
+✅ [2026-02-23T12:50:18.528Z] GET /api/groups/699c4bf6c375fe14bd89e63d/expenses → 304 (21ms) IP:::1
+✅ [2026-02-23T12:50:18.528Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/health-score → 304 (18ms) IP:::1
+✅ [2026-02-23T12:50:18.528Z] GET /api/groups/699c4bf6c375fe14bd89e63d/balances → 304 (20ms) IP:::1
+✅ [2026-02-23T12:50:18.531Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (20ms) IP:::1
+✅ [2026-02-23T12:50:18.532Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/optimized → 304 (15ms) IP:::1
+✅ [2026-02-23T12:50:18.533Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (8ms) IP:::1
+✅ [2026-02-23T12:50:18.535Z] GET /api/groups/699c4bf6c375fe14bd89e63d/transactions → 304 (5ms) IP:::1
+✅ [2026-02-23T12:50:18.536Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:50:18.536Z] GET /api/groups/699c4bf6c375fe14bd89e63d/budgets/status?month=2026-02 → 304 (5ms) IP:::1
+🔌 Socket disconnected: wEFYvshR28RmkPANAABb
+✅ [2026-02-23T12:50:28.775Z] GET /api/auth/me → 304 (5ms) IP:::1
+🔌 Socket connected: CJ4xG3pedtqOoC-4AABh
+✅ [2026-02-23T12:50:28.793Z] GET /api/currency/supported → 304 (1ms) IP:::1
+📌 Socket CJ4xG3pedtqOoC-4AABh joined group:699c4bf6c375fe14bd89e63d
+✅ [2026-02-23T12:50:29.105Z] GET /api/notifications → 304 (6ms) IP:::1
+✅ [2026-02-23T12:50:29.106Z] GET /api/groups/699c4bf6c375fe14bd89e63d → 304 (8ms) IP:::1
+✅ [2026-02-23T12:50:29.152Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements → 304 (14ms) IP:::1
+✅ [2026-02-23T12:50:29.159Z] GET /api/groups/699c4bf6c375fe14bd89e63d/balances → 304 (23ms) IP:::1
+✅ [2026-02-23T12:50:29.161Z] GET /api/groups/699c4bf6c375fe14bd89e63d/expenses → 304 (26ms) IP:::1
+✅ [2026-02-23T12:50:29.161Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/optimized → 304 (22ms) IP:::1
+✅ [2026-02-23T12:50:29.163Z] GET /api/groups/699c4bf6c375fe14bd89e63d/transactions → 304 (22ms) IP:::1
+✅ [2026-02-23T12:50:29.164Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/trends?startDate=2025-09-01&endDate=2026-02-28 → 304 (24ms) IP:::1
+✅ [2026-02-23T12:50:29.166Z] GET /api/groups/699c4bf6c375fe14bd89e63d/budgets/status?month=2026-02 → 304 (9ms) IP:::1
+✅ [2026-02-23T12:50:29.168Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/users?startDate=2025-09-01&endDate=2026-02-28 → 304 (6ms) IP:::1
+✅ [2026-02-23T12:50:29.168Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/category?startDate=2025-09-01&endDate=2026-02-28 → 304 (5ms) IP:::1
+✅ [2026-02-23T12:50:29.169Z] GET /api/groups/699c4bf6c375fe14bd89e63d/analytics/health-score → 304 (6ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:50:38.871Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (7ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:50:44.534Z] POST /api/groups/699c4bf6c375fe14bd89e63d/settlements → 400 (6ms) IP:::1
+❌ Error: Not authorized
+Stack: Error: Not authorized
+    at getDebtBetween (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:101:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:50:59.397Z] GET /api/groups/699c4bf6c375fe14bd89e63d/settlements/debt?payer=698b0cb1f584c0a22bec9a93&payee=698b118e2215a9a7bee9dad4 → 403 (6ms) IP:::1
+❌ Error: Payer and payee must be members of the group
+Stack: Error: Payer and payee must be members of the group
+    at createSettlement (/Users/johndsouzaj/Documents/GitHub/expense-manager/backend/controllers/settlementController.js:122:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+⚠️  [2026-02-23T12:51:03.443Z] POST /api/groups/699c4bf6c375fe14bd89e63d/settlements → 400 (7ms) IP:::1
+🔌 Socket disconnected: CJ4xG3pedtqOoC-4AABh
+🔌 Socket disconnected: MFztEyVxcb2Qs23CAABf

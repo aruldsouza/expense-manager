@@ -206,7 +206,7 @@ const AdvancedAnalytics = ({ groupId, groupCurrency, refreshTrigger }) => {
                                         <FaChartBar className="text-primary" /> Monthly Spending Trends
                                     </h5>
                                     <div style={{ width: '100%', height: 300 }}>
-                                        <ResponsiveContainer>
+                                        <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={trends}>
                                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                                                 <XAxis dataKey="monthYear" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={false} tickLine={false} />
@@ -228,7 +228,7 @@ const AdvancedAnalytics = ({ groupId, groupCurrency, refreshTrigger }) => {
                                         <FaChartPie className="text-primary" /> Category Breakdown
                                     </h5>
                                     <div style={{ width: '100%', height: 220 }}>
-                                        <ResponsiveContainer>
+                                        <ResponsiveContainer width="100%" height="100%">
                                             <PieChart>
                                                 <Pie
                                                     data={categories}
