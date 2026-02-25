@@ -189,7 +189,7 @@ const GroupDetails = () => {
                         </Tab>
                         <Tab eventKey="history" title={<><FaHistory className="me-2" />History</>}>
                             <div className="p-3">
-                                <MemoizedTransactionList groupId={groupId} refreshTrigger={refreshTrigger} />
+                                <MemoizedTransactionList groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
                             </div>
                         </Tab>
                         <Tab eventKey="budgets" title={<><FaWallet className="me-2" />Budgets</>}>

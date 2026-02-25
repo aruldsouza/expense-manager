@@ -21,3 +21,6 @@ files generated
 5:37:07 PM [vite] (client) hmr update /src/components/AddExpense.jsx
 5:37:30 PM [vite] (client) hmr update /src/components/AddRecurringExpense.jsx
 6:05:20 PM [vite] (client) hmr update /src/components/AdvancedAnalytics.jsx
+2:47:09 PM [vite] (client) hmr update /src/components/TransactionList.jsx
+2:47:11 PM [vite] (client) hmr update /src/components/TransactionList.jsx
+2:48:12 PM [vite] (client) hmr update /src/pages/GroupDetails.jsx

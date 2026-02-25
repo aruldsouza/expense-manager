@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { ListGroup, Badge, Spinner, Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { FaMoneyBillWave, FaHandHoldingUsd, FaHistory, FaFilter } from 'react-icons/fa';
+import { useCurrency } from '../context/CurrencyContext';
 
-const TransactionList = ({ groupId, refreshTrigger }) => {
+const TransactionList = ({ groupId, refreshTrigger, groupCurrency }) => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [filter, setFilter] = useState('all'); // all, expense, settlement
+    const { formatCurrency } = useCurrency();
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -84,7 +86,7 @@ const TransactionList = ({ groupId, refreshTrigger }) => {
                                 </div>
                             </div>
                             <div className={`fw-bold ${colorClass}`}>
-                                {isExpense ? '-' : '+'}${t.amount.toFixed(2)}
+                                {isExpense ? '-' : '+'}{formatCurrency(t.amount, groupCurrency)}
                             </div>
                         </ListGroup.Item>
                     );
