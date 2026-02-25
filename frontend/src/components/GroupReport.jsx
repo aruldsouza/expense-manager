@@ -22,21 +22,28 @@ const GroupReport = ({ groupId, groupName, userRole }) => {
         return p.toString() ? `?${p.toString()}` : '';
     };
 
+    // Parse JSON error from a blob response (axios blob mode returns errors as Blob)
+    const blobToErrorMsg = async (err, fallback) => {
+        try {
+            if (err.response?.data instanceof Blob) {
+                const text = await err.response.data.text();
+                const json = JSON.parse(text);
+                return json.error || fallback;
+            }
+        } catch (_) { /* ignore parse errors */ }
+        return err.response?.data?.error || err.message || fallback;
+    };
+
     // ─── PDF Download ──────────────────────────────────────────────────────────
     const handlePdfDownload = async () => {
         setPdfLoading(true);
         try {
-            const token = localStorage.getItem('token');
             const params = buildParams();
-            const res = await fetch(
-                `${import.meta.env.VITE_API_URL || ''}/api/groups/${groupId}/reports/pdf${params}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const res = await api.get(
+                `/groups/${groupId}/reports/pdf${params}`,
+                { responseType: 'blob' }
             );
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.error || 'PDF generation failed');
-            }
-            const blob = await res.blob();
+            const blob = new Blob([res.data], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -47,7 +54,8 @@ const GroupReport = ({ groupId, groupName, userRole }) => {
             URL.revokeObjectURL(url);
             toast.success('PDF report downloaded!');
         } catch (err) {
-            toast.error(err.message || 'Failed to download PDF');
+            const msg = await blobToErrorMsg(err, 'Failed to download PDF');
+            toast.error(msg);
         } finally {
             setPdfLoading(false);
         }
@@ -57,14 +65,12 @@ const GroupReport = ({ groupId, groupName, userRole }) => {
     const handleCsvDownload = async () => {
         setCsvLoading(true);
         try {
-            const token = localStorage.getItem('token');
             const params = buildParams();
-            const res = await fetch(
-                `${import.meta.env.VITE_API_URL || ''}/api/groups/${groupId}/analytics/export${params}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const res = await api.get(
+                `/groups/${groupId}/analytics/export${params}`,
+                { responseType: 'blob' }
             );
-            if (!res.ok) throw new Error('CSV export failed');
-            const blob = await res.blob();
+            const blob = new Blob([res.data], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -75,7 +81,8 @@ const GroupReport = ({ groupId, groupName, userRole }) => {
             URL.revokeObjectURL(url);
             toast.success('CSV downloaded!');
         } catch (err) {
-            toast.error(err.message || 'Failed to download CSV');
+            const msg = await blobToErrorMsg(err, 'Failed to download CSV');
+            toast.error(msg);
         } finally {
             setCsvLoading(false);
         }

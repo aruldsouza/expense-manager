@@ -24,3 +24,8 @@ files generated
 2:47:09 PM [vite] (client) hmr update /src/components/TransactionList.jsx
 2:47:11 PM [vite] (client) hmr update /src/components/TransactionList.jsx
 2:48:12 PM [vite] (client) hmr update /src/pages/GroupDetails.jsx
+2:54:56 PM [vite] (client) hmr update /src/components/GroupReport.jsx
+2:55:28 PM [vite] (client) hmr update /src/components/GroupReport.jsx
+2:59:42 PM [vite] (client) hmr update /src/index.css
+3:00:19 PM [vite] (client) hmr update /src/components/StatCard.jsx
+3:01:29 PM [vite] (client) hmr update /src/pages/Dashboard.jsx
