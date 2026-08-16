@@ -1,0 +1,200 @@
+# 📋 TASK.md -- After task completion mark the task as completed here
+## Smart Expense Splitter – Frontend (React + Vite)
+
+Backend Base URL: `/api`
+
+---
+
+# 1️⃣ Project Setup
+
+- [x] 1.1 Create Vite + React project
+- [x] 1.2 Setup folder structure (pages, components, services, context)
+- [x] 1.3 Install dependencies (`axios`, `react-router-dom`)
+- [x] 1.4 Configure Axios base URL
+- [x] 1.5 Setup environment variables (`VITE_API_URL`)
+- [x] 1.6 Configure React Router
+- [x] 1.7 Create layout structure (Navbar + Layout wrapper)
+
+---
+
+# 2️⃣ Authentication Module
+
+## Register Page
+
+- [x] 2.1 Create Register page UI
+- [x] 2.2 Add form validation (required fields)
+- [x] 2.3 Connect to `POST /api/auth/register`
+- [x] 2.4 Handle API success response
+- [x] 2.5 Handle API error response
+- [x] 2.6 Redirect to login after registration
+
+## Login Page
+
+- [x] 2.7 Create Login page UI
+- [x] 2.8 Add form validation
+- [x] 2.9 Connect to `POST /api/auth/login`
+- [x] 2.10 Store JWT token (localStorage)
+- [x] 2.11 Store user details in global state
+- [x] 2.12 Redirect to dashboard after login
+
+## Authentication Handling
+
+- [x] 2.13 Create AuthContext for global auth state
+- [x] 2.14 Persist login after refresh
+- [x] 2.15 Create logout functionality
+- [x] 2.16 Protect private routes
+- [x] 2.17 Redirect unauthorized users to login
+
+---
+
+# 3️⃣ Dashboard Module
+
+- [x] 3.1 Create Dashboard page
+- [x] 3.2 Display logged-in user name
+- [x] 3.3 Add navigation to Groups
+- [x] 3.4 Add logout button
+- [x] 3.5 Implement responsive layout
+
+---
+
+# 4️⃣ Group Module
+
+## Create Group
+
+- [x] 4.1 Create group creation form
+- [x] 4.2 Add member selection UI
+- [x] 4.3 Validate input before submission
+- [x] 4.4 Connect to `POST /api/groups`
+- [x] 4.5 Handle API success and errors
+- [x] 4.6 Refresh group list after creation
+
+## View Groups
+
+- [x] 4.7 Fetch groups from `GET /api/groups`
+- [x] 4.8 Display groups in card/list format
+- [x] 4.9 Handle empty group state
+- [x] 4.10 Navigate to group details page
+
+## Group Details Page
+
+- [x] 4.11 Fetch group details from `GET /api/groups/:groupId`
+- [x] 4.12 Display group members
+- [x] 4.13 Display group metadata
+- [x] 4.14 Add navigation tabs (Expenses, Balances, Settlements)
+
+---
+
+# 5️⃣ Expense Module
+
+## Add Expense
+
+- [x] 5.1 Create add expense form
+- [x] 5.2 Add payer selection dropdown
+- [x] 5.3 Add split type selector (equal, unequal, percentage)
+- [x] 5.4 Implement equal split UI
+- [x] 5.5 Implement unequal split UI
+- [x] 5.6 Implement percentage split UI
+- [x] 5.7 Validate split totals before submit
+- [x] 5.8 Connect to `POST /api/groups/:groupId/expenses`
+- [x] 5.9 Reset form after successful submission
+
+## View Expenses
+
+- [x] 5.10 Fetch expenses from `GET /api/groups/:groupId/expenses`
+- [x] 5.11 Display expenses in list/table format
+- [x] 5.12 Show payer, amount, split details
+- [x] 5.13 Sort by latest first
+- [x] 5.14 Handle empty expense state
+
+---
+
+# 6️⃣ Balance Module
+
+- [x] 6.1 Fetch balances from `GET /api/groups/:groupId/balances`
+- [x] 6.2 Display who owes whom
+- [x] 6.3 Highlight creditors (green)
+- [x] 6.4 Highlight debtors (red)
+- [x] 6.5 Ensure UI matches backend calculations
+
+---
+
+# 7️⃣ Settlement Module
+
+## Optimized Settlements
+
+- [x] 7.1 Fetch optimized settlements from `GET /api/groups/:groupId/settlements/optimized`
+- [x] 7.2 Display settlement suggestions
+- [x] 7.3 Show minimized transaction list
+- [x] 7.4 Validate totals visually
+
+## Record Settlement
+
+- [x] 7.5 Create settlement form
+- [x] 7.6 Connect to `POST /api/groups/:groupId/settlements`
+- [x] 7.7 Handle validation errors
+- [x] 7.8 Refresh balances after settlement
+
+---
+
+# 8️⃣ Transaction History Module
+
+- [x] 8.1 Fetch transaction history from `GET /api/groups/:groupId/transactions`
+- [x] 8.2 Merge expenses + settlements
+- [x] 8.3 Sort chronologically
+- [x] 8.4 Display clean ledger UI
+- [x] 8.5 Add filter options (expenses/settlements)
+
+---
+
+# 9️⃣ UI/UX Enhancements
+
+- [x] 9.1 Add loading spinners for API calls
+- [x] 9.2 Add global error handling UI
+- [x] 9.3 Add toast notifications
+- [x] 9.4 Improve form validation messages
+- [x] 9.5 Add mobile responsiveness
+- [x] 9.6 Improve overall styling consistency
+
+---
+
+# 🔟 State Management & Optimization
+
+- [x] 10.1 Optimize API calls
+- [x] 10.2 Avoid unnecessary re-renders
+- [x] 10.3 Memoize heavy components
+- [x] 10.4 Structure reusable components
+- [x] 10.5 Clean up unused state variables
+
+---
+
+# 1️⃣1️⃣ Testing & Verification
+
+- [x] 11.1 Test authentication flow
+- [x] 11.2 Test protected routes
+- [x] 11.3 Test group creation flow
+- [x] 11.4 Test expense creation edge cases
+- [x] 11.5 Test balance rendering accuracy
+- [x] 11.6 Test settlement workflow
+- [x] 11.7 Test UI responsiveness
+
+---
+
+# 1️⃣2️⃣ Finalization
+
+- [x] 12.1 Refactor component structure
+- [x] 12.2 Remove unused files
+- [x] 12.3 Add frontend README
+- [x] 12.4 Prepare production build
+- [x] 12.5 Deployment readiness check
+
+---
+
+# 12️⃣ UI Overhaul (Bootstrap)
+
+- [x] 12.1 Install Bootstrap & React-Bootstrap
+- [x] 12.2 Configure global styles (`main.jsx`, `index.css`)
+- [x] 12.3 Refactor Authentication Pages (Login, Register)
+- [x] 12.4 Refactor Dashboard & Layout
+- [x] 12.5 Refactor Group Modules (List, Create, Details)
+- [x] 12.6 Refactor Components (Expenses, Balances, Settlements)
+- [x] 12.7 Ensure consistent styling across the app

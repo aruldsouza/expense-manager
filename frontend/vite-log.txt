@@ -1,0 +1,32 @@
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v7.3.1  ready in 261 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+3:44:56 PM [vite] (client) page reload index.html
+
+PWA v1.2.0
+mode      generateSW
+precache  2 entries (0.12 KiB)
+files generated
+  dev-dist/sw.js
+  dev-dist/workbox-1e60b829.js
+4:08:36 PM [vite] (client) hmr update /src/components/ManageMembers.jsx
+5:32:52 PM [vite] (client) hmr update /src/pages/GroupDetails.jsx
+5:33:45 PM [vite] (client) hmr update /src/pages/RecurringExpenses.jsx
+5:37:07 PM [vite] (client) hmr update /src/components/AddExpense.jsx
+5:37:30 PM [vite] (client) hmr update /src/components/AddRecurringExpense.jsx
+6:05:20 PM [vite] (client) hmr update /src/components/AdvancedAnalytics.jsx
+2:47:09 PM [vite] (client) hmr update /src/components/TransactionList.jsx
+2:47:11 PM [vite] (client) hmr update /src/components/TransactionList.jsx
+2:48:12 PM [vite] (client) hmr update /src/pages/GroupDetails.jsx
+2:54:56 PM [vite] (client) hmr update /src/components/GroupReport.jsx
+2:55:28 PM [vite] (client) hmr update /src/components/GroupReport.jsx
+2:59:42 PM [vite] (client) hmr update /src/index.css
+3:00:19 PM [vite] (client) hmr update /src/components/StatCard.jsx
+3:01:29 PM [vite] (client) hmr update /src/pages/Dashboard.jsx
+3:09:32 PM [vite] (client) hmr update /src/pages/Dashboard.jsx
