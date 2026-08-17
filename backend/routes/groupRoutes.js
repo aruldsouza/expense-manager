@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createGroup, getUserGroups, getGroupById, addMember } = require('../controllers/groupController');
+const { createGroup, getUserGroups, getGroupById, addMember, deleteGroup } = require('../controllers/groupController');
 const { authMiddleware } = require('../middleware/auth');
 
 router.use(authMiddleware);
@@ -8,6 +8,8 @@ router.use(authMiddleware);
 router.post('/', createGroup);
 router.get('/', getUserGroups);
 router.get('/:groupId', getGroupById);
+router.delete('/:groupId', deleteGroup);
 router.post('/:groupId/members', addMember);
 
 module.exports = router;
+

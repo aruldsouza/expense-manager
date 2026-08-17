@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import api from '../services/api';
 import { ListGroup, Badge, Spinner, Alert, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FaHandHoldingUsd, FaArrowRight, FaTrash, FaCreditCard } from 'react-icons/fa';
@@ -14,7 +14,7 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
     const { formatCurrency } = useCurrency();
     const gc = groupCurrency || 'USD';
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             const [settlementRes, optimizedRes] = await Promise.all([
                 api.get(`/groups/${groupId}/settlements`),
@@ -27,9 +27,9 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
         } finally {
             setLoading(false);
         }
-    };
+    }, [groupId]);
 
-    useEffect(() => { fetchData(); }, [groupId, refreshTrigger]);
+    useEffect(() => { fetchData(); }, [fetchData, refreshTrigger]);
 
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this settlement? This will revert the balance.')) return;

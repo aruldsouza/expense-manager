@@ -30,9 +30,10 @@ const GroupReport = ({ groupId, groupName, userRole }) => {
                 const json = JSON.parse(text);
                 return json.error || fallback;
             }
-        } catch (_) { /* ignore parse errors */ }
+        } catch { /* ignore parse errors */ }
         return err.response?.data?.error || err.message || fallback;
     };
+
 
     // ─── PDF Download ──────────────────────────────────────────────────────────
     const handlePdfDownload = async () => {

@@ -62,7 +62,8 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
             });
             setSplits(initialSplits);
         }
-    }, [groupMembers, initialData]);
+    }, [groupMembers, initialData, involvedMembers.length]);
+
 
     // Set default payer
     useEffect(() => {

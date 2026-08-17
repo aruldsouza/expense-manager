@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Row, Col, Alert, Spinner, Button, Form, Badge } from 'react-bootstrap';
 import { FaDownload, FaChartPie, FaChartBar, FaUserTie, FaFrownOpen } from 'react-icons/fa';
 import {
@@ -51,20 +51,13 @@ const AdvancedAnalytics = ({ groupId, groupCurrency, refreshTrigger }) => {
         } finally {
             setLoading(false);
         }
-    }, [groupId, startDate, endDate, refreshTrigger]);
+    }, [groupId, startDate, endDate]);
 
     useEffect(() => {
         fetchAnalytics();
-    }, [fetchAnalytics]);
+    }, [fetchAnalytics, refreshTrigger]);
 
     const handleExport = () => {
-        // Triggers a browser download by generating a direct URL
-        let url = `${import.meta.env.VITE_API_URL}/groups/${groupId}/analytics/export`;
-        const queryParams = new URLSearchParams();
-        if (startDate) queryParams.append('startDate', startDate);
-        if (endDate) queryParams.append('endDate', endDate);
-        if (queryParams.toString()) url += `?${queryParams.toString()}`;
-
         // We need to attach the token if our API requires it. Easiest way is to fetch as blob.
         api.get(`/groups/${groupId}/analytics/export`, {
             params: { startDate, endDate },
@@ -77,10 +70,11 @@ const AdvancedAnalytics = ({ groupId, groupCurrency, refreshTrigger }) => {
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
-        }).catch(err => {
+        }).catch(() => {
             setError('Failed to export CSV');
         });
     };
+
 
     // Formatter components for charts
     const renderCustomTooltip = ({ active, payload }) => {

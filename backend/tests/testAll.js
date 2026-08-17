@@ -32,10 +32,10 @@ const runTests = async () => {
         if (reg1.status !== 201 || reg2.status !== 201) throw new Error('Registration failed');
         console.log('   ✅ Registration successful');
 
-        const token1 = reg1.data.data.token;
-        const id1 = reg1.data.data.user.id;
-        const token2 = reg2.data.data.token;
-        const id2 = reg2.data.data.user.id;
+        const token1 = reg1.data.token || reg1.data.data?.token;
+        const id1 = reg1.data.user?.id || reg1.data.data?.user?.id;
+        const token2 = reg2.data.token || reg2.data.data?.token;
+        const id2 = reg2.data.user?.id || reg2.data.data?.user?.id;
 
         // Login
         const login1 = await post(`${API_URL}/auth/login`, { email: user1.email, password: user1.password });
@@ -57,12 +57,13 @@ const runTests = async () => {
         }, token1);
 
         if (groupRes.status !== 201) throw new Error('Group creation failed');
-        const groupId = groupRes.data.data._id;
+        const groupId = groupRes.data._id || groupRes.data.data?._id;
         console.log('   ✅ Group created');
 
         // Fetch Groups
         const getGroups = await get(`${API_URL}/groups`, token1);
-        if (getGroups.status !== 200 || getGroups.data.data.length === 0) throw new Error('Fetch groups failed');
+        const groupsArr = getGroups.data.data || getGroups.data;
+        if (getGroups.status !== 200 || !Array.isArray(groupsArr) || groupsArr.length === 0) throw new Error('Fetch groups failed');
         console.log('   ✅ Groups fetched');
 
 
@@ -108,8 +109,9 @@ const runTests = async () => {
         // --- 4. Balances ---
         console.log('\n4️⃣  Testing Balances...');
         const balRes = await get(`${API_URL}/groups/${groupId}/balances`, token1);
-        const aliceBal = balRes.data.data.find(b => b.user._id === id1).balance;
-        const bobBal = balRes.data.data.find(b => b.user._id === id2).balance;
+        const balancesArr = balRes.data.data || balRes.data;
+        const aliceBal = balancesArr.find(b => (b.user._id || b.user).toString() === id1.toString()).balance;
+        const bobBal = balancesArr.find(b => (b.user._id || b.user).toString() === id2.toString()).balance;
 
         // Expect: Alice +30, Bob -30
         if (aliceBal !== 30 || bobBal !== -30) {
@@ -123,10 +125,11 @@ const runTests = async () => {
         console.log('\n5️⃣  Testing Settlements...');
         // Optimization Check
         const optRes = await get(`${API_URL}/groups/${groupId}/settlements/optimized`, token1);
-        const suggestion = optRes.data.data[0];
+        const optData = optRes.data.data || optRes.data;
+        const suggestion = (optData.optimizedTransactions || optData)[0];
 
         // Expect Bob -> Alice: 30
-        if (!suggestion || suggestion.from.email !== user2.email || suggestion.to.email !== user1.email || suggestion.amount !== 30) {
+        if (!suggestion || (suggestion.from || suggestion.fromUser).email !== user2.email || (suggestion.to || suggestion.toUser).email !== user1.email || suggestion.amount !== 30) {
             console.log('   ❌ Optimization mismatch:', suggestion);
         } else {
             console.log('   ✅ Optimization suggestion correct');
@@ -141,7 +144,8 @@ const runTests = async () => {
 
         // Verify Final Balance
         const finalBalRes = await get(`${API_URL}/groups/${groupId}/balances`, token1);
-        const aliceFinal = finalBalRes.data.data.find(b => b.user._id === id1).balance;
+        const finalBalancesArr = finalBalRes.data.data || finalBalRes.data;
+        const aliceFinal = finalBalancesArr.find(b => (b.user._id || b.user).toString() === id1.toString()).balance;
 
         if (aliceFinal !== 0) throw new Error(`Final balance not zero: ${aliceFinal}`);
         console.log('   ✅ Settlement verified (Balances zeroed)');
@@ -150,8 +154,9 @@ const runTests = async () => {
         // --- 6. Transaction History ---
         console.log('\n6️⃣  Testing Transaction History...');
         const histRes = await get(`${API_URL}/groups/${groupId}/transactions`, token1);
+        const histArr = histRes.data.data || histRes.data;
         // Expect 3 transactions: Settlement, Exp2, Exp1
-        if (histRes.data.data.length !== 3) throw new Error('Transaction history count incorrect');
+        if (!Array.isArray(histArr) || histArr.length !== 3) throw new Error('Transaction history count incorrect');
         console.log('   ✅ Transaction history verified');
 
 

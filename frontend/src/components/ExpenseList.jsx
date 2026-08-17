@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import api from '../services/api';
 import { ListGroup, Badge, Spinner, Alert, Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FaMoneyBillWave, FaUser, FaExchangeAlt, FaPaperclip, FaTrash, FaExternalLinkAlt, FaEdit, FaHistory } from 'react-icons/fa';
@@ -26,7 +26,7 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger, groupMembers, cur
     const gc = groupCurrency || 'USD';
     const needsConversion = displayCurrency && displayCurrency !== gc;
 
-    const fetchExpenses = async () => {
+    const fetchExpenses = useCallback(async () => {
         try {
             const res = await api.get(`/groups/${groupId}/expenses`);
             if (res.data.success) setExpenses(res.data.data);
@@ -35,9 +35,10 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger, groupMembers, cur
         } finally {
             setLoading(false);
         }
-    };
+    }, [groupId]);
 
-    useEffect(() => { fetchExpenses(); }, [groupId, refreshTrigger]);
+    useEffect(() => { fetchExpenses(); }, [fetchExpenses, refreshTrigger]);
+
 
     // Convert amounts for dual-currency display
     useEffect(() => {

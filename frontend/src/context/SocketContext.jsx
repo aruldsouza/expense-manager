@@ -13,28 +13,36 @@ export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);
     const { user } = useAuth();
 
-    useEffect(() => {
-        // Create a single socket connection for the lifetime of the app
+    if (socketRef.current == null) {
         socketRef.current = io(SOCKET_URL, {
             withCredentials: true,
             reconnectionAttempts: 10,
             reconnectionDelay: 1000,
             transports: ['websocket', 'polling']
         });
+    }
 
+
+    useEffect(() => {
         const socket = socketRef.current;
+        if (!socket) return;
 
-        socket.on('connect', () => {
+        const onConnect = () => {
             console.log('🔌 Socket connected:', socket.id);
-        });
-        socket.on('connect_error', (err) => {
+        };
+        const onError = (err) => {
             console.warn('Socket connection error:', err.message);
-        });
+        };
+
+        socket.on('connect', onConnect);
+        socket.on('connect_error', onError);
 
         return () => {
-            socket.disconnect();
+            socket.off('connect', onConnect);
+            socket.off('connect_error', onError);
         };
     }, []);
+
 
     const joinGroup = (groupId) => {
         if (socketRef.current && groupId) {
@@ -71,10 +79,14 @@ export const SocketProvider = ({ children }) => {
     };
 
     return (
+        // eslint-disable-next-line react-hooks/refs
         <SocketContext.Provider value={{ joinGroup, leaveGroup, joinUser, on, off, socket: socketRef.current }}>
             {children}
         </SocketContext.Provider>
     );
 };
 
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSocket = () => useContext(SocketContext);
+

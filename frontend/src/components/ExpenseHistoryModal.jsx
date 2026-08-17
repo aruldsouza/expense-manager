@@ -19,7 +19,7 @@ const ExpenseHistoryModal = ({ show, onHide, expenseId, groupId, groupCurrency }
             try {
                 const res = await api.get(`/groups/${groupId}/expenses/${expenseId}/history`);
                 setHistory(res.data.data);
-            } catch (err) {
+            } catch (_err) {
                 setError('Failed to load expense history');
             } finally {
                 setLoading(false);
@@ -76,7 +76,8 @@ const ExpenseHistoryModal = ({ show, onHide, expenseId, groupId, groupCurrency }
                     </div>
                 ) : (
                     <div className="history-timeline">
-                        {history.map((record, idx) => (
+                        {history.map((record) => (
+
                             <div key={record._id} className="mb-4 pb-3 border-bottom position-relative">
                                 <div className="d-flex justify-content-between align-items-start mb-2">
                                     <div className="fw-bold text-dark d-flex align-items-center gap-2">

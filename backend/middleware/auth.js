@@ -18,4 +18,5 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = { authMiddleware, JWT_SECRET };
+module.exports = { authMiddleware, protect: authMiddleware, JWT_SECRET };
+

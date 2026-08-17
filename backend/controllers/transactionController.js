@@ -8,6 +8,7 @@ const Group = require('../models/Group');
 const getGroupTransactions = async (req, res, next) => {
     try {
         const groupId = req.params.groupId;
+        const userId = req.user.id || req.user._id;
 
         const group = await Group.findById(groupId);
         if (!group) {
@@ -15,8 +16,11 @@ const getGroupTransactions = async (req, res, next) => {
             throw new Error('Group not found');
         }
 
-        // members is [{ user: ObjectId, role }]
-        const isMember = group.members.some(m => m.user?.toString() === req.user._id.toString());
+        const isMember = group.members.some(m => {
+            const mId = m.user ? (m.user._id || m.user) : (m._id || m);
+            return mId ? mId.toString() === userId.toString() : false;
+        });
+
         if (!isMember) {
             res.status(403);
             throw new Error('Not authorized to access transactions for this group');
@@ -24,22 +28,24 @@ const getGroupTransactions = async (req, res, next) => {
 
         // Fetch expenses and settlements
         const expenses = await Expense.find({ group: groupId })
-            .populate('payer', 'name email')
+            .populate('paidBy', 'name email')
             .populate('splits.user', 'name email')
-            .lean(); // Use lean for better performance and easier modification
+            .lean();
 
         const settlements = await Settlement.find({ group: groupId })
-            .populate('payer', 'name email')
-            .populate('payee', 'name email')
+            .populate('fromUser', 'name email')
+            .populate('toUser', 'name email')
             .lean();
 
         // Normalize and merge
         const expenseList = expenses.map(expense => ({
             _id: expense._id,
             type: 'EXPENSE',
-            description: expense.description,
+            title: expense.title || expense.description || 'Expense',
+            description: expense.title || expense.description || 'Expense',
             amount: expense.amount,
-            payer: expense.payer,
+            paidBy: expense.paidBy,
+            payer: expense.paidBy,
             date: expense.date,
             details: {
                 splitType: expense.splitType,
@@ -50,12 +56,15 @@ const getGroupTransactions = async (req, res, next) => {
         const settlementList = settlements.map(settlement => ({
             _id: settlement._id,
             type: 'SETTLEMENT',
+            title: 'Settlement',
             description: 'Settlement',
             amount: settlement.amount,
-            payer: settlement.payer, // Who paid
+            fromUser: settlement.fromUser,
+            toUser: settlement.toUser,
+            payer: settlement.fromUser,
             date: settlement.date,
             details: {
-                payee: settlement.payee // Who received
+                payee: settlement.toUser
             }
         }));
 
@@ -64,11 +73,7 @@ const getGroupTransactions = async (req, res, next) => {
         // Sort by date descending (newest first)
         transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        res.json({
-            success: true,
-            count: transactions.length,
-            data: transactions
-        });
+        res.json(transactions);
 
     } catch (error) {
         next(error);

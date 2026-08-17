@@ -16,8 +16,8 @@ const runVerification = async () => {
                 email: emailA,
                 password: 'password123'
             });
-            userAToken = resA.data.data.token;
-            userA_Id = resA.data.data.user.id;
+            userAToken = resA.data.token || resA.data.data?.token;
+            userA_Id = resA.data.user?.id || resA.data.data?.user?.id;
             console.log(`✅ User A Registered (${emailA}):`, userA_Id);
         } catch (e) {
             console.error('❌ User A Registration Failed:', e.response?.data?.message || e.message);
@@ -34,8 +34,8 @@ const runVerification = async () => {
                 email: emailB,
                 password: 'password123'
             });
-            userBToken = resB.data.data.token;
-            userB_Id = resB.data.data.user.id;
+            userBToken = resB.data.token || resB.data.data?.token;
+            userB_Id = resB.data.user?.id || resB.data.data?.user?.id;
             console.log(`✅ User B Registered (${emailB}):`, userB_Id);
         } catch (e) {
             console.error('❌ User B Registration Failed:', e.response?.data?.message || e.message);
@@ -53,7 +53,7 @@ const runVerification = async () => {
             }, {
                 headers: { Authorization: `Bearer ${userAToken}` }
             });
-            groupId = resGroup.data.data._id;
+            groupId = resGroup.data._id || resGroup.data.data?._id;
             console.log('✅ Group Created:', groupId);
         } catch (e) {
             console.error('❌ Group Creation Failed:', e.response?.data?.message || e.message);
@@ -90,11 +90,11 @@ const runVerification = async () => {
             const resBal = await axios.get(`${API_URL}/groups/${groupId}/balances`, {
                 headers: { Authorization: `Bearer ${userAToken}` }
             });
-            const balances = resBal.data.data;
+            const balances = resBal.data.data || resBal.data;
             // Find User B's balance
-            const userB_Bal = balances.find(b => b.user._id === userB_Id);
+            const userB_Bal = balances.find(b => (b.user._id || b.user).toString() === userB_Id.toString());
 
-            if (userB_Bal && userB_Bal.balance === -50) {
+            if (userB_Bal && (userB_Bal.balance === -50 || userB_Bal.netBalance === -50)) {
                 console.log('✅ Balance Verification PASSED: User B owes $50');
             } else {
                 console.error('❌ Balance Verification FAILED: User B balance is', userB_Bal?.balance);
@@ -110,16 +110,8 @@ const runVerification = async () => {
             const resStats = await axios.get(`${API_URL}/dashboard/stats`, {
                 headers: { Authorization: `Bearer ${userAToken}` }
             });
-            const stats = resStats.data.data;
+            const stats = resStats.data.data || resStats.data;
             console.log('📊 Dashboard Stats:', JSON.stringify(stats, null, 2));
-
-            // User A Paid 100. Split 50/50. 
-            // Total Spend should include the amount FRONTED (100) or SHARE (50)?
-            // My implementation calculates `totalPaid` (cashflow) vs `totalExpenses` (share).
-            // Logic: 
-            // totalExpenses (Share): 50
-            // totalPaid (Outflow): 100
-            // netBalance: +50 (Owed)
 
             if (stats.netBalance === 50 && stats.activeGroups >= 1) {
                 console.log('✅ Dashboard Stats Verified');
@@ -153,7 +145,7 @@ const runVerification = async () => {
             }, {
                 headers: { Authorization: `Bearer ${userAToken}` }
             });
-            const newGroupId = resGroup.data.data._id;
+            const newGroupId = resGroup.data._id || resGroup.data.data?._id;
 
             await axios.post(`${API_URL}/groups/${newGroupId}/expenses`, {
                 description: 'Lunch',
@@ -171,7 +163,8 @@ const runVerification = async () => {
             const resOpt = await axios.get(`${API_URL}/groups/${newGroupId}/settlements/optimized`, {
                 headers: { Authorization: `Bearer ${userAToken}` }
             });
-            const recommendations = resOpt.data.data;
+            const optData = resOpt.data.data || resOpt.data;
+            const recommendations = optData.optimizedTransactions || optData;
             console.log('💡 Recommendations:', JSON.stringify(recommendations, null, 2));
 
             if (recommendations.length > 0 && recommendations[0].amount === 30) {

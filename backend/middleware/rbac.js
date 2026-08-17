@@ -17,7 +17,7 @@ const requireRole = (requiredRole) => {
     return async (req, res, next) => {
         try {
             const groupId = req.params.groupId;
-            const userId = req.user._id;
+            const userId = req.user.id || req.user._id;
 
             if (!groupId) {
                 res.status(400);
@@ -33,12 +33,12 @@ const requireRole = (requiredRole) => {
             // Find the user's membership object
             // Backwards compatibility: handle raw ObjectIds if database hasn't been fully migrated
             let membership = group.members.find(m => {
-                if (m.user) {
+                if (m && m.user) {
                     const userRef = m.user._id ? m.user._id : m.user;
                     return userRef.toString() === userId.toString();
                 }
-                // Legacy support
-                return m.toString() === userId.toString();
+                const memberId = m && m._id ? m._id : m;
+                return memberId ? memberId.toString() === userId.toString() : false;
             });
 
             if (!membership) {
@@ -47,9 +47,10 @@ const requireRole = (requiredRole) => {
             }
 
             // Normalise legacy members without a role to 'Member' (except creator who is 'Admin')
-            let userRole = membership.role;
+            let userRole = typeof membership === 'object' && membership.role ? membership.role : null;
             if (!userRole) {
-                userRole = group.creator.toString() === userId.toString() ? 'Admin' : 'Member';
+                const creatorId = group.createdBy || group.creator;
+                userRole = creatorId && creatorId.toString() === userId.toString() ? 'Admin' : 'Member';
             }
 
             // Compare numerical levels

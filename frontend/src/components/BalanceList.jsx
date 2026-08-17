@@ -45,9 +45,9 @@ const BalanceList = ({ groupId, groupCurrency, refreshTrigger }) => {
                 const isSettled = Math.abs(bal) < 0.01;
                 if (!user) return null;
 
-                const variant = isSettled ? 'secondary' : isOwed ? 'success' : 'danger';
                 const textClass = isSettled ? 'text-muted' : isOwed ? 'text-success' : 'text-danger';
                 const label = isSettled ? 'Settled' : isOwed ? 'Gets back' : 'Owes';
+
 
                 return (
                     <ListGroup.Item key={user._id} className="d-flex justify-content-between align-items-center py-3">

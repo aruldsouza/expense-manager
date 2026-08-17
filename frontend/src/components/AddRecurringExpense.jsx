@@ -46,7 +46,8 @@ const AddRecurringExpense = ({ show, onHide, groupId, groupMembers, onSuccess })
             const memberMatch = groupMembers?.find(m => m._id === user._id);
             setPayer(memberMatch ? user._id : groupMembers?.[0]?._id || '');
         }
-    }, [groupMembers, user, show]);
+    }, [groupMembers, user, show, involvedMembers.length]);
+
 
     const toggleMember = (id) => {
         if (involvedMembers.includes(id)) {

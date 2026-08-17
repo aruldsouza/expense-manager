@@ -12,7 +12,9 @@ const SYMBOL_MAP = {
     PKR: '₨', BDT: '৳', RUB: '₽', TRY: '₺', PLN: 'zł', CZK: 'Kč',
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const getCurrencySymbol = (code) => SYMBOL_MAP[code?.toUpperCase()] || code || '$';
+
 
 export const CurrencyProvider = ({ children }) => {
     const [displayCurrency, setDisplayCurrencyState] = useState(
@@ -99,10 +101,12 @@ export const CurrencyProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCurrency = () => {
     const ctx = useContext(CurrencyContext);
     if (!ctx) throw new Error('useCurrency must be used within CurrencyProvider');
     return ctx;
 };
+
 
 export default CurrencyContext;

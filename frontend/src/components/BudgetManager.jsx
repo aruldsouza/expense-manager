@@ -49,9 +49,10 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger, currentUserRole
         } finally {
             setLoading(false);
         }
-    }, [groupId, selectedMonth, refreshTrigger]);
+    }, [groupId, selectedMonth]);
 
-    useEffect(() => { fetchBudgets(); }, [fetchBudgets]);
+    useEffect(() => { fetchBudgets(); }, [fetchBudgets, refreshTrigger]);
+
 
     const openAdd = () => {
         setEditingBudget(null);
@@ -147,7 +148,8 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger, currentUserRole
                                     <Card.Body>
                                         <div className="d-flex justify-content-between align-items-start mb-2">
                                             <div className="d-flex align-items-center gap-2">
-                                                <span style={{ fontSize: '1.5rem' }}>{CATEGORY_ICONS[b.category] || '📦'}</span>
+                                                <span style={{ fontSize: '1.5rem', color }}>{CATEGORY_ICONS[b.category] || '📦'}</span>
+
                                                 <div>
                                                     <h6 className="mb-0 fw-bold">{b.category}</h6>
                                                     {b.exceeded ? (

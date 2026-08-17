@@ -1,30 +1,38 @@
 const Group = require('../models/Group');
 const User = require('../models/User');
+const Expense = require('../models/Expense');
+const Settlement = require('../models/Settlement');
 
 exports.createGroup = async (req, res, next) => {
   try {
-    const { name, description, memberEmails } = req.body;
+    const { name, description, memberEmails, members } = req.body;
     if (!name) {
       return res.status(400).json({ error: 'Group name is required' });
     }
 
-    const membersSet = new Set([req.user.id]);
+    const userId = req.user.id || req.user._id;
+    const membersSet = new Set([userId.toString()]);
 
-    if (Array.isArray(memberEmails) && memberEmails.length > 0) {
-      for (const email of memberEmails) {
-        if (email && email.trim()) {
-          const user = await User.findOne({ email: email.trim().toLowerCase() });
-          if (user) {
-            membersSet.add(user._id.toString());
-          }
-        }
+    const itemsToProcess = [];
+    if (Array.isArray(memberEmails)) itemsToProcess.push(...memberEmails);
+    if (Array.isArray(members)) itemsToProcess.push(...members);
+
+    for (const item of itemsToProcess) {
+      if (!item) continue;
+      const strVal = typeof item === 'string' ? item.trim() : (item._id || item.id || item).toString();
+      if (strVal.includes('@')) {
+        const user = await User.findOne({ email: strVal.toLowerCase() });
+        if (user) membersSet.add(user._id.toString());
+      } else {
+        const user = await User.findById(strVal);
+        if (user) membersSet.add(user._id.toString());
       }
     }
 
     const group = await Group.create({
       name,
       description: description || '',
-      createdBy: req.user.id,
+      createdBy: userId,
       members: Array.from(membersSet)
     });
 
@@ -38,7 +46,8 @@ exports.createGroup = async (req, res, next) => {
 
 exports.getUserGroups = async (req, res, next) => {
   try {
-    const groups = await Group.find({ members: req.user.id })
+    const userId = req.user.id || req.user._id;
+    const groups = await Group.find({ members: userId })
       .populate('members', 'name email')
       .populate('createdBy', 'name email')
       .sort({ updatedAt: -1 });
@@ -52,6 +61,7 @@ exports.getUserGroups = async (req, res, next) => {
 exports.getGroupById = async (req, res, next) => {
   try {
     const { groupId } = req.params;
+    const userId = req.user.id || req.user._id;
     const group = await Group.findById(groupId)
       .populate('members', 'name email')
       .populate('createdBy', 'name email');
@@ -60,7 +70,7 @@ exports.getGroupById = async (req, res, next) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const isMember = group.members.some(m => m._id.toString() === req.user.id);
+    const isMember = group.members.some(m => (m._id || m).toString() === userId.toString());
     if (!isMember) {
       return res.status(403).json({ error: 'Access denied: You are not a member of this group' });
     }
@@ -90,7 +100,7 @@ exports.addMember = async (req, res, next) => {
       return res.status(404).json({ error: 'User not found with this email' });
     }
 
-    if (group.members.includes(userToAdd._id)) {
+    if (group.members.some(m => m.toString() === userToAdd._id.toString())) {
       return res.status(400).json({ error: 'User is already a member of this group' });
     }
 
@@ -103,3 +113,28 @@ exports.addMember = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deleteGroup = async (req, res, next) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.id || req.user._id;
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+
+    if (group.createdBy.toString() !== userId.toString()) {
+      return res.status(403).json({ error: 'Only group creator can delete this group' });
+    }
+
+    await Group.findByIdAndDelete(groupId);
+    await Expense.deleteMany({ group: groupId });
+    await Settlement.deleteMany({ group: groupId });
+
+    res.json({ message: 'Group deleted successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
+

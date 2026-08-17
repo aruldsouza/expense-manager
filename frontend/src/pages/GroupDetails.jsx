@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import { FaUsers, FaMoneyBillWave, FaBalanceScale, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet, FaRobot } from 'react-icons/fa';
+import { FaMoneyBillWave, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet, FaRobot } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
@@ -18,8 +18,9 @@ import ManageMembers from '../components/ManageMembers';
 import GroupSettings from '../components/GroupSettings';
 import { useSocket } from '../context/SocketContext';
 import { useAuth } from '../context/AuthContext';
-import { Container, Row, Col, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
+import { Container, Card, Button, Tabs, Tab, Modal, Spinner, Alert } from 'react-bootstrap';
 import { FaUserShield, FaCog, FaFileAlt } from 'react-icons/fa';
+
 
 // Memoized Components
 const MemoizedExpenseList = React.memo(ExpenseList);
@@ -30,7 +31,7 @@ const MemoizedTransactionList = React.memo(TransactionList);
 const GroupDetails = () => {
     const { groupId } = useParams();
     const { user } = useAuth();
-    const { joinGroup, leaveGroup, on, off } = useSocket();
+    const socket = useSocket();
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -43,11 +44,11 @@ const GroupDetails = () => {
 
     // Socket.IO: join group room + listen for real-time events
     useEffect(() => {
-        if (!groupId) return;
+        if (!groupId || !socket) return;
+        const { joinGroup, leaveGroup, on, off } = socket;
         joinGroup(groupId);
 
         const handleExpenseNew = (expense) => {
-            // Only show toast if someone ELSE added it
             if (expense?.payer?._id !== user?._id) {
                 toast(`💸 ${expense?.payer?.name || 'Someone'} added "${expense?.description}"`, { icon: '🧾' });
             }
@@ -70,7 +71,7 @@ const GroupDetails = () => {
             off('expense:new', handleExpenseNew);
             off('settlement:new', handleSettlementNew);
         };
-    }, [groupId, user?._id]);
+    }, [groupId, user?._id, socket]);
 
     const handleExpenseAdded = () => {
         setRefreshTrigger(prev => prev + 1);
@@ -80,7 +81,7 @@ const GroupDetails = () => {
     const handleSettlementRecorded = () => {
         setRefreshTrigger(prev => prev + 1);
         setShowRecordSettlement(false);
-        setSettlementInitialData(null); // Reset data
+        setSettlementInitialData(null);
     };
 
     const handleOpenSettlement = (data = null) => {
@@ -92,9 +93,9 @@ const GroupDetails = () => {
         const fetchGroupDetails = async () => {
             try {
                 const res = await api.get(`/groups/${groupId}`);
-                setGroup(res.data.data);
+                setGroup(res.data.data || res.data);
                 if (res.data.role) setCurrentUserRole(res.data.role);
-            } catch (err) {
+            } catch (_err) {
                 setError('Failed to load group details');
             } finally {
                 setLoading(false);
@@ -102,6 +103,7 @@ const GroupDetails = () => {
         };
         fetchGroupDetails();
     }, [groupId, refreshTrigger]);
+
 
     // Flatten group.members to reliably have _id and name for drop-downs
     const normalizedMembers = useMemo(() => {

@@ -25,7 +25,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const [settleAmount, setSettleAmount] = useState('');
   const [settleNotes, setSettleNotes] = useState('');
 
-  const loadGroupData = async () => {
+  const loadGroupData = React.useCallback(async () => {
     setLoading(true);
     try {
       const [expData, balData, optData, txData] = await Promise.all([
@@ -43,11 +43,12 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [group._id]);
 
   useEffect(() => {
     loadGroupData();
-  }, [group._id]);
+  }, [loadGroupData]);
+
 
   // Initialize custom splits state when group members or total amount changes
   useEffect(() => {

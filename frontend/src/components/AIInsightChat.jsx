@@ -22,8 +22,10 @@ const AIInsightChat = ({ groupId }) => {
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [_error, setError] = useState(null);
     const bottomRef = useRef(null);
+
+
 
     // Auto-scroll to latest message
     useEffect(() => {

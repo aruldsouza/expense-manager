@@ -70,7 +70,7 @@ function getStorage(key, fallback) {
   try {
     const data = localStorage.getItem(`expense_mgr_${key}`);
     return data ? JSON.parse(data) : fallback;
-  } catch (e) {
+  } catch (_e) {
     return fallback;
   }
 }
@@ -155,11 +155,10 @@ const localEngine = {
   },
 
   async addExpense(groupId, expenseData) {
-    const groups = getStorage('groups', DEFAULT_DEMO_GROUPS);
-    const group = groups.find(g => g._id === groupId);
     const users = getStorage('users', DEFAULT_DEMO_USERS);
     
     const paidByUser = users.find(u => u._id === expenseData.paidBy) || this.currentUser;
+
 
     const newExpense = {
       _id: 'e_' + Date.now(),
@@ -267,7 +266,7 @@ export const api = {
       const data = await this.request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
       this.setToken(data.token);
       return data;
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.login(email);
     }
   },
@@ -277,7 +276,7 @@ export const api = {
       const data = await this.request('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) });
       this.setToken(data.token);
       return data;
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.register(name, email);
     }
   },
@@ -285,7 +284,7 @@ export const api = {
   async getMe() {
     try {
       return await this.request('/auth/me');
-    } catch (e) {
+    } catch (_e) {
       return { user: localEngine.currentUser };
     }
   },
@@ -293,7 +292,7 @@ export const api = {
   async getGroups() {
     try {
       return await this.request('/groups');
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.getGroups();
     }
   },
@@ -301,7 +300,7 @@ export const api = {
   async createGroup(name, description, memberEmails) {
     try {
       return await this.request('/groups', { method: 'POST', body: JSON.stringify({ name, description, memberEmails }) });
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.createGroup(name, description, memberEmails);
     }
   },
@@ -309,7 +308,7 @@ export const api = {
   async getGroupDetails(groupId) {
     try {
       return await this.request(`/groups/${groupId}`);
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.getGroupDetails(groupId);
     }
   },
@@ -317,7 +316,7 @@ export const api = {
   async addExpense(groupId, expenseData) {
     try {
       return await this.request(`/groups/${groupId}/expenses`, { method: 'POST', body: JSON.stringify(expenseData) });
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.addExpense(groupId, expenseData);
     }
   },
@@ -325,7 +324,7 @@ export const api = {
   async getExpenses(groupId) {
     try {
       return await this.request(`/groups/${groupId}/expenses`);
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.getExpenses(groupId);
     }
   },
@@ -333,7 +332,7 @@ export const api = {
   async getBalances(groupId) {
     try {
       return await this.request(`/groups/${groupId}/balances`);
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.getBalances(groupId);
     }
   },
@@ -341,7 +340,7 @@ export const api = {
   async getOptimizedSettlements(groupId) {
     try {
       return await this.request(`/groups/${groupId}/settlements/optimized`);
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.getOptimizedSettlements(groupId);
     }
   },
@@ -349,7 +348,7 @@ export const api = {
   async recordSettlement(groupId, data) {
     try {
       return await this.request(`/groups/${groupId}/settlements`, { method: 'POST', body: JSON.stringify(data) });
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.recordSettlement(groupId, data);
     }
   },
@@ -357,8 +356,9 @@ export const api = {
   async getTransactions(groupId) {
     try {
       return await this.request(`/groups/${groupId}/transactions`);
-    } catch (e) {
+    } catch (_e) {
       return await localEngine.getTransactions(groupId);
     }
   }
 };
+

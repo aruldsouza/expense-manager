@@ -53,6 +53,7 @@ const computeNetBalances = async (groupId) => {
   // Format balances rounded to 2 decimal places
   return Object.values(balances).map(b => ({
     user: b.user,
+    balance: Math.round(b.netBalance * 100) / 100,
     netBalance: Math.round(b.netBalance * 100) / 100,
     totalPaid: Math.round(b.totalPaid * 100) / 100,
     totalOwed: Math.round(b.totalOwed * 100) / 100
@@ -111,6 +112,8 @@ exports.getOptimizedSettlements = async (req, res, next) => {
         optimized.push({
           fromUser: debtor.user,
           toUser: creditor.user,
+          from: debtor.user,
+          to: creditor.user,
           amount: roundedAmount
         });
       }
@@ -134,13 +137,16 @@ exports.getOptimizedSettlements = async (req, res, next) => {
 exports.recordSettlement = async (req, res, next) => {
   try {
     const { groupId } = req.params;
-    const { fromUser, toUser, amount, notes } = req.body;
+    const userId = req.user.id || req.user._id;
+    const fromUser = req.body.fromUser || userId;
+    const toUser = req.body.toUser || req.body.payee;
+    const { amount, notes } = req.body;
 
-    if (!fromUser || !toUser || !amount || amount <= 0) {
-      return res.status(400).json({ error: 'fromUser, toUser, and positive amount are required' });
+    if (!fromUser || !toUser || !amount || parseFloat(amount) <= 0) {
+      return res.status(400).json({ error: 'fromUser (or authenticated user), toUser (or payee), and positive amount are required' });
     }
 
-    if (fromUser === toUser) {
+    if (fromUser.toString() === toUser.toString()) {
       return res.status(400).json({ error: 'Cannot record settlement to self' });
     }
 

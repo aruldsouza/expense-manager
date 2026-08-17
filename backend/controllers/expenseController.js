@@ -4,9 +4,14 @@ const Group = require('../models/Group');
 exports.addExpense = async (req, res, next) => {
   try {
     const { groupId } = req.params;
-    const { title, amount, paidBy, splitType, splits, category, date } = req.body;
+    const title = req.body.title || req.body.description;
+    const amount = req.body.amount;
+    const paidBy = req.body.paidBy || req.body.payer;
+    const splitType = (req.body.splitType || 'equal').toLowerCase();
+    const { splits, category, date } = req.body;
+    const userId = req.user.id || req.user._id;
 
-    if (!title || !amount || amount <= 0 || !paidBy) {
+    if (!title || !amount || parseFloat(amount) <= 0 || !paidBy) {
       return res.status(400).json({ error: 'Title, positive amount, and paidBy are required' });
     }
 
@@ -15,7 +20,7 @@ exports.addExpense = async (req, res, next) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const isMember = group.members.some(m => m.toString() === req.user.id);
+    const isMember = group.members.some(m => (m._id || m).toString() === userId.toString());
     if (!isMember) {
       return res.status(403).json({ error: 'Access denied: You are not a member of this group' });
     }
@@ -25,13 +30,13 @@ exports.addExpense = async (req, res, next) => {
 
     if (splitType === 'equal') {
       const participantIds = (splits && splits.length > 0)
-        ? splits.map(s => s.user)
-        : group.members.map(m => m.toString());
+        ? splits.map(s => (s.user._id || s.user).toString())
+        : group.members.map(m => (m._id || m).toString());
 
       const perPerson = Math.round((numAmount / participantIds.length) * 100) / 100;
       let totalAssigned = 0;
 
-      calculatedSplits = participantIds.map((userId, idx) => {
+      calculatedSplits = participantIds.map((uId, idx) => {
         let personShare = perPerson;
         if (idx === participantIds.length - 1) {
           personShare = Math.round((numAmount - totalAssigned) * 100) / 100;
@@ -39,7 +44,7 @@ exports.addExpense = async (req, res, next) => {
           totalAssigned += personShare;
         }
         return {
-          user: userId,
+          user: uId,
           amount: personShare,
           percentage: Math.round((personShare / numAmount) * 10000) / 100
         };
@@ -53,7 +58,7 @@ exports.addExpense = async (req, res, next) => {
         return res.status(400).json({ error: `Sum of splits ($${sum.toFixed(2)}) does not match total expense amount ($${numAmount.toFixed(2)})` });
       }
       calculatedSplits = splits.map(s => ({
-        user: s.user,
+        user: s.user._id || s.user,
         amount: parseFloat(s.amount),
         percentage: Math.round(((parseFloat(s.amount) || 0) / numAmount) * 10000) / 100
       }));
@@ -76,7 +81,7 @@ exports.addExpense = async (req, res, next) => {
           totalAssigned += personShare;
         }
         return {
-          user: s.user,
+          user: s.user._id || s.user,
           amount: personShare,
           percentage: pct
         };
@@ -90,7 +95,7 @@ exports.addExpense = async (req, res, next) => {
       title,
       amount: numAmount,
       paidBy,
-      splitType: splitType || 'equal',
+      splitType,
       splits: calculatedSplits,
       category: category || 'General',
       date: date || new Date()
@@ -109,12 +114,13 @@ exports.addExpense = async (req, res, next) => {
 exports.getExpenses = async (req, res, next) => {
   try {
     const { groupId } = req.params;
+    const userId = req.user.id || req.user._id;
     const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const isMember = group.members.some(m => m.toString() === req.user.id);
+    const isMember = group.members.some(m => (m._id || m).toString() === userId.toString());
     if (!isMember) {
       return res.status(403).json({ error: 'Access denied: You are not a member of this group' });
     }

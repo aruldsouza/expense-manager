@@ -34,9 +34,10 @@ const HealthScore = ({ groupId, refreshTrigger }) => {
         } finally {
             setLoading(false);
         }
-    }, [groupId, refreshTrigger]);
+    }, [groupId]);
 
-    useEffect(() => { fetchScore(); }, [fetchScore]);
+    useEffect(() => { fetchScore(); }, [fetchScore, refreshTrigger]);
+
 
     if (loading) return <div className="text-center py-5"><Spinner animation="border" variant="primary" /></div>;
     if (error) return <Alert variant="danger">{error}</Alert>;

@@ -10,7 +10,7 @@ const DASHBOARD_TTL = 120; // seconds
 // @access  Private
 const getDashboardStats = async (req, res, next) => {
     try {
-        const userId = req.user._id.toString();
+        const userId = (req.user.id || req.user._id).toString();
         const cacheKey = `dashboard:stats:${userId}`;
 
         // ── Cache hit ─────────────────────────────────────────────────────────
@@ -19,8 +19,10 @@ const getDashboardStats = async (req, res, next) => {
             return res.json({ success: true, data: cached, fromCache: true });
         }
 
-        // 1. Active Groups (members is an array of objects: { user, role })
-        const groups = await Group.find({ 'members.user': userId });
+        // 1. Active Groups (members can be array of ObjectIds or objects)
+        const groups = await Group.find({
+            $or: [{ members: userId }, { 'members.user': userId }]
+        });
         const activeGroupsCount = groups.length;
         const groupIds = groups.map(g => g._id);
 
@@ -30,21 +32,20 @@ const getDashboardStats = async (req, res, next) => {
 
         // 3. Calculate Global Balance (Owed vs Owe) & Total Spend
         let totalBalance = 0;
-        let totalSpend = 0; // Amount user actually paid ("Total Expenses" usually implies spend)
+        let totalSpend = 0;
 
         // Process Expenses
         expenses.forEach(expense => {
-            const payerId = expense.payer.toString();
+            const payerId = (expense.paidBy || expense.payer)?.toString();
 
-            // If user paid, add to positive balance (you are owed)
-            if (payerId === userId.toString()) {
+            if (payerId === userId) {
                 totalBalance += expense.amount;
-                totalSpend += expense.amount; // Track total outflow
+                totalSpend += expense.amount;
             }
 
-            // Subtract user's share (splits)
             expense.splits.forEach(split => {
-                if (split.user.toString() === userId.toString()) {
+                const sUserId = (split.user._id || split.user)?.toString();
+                if (sUserId === userId) {
                     totalBalance -= split.amount;
                 }
             });
@@ -52,38 +53,27 @@ const getDashboardStats = async (req, res, next) => {
 
         // Process Settlements
         settlements.forEach(settlement => {
-            const payerId = settlement.payer.toString();
-            const payeeId = settlement.payee.toString();
+            const fromId = (settlement.fromUser || settlement.payer)?.toString();
+            const toId = (settlement.toUser || settlement.payee)?.toString();
 
-            // If user paid (settled debt), balance increases (debt reduces)
-            if (payerId === userId.toString()) {
+            if (fromId === userId) {
                 totalBalance += settlement.amount;
                 totalSpend += settlement.amount;
             }
 
-            // If user received (settled credit), balance decreases (credit reduces)
-            if (payeeId === userId.toString()) {
+            if (toId === userId) {
                 totalBalance -= settlement.amount;
             }
         });
 
-        // "You are owed" = logic: if totalBalance > 0, shows as +$_; if < 0 shows as owed.
-        // The dashboard asks for "You are owed" specifically. 
-        // We can split it:
-        // Net position: Positive = Owed to you. Negative = You owe.
-
-        // Let's refine "Total Expenses".
-        // Does user want "My share of expenses" (Cost) or "Amount I fronted" (Cashflow)?
-        // Usually "Total Expenses" in dashboards means "My total share of costs". 
-        // Let's calculate "My Share" separate from "Amounts Paid".
-
         let myTotalShare = 0;
         expenses.forEach(e => {
             e.splits.forEach(s => {
-                if (s.user.toString() === userId.toString()) {
+                const sUserId = (s.user._id || s.user)?.toString();
+                if (sUserId === userId) {
                     myTotalShare += s.amount;
                 }
-            })
+            });
         });
 
         const result = {
