@@ -36,6 +36,18 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Database connectivity middleware
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health') return next();
+  if (mongoose.connection.readyState !== 1 && mongoose.connection.readyState !== 2) {
+    return res.status(503).json({
+      error: 'Database connection unavailable. Please check MONGODB_URI environment variable in Render dashboard.'
+    });
+  }
+  next();
+});
+
+
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
 const groupRoutes = require('./routes/groupRoutes');

@@ -17,13 +17,11 @@ export const SocketProvider = ({ children }) => {
     if (socketRef.current == null) {
         socketRef.current = io(SOCKET_URL, {
             withCredentials: true,
-            reconnectionAttempts: 10,
-            reconnectionDelay: 1000,
-            transports: ['websocket', 'polling']
+            reconnectionAttempts: 5,
+            reconnectionDelay: 2000,
+            transports: ['polling', 'websocket']
         });
     }
-
-
 
     useEffect(() => {
         const socket = socketRef.current;
@@ -32,9 +30,10 @@ export const SocketProvider = ({ children }) => {
         const onConnect = () => {
             console.log('🔌 Socket connected:', socket.id);
         };
-        const onError = (err) => {
-            console.warn('Socket connection error:', err.message);
+        const onError = (_err) => {
+            // Silently handle socket connection error to avoid console error spam
         };
+
 
         socket.on('connect', onConnect);
         socket.on('connect_error', onError);

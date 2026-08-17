@@ -9,11 +9,11 @@ let io;
 const initSocket = (httpServer, corsOrigins) => {
     io = new Server(httpServer, {
         cors: {
-            origin: corsOrigins,
-            methods: ['GET', 'POST'],
-            credentials: true
+            origin: corsOrigins || '*',
+            methods: ['GET', 'POST']
         }
     });
+
 
     io.on('connection', (socket) => {
         console.log(`🔌 Socket connected: ${socket.id}`);
