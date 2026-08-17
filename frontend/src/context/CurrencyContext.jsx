@@ -1,9 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api from '../services/api';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 const CurrencyContext = createContext(null);
 
-// Hardcoded symbol map (mirrors backend SUPPORTED_CURRENCIES)
 const SYMBOL_MAP = {
     USD: '$', EUR: '€', GBP: '£', INR: '₹', JPY: '¥', CAD: 'CA$',
     AUD: 'A$', CHF: 'Fr', CNY: '¥', HKD: 'HK$', SGD: 'S$', MXN: 'MX$',
@@ -12,65 +10,33 @@ const SYMBOL_MAP = {
     PKR: '₨', BDT: '৳', RUB: '₽', TRY: '₺', PLN: 'zł', CZK: 'Kč',
 };
 
+const DEFAULT_CURRENCIES = [
+    { code: 'USD', name: 'US Dollar', symbol: '$' },
+    { code: 'EUR', name: 'Euro', symbol: '€' },
+    { code: 'GBP', name: 'British Pound', symbol: '£' },
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'CA$' },
+    { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' }
+];
+
 export const getCurrencySymbol = (code) => SYMBOL_MAP[code?.toUpperCase()] || code || '$';
 
 export const CurrencyProvider = ({ children }) => {
     const [displayCurrency, setDisplayCurrencyState] = useState(
         () => localStorage.getItem('displayCurrency') || 'USD'
     );
-    // Rate cache: { [base]: { rates, fetchedAt } }
-    const [rateCache, setRateCache] = useState({});
-    const [supportedCurrencies, setSupportedCurrencies] = useState([]);
-
-    // Load supported currencies on mount
-    useEffect(() => {
-        api.get('/currency/supported')
-            .then(r => setSupportedCurrencies(r.data.data))
-            .catch(() => { }); // silent fail — fallback handled in CurrencySelector
-    }, []);
+    const [supportedCurrencies] = useState(DEFAULT_CURRENCIES);
 
     const setDisplayCurrency = (code) => {
         localStorage.setItem('displayCurrency', code);
         setDisplayCurrencyState(code);
     };
 
-    /**
-     * Get rates for a base currency (cached 10 min client-side).
-     */
-    const getRates = useCallback(async (base) => {
-        const key = base.toUpperCase();
-        const cached = rateCache[key];
-        if (cached && Date.now() - cached.fetchedAt < 10 * 60 * 1000) {
-            return cached.rates;
-        }
-        try {
-            const res = await api.get(`/currency/rates?base=${key}`);
-            const rates = res.data.rates;
-            setRateCache(prev => ({ ...prev, [key]: { rates, fetchedAt: Date.now() } }));
-            return rates;
-        } catch {
-            return null;
-        }
-    }, [rateCache]);
+    const convertAmount = useCallback(async (amount) => {
+        return amount;
+    }, []);
 
-    /**
-     * Convert amount from one currency to another.
-     * Returns null on failure (UI can fall back gracefully).
-     */
-    const convertAmount = useCallback(async (amount, fromCurrency, toCurrency) => {
-        const from = fromCurrency?.toUpperCase() || 'USD';
-        const to = toCurrency?.toUpperCase() || 'USD';
-        if (from === to) return amount;
-
-        const rates = await getRates(from);
-        if (!rates || !rates[to]) return null;
-        return parseFloat((amount * rates[to]).toFixed(2));
-    }, [getRates]);
-
-    /**
-     * Format a number as currency string.
-     * e.g. formatCurrency(1234.5, 'INR') => '₹1,234.50'
-     */
     const formatCurrency = (amount, currencyCode) => {
         const code = currencyCode?.toUpperCase() || 'USD';
         try {
