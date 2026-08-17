@@ -15,7 +15,7 @@ const RecordSettlement = ({ groupId, groupMembers, groupCurrency, initialData, o
     const [error, setError] = useState('');
     const [successMeta, setSuccessMeta] = useState(null);   // { wasPartial, remainingDebt }
     const { formatCurrency } = useCurrency();
-    const gc = groupCurrency || 'USD';
+    const gc = groupCurrency || 'INR';
 
     // Sync when initialData changes
     useEffect(() => {

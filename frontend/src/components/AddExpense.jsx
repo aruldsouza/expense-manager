@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Form, Button, InputGroup, Row, Col, Alert, Spinner, Image } from 'react-bootstrap';
-import { FaMoneyBillWave, FaAlignLeft, FaUser, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag, FaPaperclip, FaTimesCircle, FaMagic } from 'react-icons/fa';
+import { FaMoneyBillWave, FaAlignLeft, FaUser, FaRupeeSign, FaPercentage, FaCheckCircle, FaRegCircle, FaTag, FaPaperclip, FaTimesCircle, FaMagic } from 'react-icons/fa';
 import SplitTemplatePicker from './SplitTemplatePicker';
 
 const CATEGORIES = ['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom'];
@@ -302,7 +302,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
                         <Form.Check
                             type="radio"
                             id="split-unequal"
-                            label="Unequally ($)"
+                            label="Unequally (₹)"
                             name="splitType"
                             value="UNEQUAL"
                             checked={splitType === 'UNEQUAL'}
@@ -323,7 +323,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
                 {splitType !== 'EQUAL' && (
                     <div className="mb-4 bg-light p-3 rounded border">
                         <h6 className="fw-bold mb-3 small text-muted text-uppercase">
-                            Split Details ({splitType === 'PERCENT' ? '%' : '$'})
+                            Split Details ({splitType === 'PERCENT' ? '%' : '₹'})
                         </h6>
                         {groupMembers
                             .filter(m => involvedMembers.includes(m._id))
@@ -335,7 +335,7 @@ const AddExpense = ({ groupId, groupMembers, onSuccess, onCancel, initialData = 
                                     <Col sm="4">
                                         <InputGroup size="sm">
                                             <InputGroup.Text>
-                                                {splitType === 'PERCENT' ? <FaPercentage size={10} /> : <FaDollarSign size={10} />}
+                                                {splitType === 'PERCENT' ? <FaPercentage size={10} /> : <FaRupeeSign size={10} />}
                                             </InputGroup.Text>
                                             <Form.Control
                                                 type="number"

@@ -5,7 +5,7 @@ const { getRates, SUPPORTED_CURRENCIES } = require('../utils/exchangeRate');
 // @access Public
 const getCurrencyRates = async (req, res, next) => {
     try {
-        const base = (req.query.base || 'USD').toUpperCase();
+        const base = (req.query.base || 'INR').toUpperCase();
         const rates = await getRates(base);
         res.json({ success: true, base, rates });
     } catch (error) {

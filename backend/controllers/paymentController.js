@@ -40,7 +40,7 @@ const createPaymentIntent = async (req, res, next) => {
         }
 
         // Stripe amounts are in the smallest currency unit (cents for USD)
-        const currency = (group.currency || 'USD').toLowerCase();
+        const currency = (group.currency || 'INR').toLowerCase();
         const amountInCents = Math.round(parsedAmount * 100);
 
         const paymentIntent = await stripe.paymentIntents.create({
@@ -128,14 +128,14 @@ const stripeWebhook = async (req, res) => {
                 await createNotifications(
                     [payeeId],
                     'settlement:new',
-                    `${populated.payer?.name || 'Someone'} settled $${amount.toFixed(2)} via Stripe`,
+                    `${populated.payer?.name || 'Someone'} settled ₹${amount.toFixed(2)} via Stripe`,
                     { groupId, relatedId: settlement._id }
                 );
             } catch (e) {
                 console.warn('Post-webhook notification/emit failed:', e.message);
             }
 
-            console.log(`✅ Stripe payment auto-settled: $${amount} from ${payerId} to ${payeeId} in group ${groupId}`);
+            console.log(`✅ Stripe payment auto-settled: ₹${amount} from ${payerId} to ${payeeId} in group ${groupId}`);
         } catch (err) {
             console.error('Webhook processing error:', err.message);
         }

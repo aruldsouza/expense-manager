@@ -15,7 +15,7 @@ const BalanceList = ({ groupId, groupCurrency, refreshTrigger }) => {
             setLoading(true);
             try {
                 // Always pass convertTo so we get both native + converted in one call
-                const params = displayCurrency && displayCurrency !== (groupCurrency || 'USD')
+                const params = displayCurrency && displayCurrency !== (groupCurrency || 'INR')
                     ? { convertTo: displayCurrency }
                     : {};
                 const res = await api.get(`/groups/${groupId}/balances`, { params });
@@ -33,7 +33,7 @@ const BalanceList = ({ groupId, groupCurrency, refreshTrigger }) => {
     if (error) return <Alert variant="danger">{error}</Alert>;
 
     const sortedBalances = [...balances].sort((a, b) => b.balance - a.balance);
-    const gc = groupCurrency || 'USD';
+    const gc = groupCurrency || 'INR';
     const needsConversion = displayCurrency && displayCurrency !== gc;
 
     return (

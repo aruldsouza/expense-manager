@@ -23,7 +23,7 @@ const ExpenseList = ({ groupId, groupCurrency, refreshTrigger, groupMembers, cur
     const [editExpenseData, setEditExpenseData] = useState(null);
     const [showHistoryFor, setShowHistoryFor] = useState(null);
 
-    const gc = groupCurrency || 'USD';
+    const gc = groupCurrency || 'INR';
     const needsConversion = displayCurrency && displayCurrency !== gc;
 
     const fetchExpenses = useCallback(async () => {

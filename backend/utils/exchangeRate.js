@@ -39,7 +39,7 @@ const fetchFromAPI = (baseCurrency) =>
  * @param {string} baseCurrency - ISO 4217 code e.g. "USD"
  * @returns {Promise<Object>} rates map { EUR: 0.91, INR: 83.1, ... }
  */
-const getRates = async (baseCurrency = 'USD') => {
+const getRates = async (baseCurrency = 'INR') => {
     const key = baseCurrency.toUpperCase();
     const now = Date.now();
 
@@ -79,10 +79,10 @@ const convertAmount = async (amount, from, to) => {
  * Major supported currencies with symbols.
  */
 const SUPPORTED_CURRENCIES = [
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
     { code: 'USD', name: 'US Dollar', symbol: '$' },
     { code: 'EUR', name: 'Euro', symbol: '€' },
     { code: 'GBP', name: 'British Pound', symbol: '£' },
-    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
     { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
     { code: 'CAD', name: 'Canadian Dollar', symbol: 'CA$' },
     { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },

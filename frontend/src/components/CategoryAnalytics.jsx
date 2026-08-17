@@ -28,7 +28,7 @@ const CategoryAnalytics = ({ groupId, groupCurrency }) => {
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     });
     const { formatCurrency } = useCurrency();
-    const gc = groupCurrency || 'USD';
+    const gc = groupCurrency || 'INR';
 
     const fetchData = useCallback(async () => {
         setLoading(true);

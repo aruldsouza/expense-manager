@@ -166,7 +166,7 @@ const RecurringExpenses = () => {
                                         </div>
 
                                         <div className="display-6 fw-bold text-primary mb-3">
-                                            ${Number(item.amount).toFixed(2)}
+                                            ₹{Number(item.amount).toFixed(2)}
                                         </div>
 
                                         <div className="d-flex flex-column gap-1 small text-muted mb-3">

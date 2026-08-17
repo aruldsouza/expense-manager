@@ -35,7 +35,7 @@ const BudgetManager = ({ groupId, groupCurrency, refreshTrigger, currentUserRole
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     });
     const { formatCurrency } = useCurrency();
-    const gc = groupCurrency || 'USD';
+    const gc = groupCurrency || 'INR';
 
     const fetchBudgets = useCallback(async () => {
         setLoading(true);

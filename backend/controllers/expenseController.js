@@ -55,7 +55,7 @@ exports.addExpense = async (req, res, next) => {
       }
       const sum = splits.reduce((acc, s) => acc + (parseFloat(s.amount) || 0), 0);
       if (Math.abs(sum - numAmount) > 0.05) {
-        return res.status(400).json({ error: `Sum of splits ($${sum.toFixed(2)}) does not match total expense amount ($${numAmount.toFixed(2)})` });
+        return res.status(400).json({ error: `Sum of splits (₹${sum.toFixed(2)}) does not match total expense amount (₹${numAmount.toFixed(2)})` });
       }
       calculatedSplits = splits.map(s => ({
         user: s.user._id || s.user,

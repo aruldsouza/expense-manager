@@ -151,7 +151,7 @@ const StripePaymentModal = ({ show, onHide, groupId, payeeId, payeeName, amount,
                     <Elements stripe={stripePromise} options={stripeOptions}>
                         <CheckoutForm
                             amount={amount}
-                            currency={currency || 'USD'}
+                            currency={currency || 'INR'}
                             payeeName={payeeName}
                             onSuccess={handleSuccess}
                             onCancel={onHide}

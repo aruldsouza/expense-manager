@@ -57,7 +57,7 @@ const upsertBudget = async (req, res, next) => {
                 await createNotifications(
                     [budget.createdBy.toString()],
                     'budget:exceeded',
-                    `⚠️ Budget exceeded: ${budget.category} spent ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(spent)} of ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(budget.limit)} limit`,
+                    `⚠️ Budget exceeded: ${budget.category} spent ${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(spent)} of ${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(budget.limit)} limit`,
                     { groupId: req.params.groupId, relatedId: budget._id }
                 );
             }

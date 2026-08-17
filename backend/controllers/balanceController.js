@@ -37,7 +37,7 @@ const getGroupBalances = async (req, res, next) => {
             throw new Error('Not authorized to access balances for this group');
         }
 
-        const groupCurrency = group.currency || 'USD';
+        const groupCurrency = group.currency || 'INR';
         const expenses = await Expense.find({ group: groupId });
         const settlements = await Settlement.find({ group: groupId });
 

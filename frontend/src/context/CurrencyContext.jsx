@@ -12,23 +12,23 @@ const SYMBOL_MAP = {
 };
 
 const DEFAULT_CURRENCIES = [
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
     { code: 'USD', name: 'US Dollar', symbol: '$' },
     { code: 'EUR', name: 'Euro', symbol: '€' },
     { code: 'GBP', name: 'British Pound', symbol: '£' },
-    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
     { code: 'CAD', name: 'Canadian Dollar', symbol: 'CA$' },
     { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
     { code: 'JPY', name: 'Japanese Yen', symbol: '¥' }
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const getCurrencySymbol = (code) => SYMBOL_MAP[code?.toUpperCase()] || code || '$';
+export const getCurrencySymbol = (code) => SYMBOL_MAP[code?.toUpperCase()] || code || '₹';
 
 
 
 export const CurrencyProvider = ({ children }) => {
     const [displayCurrency, setDisplayCurrencyState] = useState(
-        () => localStorage.getItem('displayCurrency') || 'USD'
+        () => localStorage.getItem('displayCurrency') || 'INR'
     );
     const [rateCache, setRateCache] = useState({});
     const [supportedCurrencies, setSupportedCurrencies] = useState(DEFAULT_CURRENCIES);
@@ -66,8 +66,8 @@ export const CurrencyProvider = ({ children }) => {
     }, [rateCache]);
 
     const convertAmount = useCallback(async (amount, fromCurrency, toCurrency) => {
-        const from = fromCurrency?.toUpperCase() || 'USD';
-        const to = toCurrency?.toUpperCase() || 'USD';
+        const from = fromCurrency?.toUpperCase() || 'INR';
+        const to = toCurrency?.toUpperCase() || 'INR';
         if (from === to || !amount) return amount;
 
         const rates = await getRates(from);
@@ -76,7 +76,7 @@ export const CurrencyProvider = ({ children }) => {
     }, [getRates]);
 
     const formatCurrency = (amount, currencyCode) => {
-        const code = currencyCode?.toUpperCase() || 'USD';
+        const code = currencyCode?.toUpperCase() || 'INR';
         try {
             return new Intl.NumberFormat(undefined, {
                 style: 'currency',

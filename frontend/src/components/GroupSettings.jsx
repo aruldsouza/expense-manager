@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 const GroupSettings = ({ group, onUpdate }) => {
     const [name, setName] = useState(group.name);
     const [description, setDescription] = useState(group.description || '');
-    const [currency, setCurrency] = useState(group.currency || 'USD');
+    const [currency, setCurrency] = useState(group.currency || 'INR');
     const [loading, setLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const navigate = useNavigate();
@@ -78,10 +78,10 @@ const GroupSettings = ({ group, onUpdate }) => {
                     <Form.Group className="mb-4">
                         <Form.Label className="fw-semibold">Base Currency</Form.Label>
                         <Form.Select value={currency} onChange={e => setCurrency(e.target.value)}>
+                            <option value="INR">INR (₹)</option>
                             <option value="USD">USD ($)</option>
                             <option value="EUR">EUR (€)</option>
                             <option value="GBP">GBP (£)</option>
-                            <option value="INR">INR (₹)</option>
                             <option value="JPY">JPY (¥)</option>
                             <option value="CAD">CAD ($)</option>
                             <option value="AUD">AUD ($)</option>

@@ -94,7 +94,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       }, 0);
 
       if (Math.abs(totalCustomSum - numAmount) > 0.05) {
-        alert(`Sum of split amounts ($${totalCustomSum.toFixed(2)}) must equal total expense amount ($${numAmount.toFixed(2)})`);
+        alert(`Sum of split amounts (₹${totalCustomSum.toFixed(2)}) must equal total expense amount (₹${numAmount.toFixed(2)})`);
         return;
       }
 
@@ -213,13 +213,13 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       <div className="grid-3" style={{ marginBottom: '1.5rem' }}>
         <div className="glass-card stat-card">
           <span className="stat-label">Total Group Expense</span>
-          <span className="stat-value" style={{ color: '#fff' }}>${totalSpent.toFixed(2)}</span>
+          <span className="stat-value" style={{ color: '#fff' }}>₹{totalSpent.toFixed(2)}</span>
         </div>
 
         <div className="glass-card stat-card">
           <span className="stat-label">Your Net Balance</span>
           <span className="stat-value" style={{ color: userNetPosition > 0 ? 'var(--accent-emerald)' : userNetPosition < 0 ? 'var(--accent-rose)' : 'var(--text-muted)' }}>
-            {userNetPosition > 0 ? `+$${userNetPosition.toFixed(2)}` : userNetPosition < 0 ? `-$${Math.abs(userNetPosition).toFixed(2)}` : '$0.00'}
+            {userNetPosition > 0 ? `+₹${userNetPosition.toFixed(2)}` : userNetPosition < 0 ? `-₹${Math.abs(userNetPosition).toFixed(2)}` : '₹0.00'}
           </span>
         </div>
 
@@ -270,12 +270,12 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                       </div>
                       <div>
                         <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>{b.user.name}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Paid ${b.totalPaid.toFixed(2)} • Owed ${b.totalOwed.toFixed(2)}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Paid ₹{b.totalPaid.toFixed(2)} • Owed ₹{b.totalOwed.toFixed(2)}</div>
                       </div>
                     </div>
 
                     <span className={`badge ${isPositive ? 'badge-emerald' : isNegative ? 'badge-rose' : 'badge-amber'}`}>
-                      {isPositive ? `gets back $${b.netBalance.toFixed(2)}` : isNegative ? `owes $${Math.abs(b.netBalance).toFixed(2)}` : 'settled up'}
+                      {isPositive ? `gets back ₹${b.netBalance.toFixed(2)}` : isNegative ? `owes ₹${Math.abs(b.netBalance).toFixed(2)}` : 'settled up'}
                     </span>
                   </div>
                 );
@@ -314,7 +314,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <span style={{ fontFamily: 'var(--font-display)', fontWeight: '700', fontSize: '1.1rem', color: '#fff' }}>
-                        ${opt.amount.toFixed(2)}
+                        ₹{opt.amount.toFixed(2)}
                       </span>
                       <button className="btn btn-primary btn-sm" onClick={() => quickSettle(opt)}>
                         Settle
@@ -360,7 +360,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                     </div>
 
                     <div style={{ fontFamily: 'var(--font-display)', fontWeight: '700', fontSize: '1.15rem', color: isExpense ? '#fff' : 'var(--accent-emerald)' }}>
-                      ${tx.amount.toFixed(2)}
+                      ₹{tx.amount.toFixed(2)}
                     </div>
                   </div>
                 );
@@ -394,7 +394,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Total Amount ($)</label>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Total Amount (₹)</label>
                   <input
                     className="glass-input"
                     type="number"
@@ -449,7 +449,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                       className={`btn btn-sm ${splitType === type ? 'btn-primary' : 'btn-secondary'}`}
                       style={{ flex: 1, textTransform: 'capitalize' }}
                     >
-                      {type === 'equal' ? '⚖️ Equal' : type === 'unequal' ? '💵 Unequal ($)' : '📊 % Split'}
+                      {type === 'equal' ? '⚖️ Equal' : type === 'unequal' ? '💵 Unequal (₹)' : '📊 % Split'}
                     </button>
                   ))}
                 </div>
@@ -476,7 +476,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
                         {splitType === 'unequal' && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>$</span>
+                            <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>₹</span>
                             <input
                               className="glass-input"
                               type="number"
@@ -553,7 +553,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Settlement Amount ($)</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Settlement Amount (₹)</label>
                 <input
                   className="glass-input"
                   type="number"

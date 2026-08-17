@@ -12,7 +12,7 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
     const [error, setError] = useState('');
     const [stripeModal, setStripeModal] = useState(null); // { payeeId, payeeName, amount }
     const { formatCurrency } = useCurrency();
-    const gc = groupCurrency || 'USD';
+    const gc = groupCurrency || 'INR';
 
     const fetchData = useCallback(async () => {
         try {

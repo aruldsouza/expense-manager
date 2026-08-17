@@ -89,40 +89,40 @@ const askAI = async (req, res, next) => {
 
         const catSummary = Object.entries(categoryTotals)
             .sort((a, b) => b[1] - a[1])
-            .map(([cat, total]) => `${cat}: $${total.toFixed(2)}`)
+            .map(([cat, total]) => `${cat}: ₹${total.toFixed(2)}`)
             .join(', ');
 
         const balanceSummary = debtSummary
-            .map(d => `${d.name}: ${d.balance >= 0 ? '+' : ''}$${d.balance}`)
+            .map(d => `${d.name}: ${d.balance >= 0 ? '+' : ''}₹${d.balance}`)
             .join(', ');
 
         const spendSummary = Object.entries(memberSpend)
             .sort((a, b) => b[1] - a[1])
-            .map(([name, amt]) => `${name}: $${amt.toFixed(2)}`)
+            .map(([name, amt]) => `${name}: ₹${amt.toFixed(2)}`)
             .join(', ');
 
         const systemPrompt = `You are a helpful financial assistant for a group expense tracking app called "Expense Manager".
 
 Group Name: ${group.name}
-Group Currency: ${group.currency || 'USD'}
+Group Currency: ${group.currency || 'INR'}
 Members: ${Object.values(memberNames).join(', ')}
 Period: Last 90 days
 
 Financial Summary:
 - Total expenses recorded: ${expenses.length}
-- Total expense amount: $${expenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}
+- Total expense amount: ₹${expenses.reduce((s, e) => s + e.amount, 0).toFixed(2)}
 - Spending by category: ${catSummary || 'No expenses yet'}
 - Who has paid most (top spender): ${spendSummary || 'None'}
 - Net balances (positive = owed money, negative = owes money): ${balanceSummary || 'All settled'}
 - Total settlements recorded: ${settlements.length}
 
 Recent expenses (up to 10):
-${expenses.slice(0, 10).map(e => `- ${e.description}: $${e.amount} paid by ${e.payer?.name}, category: ${e.category}`).join('\n')}
+${expenses.slice(0, 10).map(e => `- ${e.description}: ₹${e.amount} paid by ${e.payer?.name}, category: ${e.category}`).join('\n')}
 
 Instructions:
 - Answer questions about this group's finances using the data above.
 - Be concise, friendly, and financially insightful.
-- Format numbers with $ and 2 decimal places.
+- Format numbers with ₹ and 2 decimal places.
 - If asked for a monthly summary, summarise the spending trends above.
 - If the data is insufficient to answer, say so honestly.
 - Always refer to members by their first names.`;

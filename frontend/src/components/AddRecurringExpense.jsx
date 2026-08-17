@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import {
     FaAlignLeft, FaMoneyBillWave, FaUser, FaClock, FaCode,
-    FaCalendarAlt, FaDollarSign, FaPercentage, FaCheckCircle, FaRegCircle
+    FaCalendarAlt, FaRupeeSign, FaPercentage, FaCheckCircle, FaRegCircle
 } from 'react-icons/fa';
 import { createRecurringExpense } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -66,7 +66,7 @@ const AddRecurringExpense = ({ show, onHide, groupId, groupMembers, onSuccess })
 
         if (splitType === 'UNEQUAL') {
             const total = involvedMembers.reduce((s, id) => s + parseFloat(splits[id] || 0), 0);
-            if (Math.abs(total - amt) > 0.01) return `Split amounts must sum to $${amt} (current: $${total.toFixed(2)})`;
+            if (Math.abs(total - amt) > 0.01) return `Split amounts must sum to ₹${amt} (current: ₹${total.toFixed(2)})`;
         }
         if (splitType === 'PERCENT') {
             const total = involvedMembers.reduce((s, id) => s + parseFloat(splits[id] || 0), 0);
@@ -259,7 +259,7 @@ const AddRecurringExpense = ({ show, onHide, groupId, groupMembers, onSuccess })
                                     key={type}
                                     type="radio"
                                     id={`re-split-${type}`}
-                                    label={type === 'EQUAL' ? 'Equally' : type === 'UNEQUAL' ? 'Unequally ($)' : 'Percentage (%)'}
+                                    label={type === 'EQUAL' ? 'Equally' : type === 'UNEQUAL' ? 'Unequally (₹)' : 'Percentage (%)'}
                                     name="splitTypeRecurring"
                                     value={type}
                                     checked={splitType === type}
@@ -273,7 +273,7 @@ const AddRecurringExpense = ({ show, onHide, groupId, groupMembers, onSuccess })
                     {splitType !== 'EQUAL' && (
                         <div className="mb-3 bg-light p-3 rounded border">
                             <h6 className="fw-bold mb-3 small text-muted text-uppercase">
-                                Split Details ({splitType === 'PERCENT' ? '%' : '$'})
+                                Split Details ({splitType === 'PERCENT' ? '%' : '₹'})
                             </h6>
                             {groupMembers?.filter(m => involvedMembers.includes(m._id)).map(m => (
                                 <Form.Group as={Row} key={m._id} className="mb-2 align-items-center">
@@ -281,7 +281,7 @@ const AddRecurringExpense = ({ show, onHide, groupId, groupMembers, onSuccess })
                                     <Col sm="4">
                                         <InputGroup size="sm">
                                             <InputGroup.Text>
-                                                {splitType === 'PERCENT' ? <FaPercentage size={10} /> : <FaDollarSign size={10} />}
+                                                {splitType === 'PERCENT' ? <FaPercentage size={10} /> : <FaRupeeSign size={10} />}
                                             </InputGroup.Text>
                                             <Form.Control
                                                 type="number" min="0"

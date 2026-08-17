@@ -103,7 +103,7 @@ const generatePdfReport = async (req, res, next) => {
         const { expenses, settlements, totalAmount, settledAmount, categoryRows, memberRows } =
             await buildReportData(req.params.groupId, startDate, endDate);
 
-        const currency = group.currency || 'USD';
+        const currency = group.currency || 'INR';
         const period = startDate && endDate
             ? `${startDate} to ${endDate}`
             : 'All time';
@@ -245,7 +245,7 @@ const sendMonthlyEmailReport = async (req, res, next) => {
         const { expenses, totalAmount, settledAmount, categoryRows, memberRows } =
             await buildReportData(req.params.groupId, startDate, endDate);
 
-        const currency = group.currency || 'USD';
+        const currency = group.currency || 'INR';
 
         // Build HTML email
         const categoryHtml = categoryRows.slice(0, 8).map(r =>
