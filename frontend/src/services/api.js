@@ -1,6 +1,9 @@
 import { calculateNetBalances, computeOptimizedSettlements } from './debtOptimizer';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const RAW_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE = (RAW_URL && !RAW_URL.includes('expense-manager-5h2m.onrender.com')) 
+  ? RAW_URL 
+  : 'http://localhost:5001/api';
 
 // Initial Demo Data for LocalStorage Fallback
 const DEFAULT_DEMO_USERS = [

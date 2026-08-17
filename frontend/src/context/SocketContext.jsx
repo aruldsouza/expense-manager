@@ -1,17 +1,9 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
-import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
-// Backend URL — same as API base but without /api
-const SOCKET_URL = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace('/api', '')
-    : 'http://localhost:5001';
-
 export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);
-    const { user } = useAuth();
 
     if (socketRef.current == null) {
         socketRef.current = io(SOCKET_URL, {
@@ -81,6 +73,7 @@ export const SocketProvider = ({ children }) => {
     return (
         // eslint-disable-next-line react-hooks/refs
         <SocketContext.Provider value={{ joinGroup, leaveGroup, joinUser, on, off, socket: socketRef.current }}>
+
             {children}
         </SocketContext.Provider>
     );
