@@ -14,9 +14,16 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json({ error: 'Duplicate field value entered' });
   }
 
+  if (err.name === 'MongooseServerSelectionError' || err.name === 'MongooseError' || err.message?.includes('buffering timed out')) {
+    return res.status(503).json({
+      error: 'Database connection unavailable. Please ensure MONGODB_URI environment variable is configured in Render service settings.'
+    });
+  }
+
   res.status(err.statusCode || 500).json({
     error: err.message || 'Internal Server Error'
   });
+
 };
 
 module.exports = errorHandler;

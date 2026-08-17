@@ -93,7 +93,9 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 // Connect to MongoDB & start server
-mongoose.connect(MONGODB_URI)
+mongoose.set('bufferCommands', false);
+
+mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 })
   .then(() => {
     console.log('Successfully connected to MongoDB.');
     server.listen(PORT, () => {
@@ -102,9 +104,10 @@ mongoose.connect(MONGODB_URI)
   })
   .catch(err => {
     console.warn(`MongoDB connection error: ${err.message}`);
-    console.log('Starting Express server in offline mode...');
+    console.log('Starting Express server (Database disconnected)...');
     server.listen(PORT, () => {
-      console.log(`🚀 Smart Expense Splitter Backend listening on http://localhost:${PORT} (Offline mode)`);
+      console.log(`🚀 Smart Expense Splitter Backend listening on http://localhost:${PORT} (Database disconnected)`);
     });
   });
+
 
