@@ -1,9 +1,18 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
+import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
+// Backend URL — same as API base but without /api
+const SOCKET_URL = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace('/api', '')
+    : (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com' : 'http://localhost:5002');
+
 export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);
+    const { user } = useAuth();
+    const userId = user?._id;
 
     if (socketRef.current == null) {
         socketRef.current = io(SOCKET_URL, {
@@ -13,6 +22,7 @@ export const SocketProvider = ({ children }) => {
             transports: ['websocket', 'polling']
         });
     }
+
 
 
     useEffect(() => {
@@ -57,10 +67,11 @@ export const SocketProvider = ({ children }) => {
 
     // Auto-join user room when authenticated
     useEffect(() => {
-        if (user?._id) {
-            joinUser(user._id);
+        if (userId) {
+            joinUser(userId);
         }
-    }, [user?._id]);
+    }, [userId]);
+
 
     const on = (event, handler) => {
         socketRef.current?.on(event, handler);

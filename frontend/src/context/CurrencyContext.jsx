@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api from '../services/api';
 
 const CurrencyContext = createContext(null);
 
@@ -10,8 +11,6 @@ const SYMBOL_MAP = {
     PKR: '₨', BDT: '৳', RUB: '₽', TRY: '₺', PLN: 'zł', CZK: 'Kč',
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-
 const DEFAULT_CURRENCIES = [
     { code: 'USD', name: 'US Dollar', symbol: '$' },
     { code: 'EUR', name: 'Euro', symbol: '€' },
@@ -22,23 +21,59 @@ const DEFAULT_CURRENCIES = [
     { code: 'JPY', name: 'Japanese Yen', symbol: '¥' }
 ];
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const getCurrencySymbol = (code) => SYMBOL_MAP[code?.toUpperCase()] || code || '$';
+
 
 
 export const CurrencyProvider = ({ children }) => {
     const [displayCurrency, setDisplayCurrencyState] = useState(
         () => localStorage.getItem('displayCurrency') || 'USD'
     );
-    const [supportedCurrencies] = useState(DEFAULT_CURRENCIES);
+    const [rateCache, setRateCache] = useState({});
+    const [supportedCurrencies, setSupportedCurrencies] = useState(DEFAULT_CURRENCIES);
+
+    useEffect(() => {
+        api.get('/currencies/supported')
+            .then(r => {
+                if (r.data?.data) setSupportedCurrencies(r.data.data);
+            })
+            .catch(() => { }); // fallback to DEFAULT_CURRENCIES
+    }, []);
 
     const setDisplayCurrency = (code) => {
         localStorage.setItem('displayCurrency', code);
         setDisplayCurrencyState(code);
     };
 
-    const convertAmount = useCallback(async (amount) => {
-        return amount;
-    }, []);
+    const getRates = useCallback(async (base) => {
+        const key = base.toUpperCase();
+        const cached = rateCache[key];
+        if (cached && Date.now() - cached.fetchedAt < 10 * 60 * 1000) {
+            return cached.rates;
+        }
+        try {
+            const res = await api.get(`/currencies/rates?base=${key}`);
+            const rates = res.data.data || res.data.rates;
+            if (rates) {
+                setRateCache(prev => ({ ...prev, [key]: { rates, fetchedAt: Date.now() } }));
+                return rates;
+            }
+            return null;
+        } catch {
+            return null;
+        }
+    }, [rateCache]);
+
+    const convertAmount = useCallback(async (amount, fromCurrency, toCurrency) => {
+        const from = fromCurrency?.toUpperCase() || 'USD';
+        const to = toCurrency?.toUpperCase() || 'USD';
+        if (from === to || !amount) return amount;
+
+        const rates = await getRates(from);
+        if (!rates || !rates[to]) return amount;
+        return parseFloat((amount * rates[to]).toFixed(2));
+    }, [getRates]);
 
     const formatCurrency = (amount, currencyCode) => {
         const code = currencyCode?.toUpperCase() || 'USD';
@@ -67,6 +102,7 @@ export const CurrencyProvider = ({ children }) => {
         </CurrencyContext.Provider>
     );
 };
+
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useCurrency = () => {
