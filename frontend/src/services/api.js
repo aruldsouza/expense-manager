@@ -1,7 +1,7 @@
 import { calculateNetBalances, computeOptimizedSettlements } from './debtOptimizer';
 
 const rawBase = (import.meta.env.VITE_API_URL || 
-  (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com/api' : 'http://localhost:5002/api')).replace(/\/+$/, '');
+  (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com/api' : 'http://localhost:5001/api')).replace(/\/+$/, '');
 
 const API_BASE = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`;
 

@@ -3,6 +3,8 @@ const http = require('http');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
+const fs = require('fs');
 const errorHandler = require('./middleware/error');
 const { initSocket } = require('./socket');
 
@@ -84,9 +86,21 @@ app.use('/api/groups/:groupId/recurring', recurringExpenseRoutes);
 app.use('/api/groups/:groupId/reports', reportRoutes);
 app.use('/api/groups/:groupId/templates', splitTemplateRoutes);
 
-// 404 Handler
+// Serve static frontend build if present
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendDistPath));
+
+// SPA fallback for non-API GET requests
 app.use((req, res, next) => {
-  res.status(404).json({ error: `Route ${req.originalUrl} not found` });
+  if (req.method !== 'GET' || req.path.startsWith('/api')) {
+    return next();
+  }
+  const indexPath = path.join(frontendDistPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: `Route ${req.originalUrl} not found` });
+  }
 });
 
 // Error handling middleware

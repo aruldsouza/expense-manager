@@ -7,7 +7,7 @@ const SocketContext = createContext(null);
 // Backend URL — same as API base but without /api
 const SOCKET_URL = import.meta.env.VITE_API_URL
     ? import.meta.env.VITE_API_URL.replace('/api', '')
-    : (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com' : 'http://localhost:5002');
+    : (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com' : 'http://localhost:5001');
 
 export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);

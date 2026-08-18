@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Manager — Launching Application...</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.8);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --accent: #6366f1;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: var(--text);
+    }
+    .launcher-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2.5rem;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 0.85rem 1.2rem;
+      margin: 0.4rem 0;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, #4f46e5, #0284c7);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #34d399;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  </style>
+  <script>
+    // Auto-redirect to compiled frontend app on Live Server / static server launch
+    (function autoLaunch() {
+      const isLiveServer = window.location.pathname.endsWith('/index.html') || window.location.pathname === '/';
+      const targetUrl = './frontend/dist/index.html';
+
+      // Check if user has vite dev server or backend running
+      fetch('http://localhost:5173', { mode: 'no-cors' })
+        .then(() => {
+          // Vite dev server is running! Redirect to Vite dev server
+          window.location.replace('http://localhost:5173');
+        })
+        .catch(() => {
+          // Redirect to compiled static app in frontend/dist
+          if (isLiveServer) {
+            window.location.replace(targetUrl);
+          }
+        });
+    })();
+  </script>
+</head>
+<body>
+  <div class="launcher-card">
+    <div class="logo">💸</div>
+    <div class="status-badge"><span class="dot"></span> Smart Expense Splitter</div>
+    <h1>Launching Expense Manager</h1>
+    <p>Redirecting to the web application. If you are not redirected automatically within a few seconds, click below.</p>
+    
+    <a href="./frontend/dist/index.html" class="btn">🚀 Open Web Application</a>
+    <a href="http://localhost:5001" class="btn btn-secondary">⚡ Open Express Backend Server (Port 5001)</a>
+    <a href="http://localhost:5173" class="btn btn-secondary">💻 Open Vite Dev Server (Port 5173)</a>
+  </div>
+</body>
+</html>
