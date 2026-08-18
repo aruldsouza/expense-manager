@@ -1,9 +1,18 @@
 import { calculateNetBalances, computeOptimizedSettlements } from './debtOptimizer';
 
-const rawBase = (import.meta.env.VITE_API_URL || 
-  (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com/api' : 'http://localhost:5001/api')).replace(/\/+$/, '');
+// Detect API base at runtime — works for Live Server, Express backend, and Render.com
+function getApiBase() {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return 'https://expense-manager-5h2m.onrender.com/api';
+  }
+  // Local development (any port — Live Server 5500, Express 5001, Vite 5173, etc.)
+  return 'http://localhost:5001/api';
+}
 
-const API_BASE = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`;
+const API_BASE = getApiBase();
 
 
 // ── One-time cleanup: remove any previously seeded demo data from browser storage ──

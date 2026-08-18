@@ -4,10 +4,18 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext(null);
 
-// Backend URL — same as API base but without /api
-const SOCKET_URL = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace('/api', '')
-    : (import.meta.env.MODE === 'production' ? 'https://expense-manager-5h2m.onrender.com' : 'http://localhost:5001');
+// Detect socket URL at runtime — same logic as API base
+function getSocketUrl() {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace('/api', '').replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return 'https://expense-manager-5h2m.onrender.com';
+  }
+  return 'http://localhost:5001';
+}
+
+const SOCKET_URL = getSocketUrl();
 
 export const SocketProvider = ({ children }) => {
     const socketRef = useRef(null);
