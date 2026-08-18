@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Navbar({ currentUser, onOpenAuth, onLogout, onSelectGroup }) {
+export default function Navbar({ currentUser, onLogout, onSelectGroup }) {
   return (
     <nav className="glass-card navbar">
       <div className="brand-logo" style={{ cursor: 'pointer' }} onClick={() => onSelectGroup(null)}>
@@ -9,7 +9,7 @@ export default function Navbar({ currentUser, onOpenAuth, onLogout, onSelectGrou
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {currentUser ? (
+        {currentUser && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
               width: '36px',
@@ -21,7 +21,8 @@ export default function Navbar({ currentUser, onOpenAuth, onLogout, onSelectGrou
               justifyContent: 'center',
               fontWeight: '700',
               color: '#fff',
-              fontSize: '0.95rem'
+              fontSize: '0.95rem',
+              boxShadow: '0 0 12px rgba(99,102,241,0.35)',
             }}>
               {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
             </div>
@@ -29,14 +30,14 @@ export default function Navbar({ currentUser, onOpenAuth, onLogout, onSelectGrou
               <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{currentUser.name}</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{currentUser.email}</span>
             </div>
-            <button className="btn btn-secondary btn-sm" onClick={onLogout} style={{ marginLeft: '0.5rem' }}>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={onLogout}
+              style={{ marginLeft: '0.5rem' }}
+            >
               Sign Out
             </button>
           </div>
-        ) : (
-          <button className="btn btn-primary" onClick={onOpenAuth}>
-            Sign In / Register
-          </button>
         )}
       </div>
     </nav>

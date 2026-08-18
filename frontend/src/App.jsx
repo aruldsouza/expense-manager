@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
-import AuthModal from './components/AuthModal';
+import AuthPage from './components/AuthPage';
 import GroupList from './components/GroupList';
 import GroupDetail from './components/GroupDetail';
 import { api } from './services/api';
@@ -10,44 +10,44 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const loadInitialData = async () => {
-    setLoading(true);
-    try {
-      const meRes = await api.getMe();
-      if (meRes && meRes.user) {
-        setCurrentUser(meRes.user);
-      }
-      const groupsData = await api.getGroups();
-      setGroups(groupsData || []);
-    } catch (err) {
-      console.error('Failed loading initial application data:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // On mount: try to restore logged-in session from stored JWT
   useEffect(() => {
-    loadInitialData();
+    (async () => {
+      setLoading(true);
+      try {
+        const meRes = await api.getMe();
+        if (meRes && meRes.user) {
+          setCurrentUser(meRes.user);
+          const groupsData = await api.getGroups();
+          setGroups(groupsData || []);
+        }
+      } catch (_) {
+        // No valid session — stays on auth page
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   const handleAuthSuccess = async ({ type, name, email, password }) => {
+    let res;
     if (type === 'register') {
-      const res = await api.register(name, email, password);
-      setCurrentUser(res.user);
+      res = await api.register(name, email, password);
     } else {
-      const res = await api.login(email, password);
-      setCurrentUser(res.user);
+      res = await api.login(email, password);
     }
-    loadInitialData();
+    setCurrentUser(res.user);
+    const groupsData = await api.getGroups();
+    setGroups(groupsData || []);
   };
 
   const handleLogout = () => {
     api.setToken(null);
     setCurrentUser(null);
     setSelectedGroup(null);
+    setGroups([]);
   };
 
   const handleCreateGroup = async (name, description, memberEmails) => {
@@ -56,22 +56,42 @@ export default function App() {
     setSelectedGroup(newGroup);
   };
 
+  // ── Loading splash ──
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', flexDirection: 'column', gap: '1rem',
+      }}>
+        <div style={{
+          width: '56px', height: '56px', borderRadius: '14px',
+          background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '1.8rem', boxShadow: '0 0 28px rgba(99,102,241,0.4)',
+          animation: 'pulse 1.4s ease-in-out infinite',
+        }}>⚡</div>
+        <span style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Loading SplitSmart…</span>
+        <style>{`@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.8} }`}</style>
+      </div>
+    );
+  }
+
+  // ── Not logged in → show ONLY the auth page ──
+  if (!currentUser) {
+    return <AuthPage onAuthSuccess={handleAuthSuccess} />;
+  }
+
+  // ── Logged in → show full app ──
   return (
     <div className="app-container">
       <Navbar
         currentUser={currentUser}
-        onOpenAuth={() => setAuthModalOpen(true)}
         onLogout={handleLogout}
-        onSelectGroup={(g) => setSelectedGroup(g)}
+        onSelectGroup={() => setSelectedGroup(null)}
       />
 
       <main>
-        {loading ? (
-          <div className="glass-card" style={{ textAlign: 'center', padding: '3rem' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⚡</div>
-            <div>Loading SplitSmart Application...</div>
-          </div>
-        ) : selectedGroup ? (
+        {selectedGroup ? (
           <GroupDetail
             group={selectedGroup}
             currentUser={currentUser}
@@ -85,12 +105,6 @@ export default function App() {
           />
         )}
       </main>
-
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
-      />
     </div>
   );
 }
