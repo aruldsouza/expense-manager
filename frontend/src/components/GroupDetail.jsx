@@ -617,9 +617,11 @@ export default function GroupDetail({ group, currentUser, onBack }) {
               <button onClick={() => setShowInviteModal(false)} style={{ background: 'none', color: 'var(--text-dim)', fontSize: '1.2rem' }}>✕</button>
             </div>
 
-            <form onSubmit={handleInviteMember} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleInviteMember} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Member Email Address</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem', fontWeight: '600' }}>
+                  INVITE BY EMAIL
+                </label>
                 <input
                   className="glass-input"
                   type="email"
@@ -628,16 +630,44 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                   onChange={e => setInviteEmail(e.target.value)}
                   required
                 />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.35rem', display: 'block' }}>
-                  This user will immediately see this group in their dashboard upon registering or logging in with this email.
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.4rem', display: 'block', lineHeight: 1.4 }}>
+                  ✉️ An invitation email will be sent automatically. When your friend registers or signs in with this email, this group will instantly appear in their dashboard!
                 </span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
                 <button className="btn btn-secondary" type="button" onClick={() => setShowInviteModal(false)}>Cancel</button>
                 <button className="btn btn-primary" type="submit" disabled={inviting}>
-                  {inviting ? 'Inviting...' : 'Send Invite'}
+                  {inviting ? 'Sending Invite...' : '🚀 Send Email Invite'}
                 </button>
+              </div>
+
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.4rem', fontWeight: '600' }}>
+                  OR SHARE DIRECT LINK
+                </label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    className="glass-input"
+                    type="text"
+                    readOnly
+                    value={window.location.origin}
+                    style={{ fontSize: '0.85rem', opacity: 0.8 }}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={(e) => {
+                      navigator.clipboard.writeText(window.location.origin);
+                      const original = e.currentTarget.innerText;
+                      e.currentTarget.innerText = '✓ Copied!';
+                      setTimeout(() => { if (e.currentTarget) e.currentTarget.innerText = original; }, 2000);
+                    }}
+                    style={{ whiteSpace: 'nowrap' }}
+                  >
+                    📋 Copy Link
+                  </button>
+                </div>
               </div>
             </form>
           </div>

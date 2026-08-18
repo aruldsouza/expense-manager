@@ -2,6 +2,8 @@ const Group = require('../models/Group');
 const User = require('../models/User');
 const Expense = require('../models/Expense');
 const Settlement = require('../models/Settlement');
+const Notification = require('../models/Notification');
+const { sendGroupInviteEmail } = require('../utils/mailer');
 
 exports.createGroup = async (req, res, next) => {
   try {
@@ -11,7 +13,10 @@ exports.createGroup = async (req, res, next) => {
     }
 
     const userId = req.user.id || req.user._id;
+    const inviterName = req.user.name || 'Group Creator';
+    const inviterEmail = req.user.email || '';
     const membersSet = new Set([userId.toString()]);
+    const invitedEmailsList = [];
 
     const itemsToProcess = [];
     if (Array.isArray(memberEmails)) {
@@ -33,6 +38,8 @@ exports.createGroup = async (req, res, next) => {
 
       if (strVal.includes('@')) {
         const cleanEmail = strVal.toLowerCase();
+        if (cleanEmail === inviterEmail.toLowerCase()) continue;
+
         let user = await User.findOne({ email: cleanEmail });
         if (!user) {
           // Create placeholder user so they are immediately part of the group
@@ -43,10 +50,16 @@ exports.createGroup = async (req, res, next) => {
             password: 'placeholder_pending_registration_' + Date.now()
           });
         }
-        if (user) membersSet.add(user._id.toString());
+        if (user) {
+          membersSet.add(user._id.toString());
+          invitedEmailsList.push({ email: cleanEmail, userId: user._id });
+        }
       } else {
         const user = await User.findById(strVal);
-        if (user) membersSet.add(user._id.toString());
+        if (user) {
+          membersSet.add(user._id.toString());
+          if (user.email) invitedEmailsList.push({ email: user.email, userId: user._id });
+        }
       }
     }
 
@@ -60,6 +73,27 @@ exports.createGroup = async (req, res, next) => {
     const populatedGroup = await Group.findById(group._id)
       .populate('members', 'name email')
       .populate('createdBy', 'name email');
+
+    // Asynchronously dispatch email invites & create in-app notifications
+    for (const invited of invitedEmailsList) {
+      // 1. Send Email
+      sendGroupInviteEmail({
+        toEmail: invited.email,
+        inviterName,
+        inviterEmail,
+        groupName: group.name,
+        groupDescription: group.description,
+        groupId: group._id
+      }).catch(e => console.warn('Email invite dispatch error:', e.message));
+
+      // 2. Create in-app notification
+      Notification.create({
+        recipient: invited.userId,
+        type: 'group:invite',
+        message: `${inviterName} invited you to join the expense group "${group.name}".`,
+        groupId: group._id
+      }).catch(() => {});
+    }
 
     res.status(201).json(populatedGroup);
   } catch (err) {
@@ -158,6 +192,30 @@ exports.addMember = async (req, res, next) => {
     const updatedGroup = await Group.findById(groupId)
       .populate('members', 'name email')
       .populate('createdBy', 'name email');
+
+    const inviterName = req.user.name || 'Group Admin';
+    const inviterEmail = req.user.email || '';
+
+    // Send email invitation asynchronously
+    if (userToAdd.email) {
+      sendGroupInviteEmail({
+        toEmail: userToAdd.email,
+        inviterName,
+        inviterEmail,
+        groupName: updatedGroup.name,
+        groupDescription: updatedGroup.description,
+        groupId: updatedGroup._id
+      }).catch(e => console.warn('Email invite dispatch error:', e.message));
+    }
+
+    // Create in-app notification
+    Notification.create({
+      recipient: userToAdd._id,
+      type: 'group:invite',
+      message: `${inviterName} invited you to join the expense group "${updatedGroup.name}".`,
+      groupId: updatedGroup._id
+    }).catch(() => {});
+
     res.json(updatedGroup);
   } catch (err) {
     next(err);
