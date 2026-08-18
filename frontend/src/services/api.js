@@ -220,8 +220,11 @@ export const api = {
       }
       return await res.json();
     } catch (err) {
-      console.warn(`Backend fetch failed for ${endpoint}: ${err.message}. Using LocalStorage engine.`);
-      throw err; // Caught by wrapper to switch engine
+      // Only warn for non-auth-check calls to reduce noise on initial load
+      if (!endpoint.includes('/auth/me')) {
+        console.warn(`API: ${endpoint} failed (${err.message}), using local mode.`);
+      }
+      throw err;
     }
   },
 
@@ -231,7 +234,10 @@ export const api = {
       this.setToken(data.token);
       return data;
     } catch (_e) {
-      return await localEngine.login(email);
+      // Offline fallback — set a local-mode marker token so session restore works
+      const result = await localEngine.login(email);
+      this.setToken('local-mode');
+      return result;
     }
   },
 
@@ -241,15 +247,27 @@ export const api = {
       this.setToken(data.token);
       return data;
     } catch (_e) {
-      return await localEngine.register(name, email);
+      // Offline fallback — set a local-mode marker token so session restore works
+      const result = await localEngine.register(name, email);
+      this.setToken('local-mode');
+      return result;
     }
   },
 
   async getMe() {
+    // No token at all — not logged in, don't hit the backend
+    if (!this.token) return { user: null };
+    // Local offline session — restore from localStorage without a network call
+    if (this.token === 'local-mode') {
+      return { user: localEngine.currentUser };
+    }
+    // Real JWT — verify with backend
     try {
       return await this.request('/auth/me');
     } catch (_e) {
-      return { user: localEngine.currentUser };
+      // Token expired or invalid — clear it and force re-login
+      this.setToken(null);
+      return { user: null };
     }
   },
 
