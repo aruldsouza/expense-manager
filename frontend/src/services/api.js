@@ -6,68 +6,19 @@ const rawBase = (import.meta.env.VITE_API_URL ||
 const API_BASE = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`;
 
 
-// Initial Demo Data for LocalStorage Fallback
-const DEFAULT_DEMO_USERS = [
-  { _id: 'u1', name: 'Alex Rivera', email: 'alex@example.com' },
-  { _id: 'u2', name: 'Beatriz Chen', email: 'beatriz@example.com' },
-  { _id: 'u3', name: 'Charlie Kim', email: 'charlie@example.com' },
-  { _id: 'u4', name: 'David Miller', email: 'david@example.com' }
-];
-
-const DEFAULT_DEMO_GROUPS = [
-  {
-    _id: 'g1',
-    name: 'Goa Beach Vacation 🏖️',
-    description: 'Shared expenses for flights, villa, and beach clubs',
-    createdBy: 'u1',
-    members: DEFAULT_DEMO_USERS
-  },
-  {
-    _id: 'g2',
-    name: 'Apartment 402 Roommates 🏠',
-    description: 'Monthly rent, wifi, utilities, and grocery supplies',
-    createdBy: 'u2',
-    members: [DEFAULT_DEMO_USERS[0], DEFAULT_DEMO_USERS[1], DEFAULT_DEMO_USERS[2]]
-  }
-];
-
-const DEFAULT_DEMO_EXPENSES = [
-  {
-    _id: 'e1',
-    group: 'g1',
-    title: 'Luxury Villa Booking',
-    amount: 600,
-    paidBy: DEFAULT_DEMO_USERS[0], // Alex
-    category: 'Accommodation',
-    splitType: 'equal',
-    splits: DEFAULT_DEMO_USERS.map(u => ({ user: u, amount: 150, percentage: 25 })),
-    date: new Date(Date.now() - 3 * 86400000).toISOString()
-  },
-  {
-    _id: 'e2',
-    group: 'g1',
-    title: 'Seafood Dinner & Drinks',
-    amount: 240,
-    paidBy: DEFAULT_DEMO_USERS[1], // Beatriz
-    category: 'Food',
-    splitType: 'equal',
-    splits: DEFAULT_DEMO_USERS.map(u => ({ user: u, amount: 60, percentage: 25 })),
-    date: new Date(Date.now() - 2 * 86400000).toISOString()
-  },
-  {
-    _id: 'e3',
-    group: 'g1',
-    title: 'Scuba Diving & Jet Ski Rental',
-    amount: 180,
-    paidBy: DEFAULT_DEMO_USERS[2], // Charlie
-    category: 'Entertainment',
-    splitType: 'equal',
-    splits: DEFAULT_DEMO_USERS.map(u => ({ user: u, amount: 45, percentage: 25 })),
-    date: new Date(Date.now() - 1 * 86400000).toISOString()
-  }
-];
-
-const DEFAULT_DEMO_SETTLEMENTS = [];
+// ── One-time cleanup: remove any previously seeded demo data from browser storage ──
+const DEMO_IDS = ['u1', 'u2', 'u3', 'u4', 'g1', 'g2', 'e1', 'e2', 'e3'];
+(function wipeDemoData() {
+  try {
+    const groups = JSON.parse(localStorage.getItem('expense_mgr_groups') || '[]');
+    if (groups.some(g => DEMO_IDS.includes(g._id))) {
+      localStorage.removeItem('expense_mgr_users');
+      localStorage.removeItem('expense_mgr_groups');
+      localStorage.removeItem('expense_mgr_expenses');
+      localStorage.removeItem('expense_mgr_settlements');
+    }
+  } catch (_) {}
+})();
 
 // LocalStorage Helper
 function getStorage(key, fallback) {
@@ -87,18 +38,18 @@ function setStorage(key, data) {
   }
 }
 
-// Initialize LocalStorage defaults if empty
-if (!localStorage.getItem('expense_mgr_users')) setStorage('users', DEFAULT_DEMO_USERS);
-if (!localStorage.getItem('expense_mgr_groups')) setStorage('groups', DEFAULT_DEMO_GROUPS);
-if (!localStorage.getItem('expense_mgr_expenses')) setStorage('expenses', DEFAULT_DEMO_EXPENSES);
-if (!localStorage.getItem('expense_mgr_settlements')) setStorage('settlements', DEFAULT_DEMO_SETTLEMENTS);
+// Initialize LocalStorage with empty state (no demo data)
+if (!localStorage.getItem('expense_mgr_users')) setStorage('users', []);
+if (!localStorage.getItem('expense_mgr_groups')) setStorage('groups', []);
+if (!localStorage.getItem('expense_mgr_expenses')) setStorage('expenses', []);
+if (!localStorage.getItem('expense_mgr_settlements')) setStorage('settlements', []);
 
 // Local Storage Fallback API Engine
 const localEngine = {
-  currentUser: getStorage('users', DEFAULT_DEMO_USERS)[0],
+  currentUser: getStorage('users', [])[0] || null,
   
   async login(email) {
-    const users = getStorage('users', DEFAULT_DEMO_USERS);
+    const users = getStorage('users', []);
     let user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
       user = { _id: 'u_' + Date.now(), name: email.split('@')[0], email };
@@ -110,7 +61,7 @@ const localEngine = {
   },
 
   async register(name, email) {
-    const users = getStorage('users', DEFAULT_DEMO_USERS);
+    const users = getStorage('users', []);
     const user = { _id: 'u_' + Date.now(), name, email };
     users.push(user);
     setStorage('users', users);
@@ -119,11 +70,11 @@ const localEngine = {
   },
 
   async getGroups() {
-    return getStorage('groups', DEFAULT_DEMO_GROUPS);
+    return getStorage('groups', []);
   },
 
   async createGroup(name, description, memberEmails = []) {
-    const users = getStorage('users', DEFAULT_DEMO_USERS);
+    const users = getStorage('users', []);
     const members = [this.currentUser];
 
     memberEmails.forEach(email => {
@@ -147,19 +98,19 @@ const localEngine = {
       members
     };
 
-    const groups = getStorage('groups', DEFAULT_DEMO_GROUPS);
+    const groups = getStorage('groups', []);
     groups.unshift(newGroup);
     setStorage('groups', groups);
     return newGroup;
   },
 
   async getGroupDetails(groupId) {
-    const groups = getStorage('groups', DEFAULT_DEMO_GROUPS);
-    return groups.find(g => g._id === groupId) || groups[0];
+    const groups = getStorage('groups', []);
+    return groups.find(g => g._id === groupId) || null;
   },
 
   async addExpense(groupId, expenseData) {
-    const users = getStorage('users', DEFAULT_DEMO_USERS);
+    const users = getStorage('users', []);
     
     const paidByUser = users.find(u => u._id === expenseData.paidBy) || this.currentUser;
 
@@ -180,21 +131,21 @@ const localEngine = {
       date: new Date().toISOString()
     };
 
-    const expenses = getStorage('expenses', DEFAULT_DEMO_EXPENSES);
+    const expenses = getStorage('expenses', []);
     expenses.unshift(newExpense);
     setStorage('expenses', expenses);
     return newExpense;
   },
 
   async getExpenses(groupId) {
-    const expenses = getStorage('expenses', DEFAULT_DEMO_EXPENSES);
+    const expenses = getStorage('expenses', []);
     return expenses.filter(e => e.group === groupId);
   },
 
   async getBalances(groupId) {
     const group = await this.getGroupDetails(groupId);
     const expenses = await this.getExpenses(groupId);
-    const settlements = getStorage('settlements', DEFAULT_DEMO_SETTLEMENTS).filter(s => s.group === groupId);
+    const settlements = getStorage('settlements', []).filter(s => s.group === groupId);
     return calculateNetBalances(group.members, expenses, settlements);
   },
 
@@ -205,7 +156,7 @@ const localEngine = {
   },
 
   async recordSettlement(groupId, { fromUser, toUser, amount, notes }) {
-    const users = getStorage('users', DEFAULT_DEMO_USERS);
+    const users = getStorage('users', []);
     const from = users.find(u => u._id === fromUser);
     const to = users.find(u => u._id === toUser);
 
@@ -219,7 +170,7 @@ const localEngine = {
       date: new Date().toISOString()
     };
 
-    const settlements = getStorage('settlements', DEFAULT_DEMO_SETTLEMENTS);
+    const settlements = getStorage('settlements', []);
     settlements.unshift(settlement);
     setStorage('settlements', settlements);
     return settlement;
@@ -227,7 +178,7 @@ const localEngine = {
 
   async getTransactions(groupId) {
     const expenses = (await this.getExpenses(groupId)).map(e => ({ ...e, type: 'expense' }));
-    const settlements = getStorage('settlements', DEFAULT_DEMO_SETTLEMENTS)
+    const settlements = getStorage('settlements', [])
       .filter(s => s.group === groupId)
       .map(s => ({ ...s, type: 'settlement' }));
 

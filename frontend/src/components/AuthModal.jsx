@@ -62,7 +62,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               <input
                 className="glass-input"
                 type="text"
-                placeholder="e.g. Alex Rivera"
+                placeholder="Your full name"
                 value={name}
                 onChange={e => setName(e.target.value)}
               />
@@ -74,7 +74,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             <input
               className="glass-input"
               type="email"
-              placeholder="e.g. alex@example.com"
+              placeholder="your@email.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
             />

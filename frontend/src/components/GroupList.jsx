@@ -127,7 +127,7 @@ export default function GroupList({ groups, onSelectGroup, onCreateGroup }) {
                 <input
                   className="glass-input"
                   type="text"
-                  placeholder="e.g. Goa Trip 🏖️ or Apartment 402"
+                  placeholder="Group name (e.g. Road Trip, Weekend Getaway)"
                   value={name}
                   onChange={e => setName(e.target.value)}
                   required
@@ -139,7 +139,7 @@ export default function GroupList({ groups, onSelectGroup, onCreateGroup }) {
                 <input
                   className="glass-input"
                   type="text"
-                  placeholder="e.g. Shared expenses for summer vacation"
+                  placeholder="Brief description of shared expenses (optional)"
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                 />
@@ -150,7 +150,7 @@ export default function GroupList({ groups, onSelectGroup, onCreateGroup }) {
                 <input
                   className="glass-input"
                   type="text"
-                  placeholder="beatriz@example.com, charlie@example.com"
+                  placeholder="member1@email.com, member2@email.com"
                   value={memberEmails}
                   onChange={e => setMemberEmails(e.target.value)}
                 />
