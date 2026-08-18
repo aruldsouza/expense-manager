@@ -18,32 +18,40 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const [splitType, setSplitType] = useState('equal'); // 'equal' | 'unequal' | 'percentage'
   const [customSplits, setCustomSplits] = useState({});
 
-  // Settlement Modal State
+  // Settle Modal State
   const [showSettleModal, setShowSettleModal] = useState(false);
   const [settleFrom, setSettleFrom] = useState('');
   const [settleTo, setSettleTo] = useState('');
   const [settleAmount, setSettleAmount] = useState('');
   const [settleNotes, setSettleNotes] = useState('');
 
+  // Invite Member Modal State
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviting, setInviting] = useState(false);
+  const [currentGroup, setCurrentGroup] = useState(group);
+
   const loadGroupData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const [expData, balData, optData, txData] = await Promise.all([
+      const [expData, balData, optData, txData, grpData] = await Promise.all([
         api.getExpenses(group._id),
         api.getBalances(group._id),
         api.getOptimizedSettlements(group._id),
-        api.getTransactions(group._id)
+        api.getTransactions(group._id),
+        api.getGroupDetails(group._id).catch(() => group)
       ]);
       setExpenses(expData || []);
       setBalances(balData || []);
       setOptimized(optData.optimizedTransactions || []);
       setTransactions(txData || []);
+      if (grpData) setCurrentGroup(grpData);
     } catch (err) {
       console.error('Error loading group data:', err);
     } finally {
       setLoading(false);
     }
-  }, [group._id]);
+  }, [group._id, group]);
 
   useEffect(() => {
     loadGroupData();
@@ -174,6 +182,22 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     }
   };
 
+  const handleInviteMember = async (e) => {
+    e.preventDefault();
+    if (!inviteEmail || !inviteEmail.trim()) return;
+    setInviting(true);
+    try {
+      await api.addMember(group._id, inviteEmail.trim());
+      setInviteEmail('');
+      setShowInviteModal(false);
+      await loadGroupData();
+    } catch (err) {
+      alert(err.message || 'Failed to invite member');
+    } finally {
+      setInviting(false);
+    }
+  };
+
   const quickSettle = (opt) => {
     setSettleFrom(opt.fromUser._id || opt.fromUser.id);
     setSettleTo(opt.toUser._id || opt.toUser.id);
@@ -195,11 +219,14 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           <button onClick={onBack} style={{ background: 'none', color: 'var(--primary)', fontWeight: '600', marginBottom: '0.4rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
             ← Back to Groups
           </button>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: '700' }}>{group.name}</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{group.description}</p>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: '700' }}>{currentGroup.name || group.name}</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{currentGroup.description || group.description}</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary" onClick={() => setShowInviteModal(true)}>
+            👥 Invite Member
+          </button>
           <button className="btn btn-secondary" onClick={() => setShowSettleModal(true)}>
             💵 Settle Up
           </button>
@@ -247,7 +274,10 @@ export default function GroupDetail({ group, currentUser, onBack }) {
         <div className="grid-2">
           {/* Member Net Balances */}
           <div className="glass-card">
-            <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: '1.25rem', fontSize: '1.15rem' }}>Member Net Balances</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem' }}>Member Net Balances</h3>
+              <span className="badge badge-cyan">{(currentGroup.members || group.members || []).length} Members</span>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {balances.map(b => {
                 const isPositive = b.netBalance > 0.01;
@@ -269,8 +299,15 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                         {b.user.name ? b.user.name.charAt(0).toUpperCase() : '?'}
                       </div>
                       <div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>{b.user.name}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Paid ₹{b.totalPaid.toFixed(2)} • Owed ₹{b.totalOwed.toFixed(2)}</div>
+                        <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
+                          {b.user.name}
+                          {(b.user._id || b.user.id) === (currentUser ? (currentUser._id || currentUser.id) : null) && (
+                            <span style={{ fontSize: '0.75rem', color: 'var(--primary)', marginLeft: '0.35rem' }}>(You)</span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                          {b.user.email ? `${b.user.email} • ` : ''}Paid ₹{b.totalPaid.toFixed(2)} • Owed ₹{b.totalOwed.toFixed(2)}
+                        </div>
                       </div>
                     </div>
 
@@ -348,19 +385,24 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                   }}>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', fontSize: '0.95rem' }}>
-                        <span>{isExpense ? '🛒' : '💸'}</span>
-                        <span>{isExpense ? tx.title : `Settlement: ${tx.fromUser?.name} → ${tx.toUser?.name}`}</span>
-                        <span className={`badge ${isExpense ? 'badge-cyan' : 'badge-emerald'}`}>
-                          {isExpense ? (tx.category || 'Expense') : 'Settlement'}
-                        </span>
+                        <span>{isExpense ? '🛒' : '🤝'}</span>
+                        <span>{isExpense ? tx.title : `Settlement: ${tx.fromUser?.name || 'User'} paid ${tx.toUser?.name || 'User'}`}</span>
                       </div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
-                        {isExpense ? `Paid by ${tx.paidBy?.name}` : tx.notes ? `Note: ${tx.notes}` : 'Direct payment'} • {new Date(tx.date || tx.createdAt).toLocaleDateString()}
+                        {isExpense ? `Paid by ${tx.paidBy?.name || 'Member'} • ${tx.category || 'General'}` : (tx.notes || 'No notes')}
+                        {tx.date && ` • ${new Date(tx.date).toLocaleDateString()}`}
                       </div>
                     </div>
 
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: '700', fontSize: '1.15rem', color: isExpense ? '#fff' : 'var(--accent-emerald)' }}>
-                      ₹{tx.amount.toFixed(2)}
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontWeight: '700', fontSize: '1.05rem', color: isExpense ? '#fff' : 'var(--accent-emerald)' }}>
+                        {isExpense ? `-₹${tx.amount.toFixed(2)}` : `₹${tx.amount.toFixed(2)}`}
+                      </div>
+                      {isExpense && (
+                        <span className="badge badge-cyan" style={{ fontSize: '0.7rem' }}>
+                          {tx.splitType || 'equal'} split
+                        </span>
+                      )}
                     </div>
                   </div>
                 );
@@ -375,24 +417,24 @@ export default function GroupDetail({ group, currentUser, onBack }) {
         <div className="modal-overlay" onClick={() => setShowExpenseModal(false)}>
           <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>Add New Expense</h2>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>Add Expense</h2>
               <button onClick={() => setShowExpenseModal(false)} style={{ background: 'none', color: 'var(--text-dim)', fontSize: '1.2rem' }}>✕</button>
             </div>
 
             <form onSubmit={handleAddExpense} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Description / Title</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Expense Title</label>
                 <input
                   className="glass-input"
                   type="text"
-                  placeholder="e.g. Dinner at Beach Club, Uber fare, Villa rent"
+                  placeholder="e.g. Dinner, Uber, Groceries"
                   value={expTitle}
                   onChange={e => setExpTitle(e.target.value)}
                   required
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid-2">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Total Amount (₹)</label>
                   <input
@@ -408,12 +450,8 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Paid By</label>
-                  <select
-                    className="glass-input"
-                    value={expPaidBy}
-                    onChange={e => setExpPaidBy(e.target.value)}
-                  >
-                    {group.members.map(m => (
+                  <select className="glass-input" value={expPaidBy} onChange={e => setExpPaidBy(e.target.value)} required>
+                    {(currentGroup.members || group.members).map(m => (
                       <option key={m._id || m.id} value={m._id || m.id} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>
                         {m.name}
                       </option>
@@ -422,96 +460,81 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Category</label>
-                <select
-                  className="glass-input"
-                  value={expCategory}
-                  onChange={e => setExpCategory(e.target.value)}
-                >
-                  <option value="General" style={{ background: 'var(--bg-secondary)' }}>General</option>
-                  <option value="Food & Dining" style={{ background: 'var(--bg-secondary)' }}>Food & Dining</option>
-                  <option value="Accommodation" style={{ background: 'var(--bg-secondary)' }}>Accommodation</option>
-                  <option value="Travel & Rides" style={{ background: 'var(--bg-secondary)' }}>Travel & Rides</option>
-                  <option value="Entertainment" style={{ background: 'var(--bg-secondary)' }}>Entertainment</option>
-                  <option value="Utilities" style={{ background: 'var(--bg-secondary)' }}>Utilities</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Split Mechanism</label>
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                  {['equal', 'unequal', 'percentage'].map(type => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setSplitType(type)}
-                      className={`btn btn-sm ${splitType === type ? 'btn-primary' : 'btn-secondary'}`}
-                      style={{ flex: 1, textTransform: 'capitalize' }}
-                    >
-                      {type === 'equal' ? '⚖️ Equal' : type === 'unequal' ? '💵 Unequal (₹)' : '📊 % Split'}
-                    </button>
-                  ))}
+              <div className="grid-2">
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Category</label>
+                  <select className="glass-input" value={expCategory} onChange={e => setExpCategory(e.target.value)}>
+                    <option value="Food" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>🍔 Food & Drinks</option>
+                    <option value="Transportation" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>🚕 Transportation</option>
+                    <option value="Accommodation" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>🏨 Accommodation</option>
+                    <option value="Entertainment" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>🎟️ Entertainment</option>
+                    <option value="Shopping" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>🛍️ Shopping</option>
+                    <option value="General" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>📦 General</option>
+                  </select>
                 </div>
 
-                {/* Dynamic Split Controls */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '180px', overflowY: 'auto', paddingRight: '0.3rem' }}>
-                  {group.members.map(m => {
-                    const mId = m._id || m.id;
-                    const splitObj = customSplits[mId] || { selected: true, amount: '0.00', percentage: '0' };
-                    return (
-                      <div key={mId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
-                        <span style={{ fontSize: '0.88rem', fontWeight: '500' }}>{m.name}</span>
-
-                        {splitType === 'equal' && (
-                          <input
-                            type="checkbox"
-                            checked={splitObj.selected !== false}
-                            onChange={e => setCustomSplits(prev => ({
-                              ...prev,
-                              [mId]: { ...prev[mId], selected: e.target.checked }
-                            }))}
-                          />
-                        )}
-
-                        {splitType === 'unequal' && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>₹</span>
-                            <input
-                              className="glass-input"
-                              type="number"
-                              step="0.01"
-                              style={{ width: '90px', padding: '0.35rem 0.5rem' }}
-                              value={splitObj.amount || ''}
-                              onChange={e => setCustomSplits(prev => ({
-                                ...prev,
-                                [mId]: { ...prev[mId], amount: e.target.value }
-                              }))}
-                            />
-                          </div>
-                        )}
-
-                        {splitType === 'percentage' && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            <input
-                              className="glass-input"
-                              type="number"
-                              step="0.1"
-                              style={{ width: '80px', padding: '0.35rem 0.5rem' }}
-                              value={splitObj.percentage || ''}
-                              onChange={e => setCustomSplits(prev => ({
-                                ...prev,
-                                [mId]: { ...prev[mId], percentage: e.target.value }
-                              }))}
-                            />
-                            <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>%</span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Split Method</label>
+                  <select className="glass-input" value={splitType} onChange={e => setSplitType(e.target.value)}>
+                    <option value="equal" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>Equal Split (=)</option>
+                    <option value="unequal" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>Exact Amount (₹)</option>
+                    <option value="percentage" style={{ background: 'var(--bg-secondary)', color: '#fff' }}>Percentage (%)</option>
+                  </select>
                 </div>
               </div>
+
+              {/* Custom Split Inputs */}
+              {(splitType === 'unequal' || splitType === 'percentage') && (
+                <div style={{ background: 'rgba(15, 23, 42, 0.4)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                    {splitType === 'unequal' ? 'Enter exact share per member (₹):' : 'Enter percentage share per member (%):'}
+                  </label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {(currentGroup.members || group.members).map(m => {
+                      const mId = m._id || m.id;
+                      const splitObj = customSplits[mId] || {};
+                      return (
+                        <div key={mId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.88rem' }}>{m.name}</span>
+                          {splitType === 'unequal' ? (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                              <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>₹</span>
+                              <input
+                                className="glass-input"
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                style={{ width: '90px', padding: '0.35rem 0.5rem' }}
+                                value={splitObj.amount || ''}
+                                onChange={e => setCustomSplits(prev => ({
+                                  ...prev,
+                                  [mId]: { ...prev[mId], amount: e.target.value }
+                                }))}
+                              />
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                              <input
+                                className="glass-input"
+                                type="number"
+                                step="0.1"
+                                placeholder="0.0"
+                                style={{ width: '80px', padding: '0.35rem 0.5rem' }}
+                                value={splitObj.percentage || ''}
+                                onChange={e => setCustomSplits(prev => ({
+                                  ...prev,
+                                  [mId]: { ...prev[mId], percentage: e.target.value }
+                                }))}
+                              />
+                              <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>%</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
                 <button className="btn btn-secondary" type="button" onClick={() => setShowExpenseModal(false)}>Cancel</button>
@@ -536,7 +559,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Payer (Who paid?)</label>
                 <select className="glass-input" value={settleFrom} onChange={e => setSettleFrom(e.target.value)} required>
                   <option value="">Select Payer...</option>
-                  {group.members.map(m => (
+                  {(currentGroup.members || group.members).map(m => (
                     <option key={m._id || m.id} value={m._id || m.id} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>{m.name}</option>
                   ))}
                 </select>
@@ -546,7 +569,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Recipient (Who received?)</label>
                 <select className="glass-input" value={settleTo} onChange={e => setSettleTo(e.target.value)} required>
                   <option value="">Select Recipient...</option>
-                  {group.members.map(m => (
+                  {(currentGroup.members || group.members).map(m => (
                     <option key={m._id || m.id} value={m._id || m.id} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>{m.name}</option>
                   ))}
                 </select>
@@ -579,6 +602,42 @@ export default function GroupDetail({ group, currentUser, onBack }) {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
                 <button className="btn btn-secondary" type="button" onClick={() => setShowSettleModal(false)}>Cancel</button>
                 <button className="btn btn-primary" type="submit">Record Payment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Invite Member Modal */}
+      {showInviteModal && (
+        <div className="modal-overlay" onClick={() => setShowInviteModal(false)}>
+          <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>👥 Invite Member to Group</h2>
+              <button onClick={() => setShowInviteModal(false)} style={{ background: 'none', color: 'var(--text-dim)', fontSize: '1.2rem' }}>✕</button>
+            </div>
+
+            <form onSubmit={handleInviteMember} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Member Email Address</label>
+                <input
+                  className="glass-input"
+                  type="email"
+                  placeholder="friend@email.com"
+                  value={inviteEmail}
+                  onChange={e => setInviteEmail(e.target.value)}
+                  required
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.35rem', display: 'block' }}>
+                  This user will immediately see this group in their dashboard upon registering or logging in with this email.
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+                <button className="btn btn-secondary" type="button" onClick={() => setShowInviteModal(false)}>Cancel</button>
+                <button className="btn btn-primary" type="submit" disabled={inviting}>
+                  {inviting ? 'Inviting...' : 'Send Invite'}
+                </button>
               </div>
             </form>
           </div>

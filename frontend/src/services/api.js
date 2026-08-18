@@ -58,42 +58,81 @@ const localEngine = {
   currentUser: getStorage('users', [])[0] || null,
   
   async login(email) {
+    const cleanEmail = email.trim().toLowerCase();
     const users = getStorage('users', []);
-    let user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    let user = users.find(u => (u.email || '').toLowerCase() === cleanEmail);
     if (!user) {
-      user = { _id: 'u_' + Date.now(), name: email.split('@')[0], email };
+      user = { _id: 'u_' + Date.now(), name: cleanEmail.split('@')[0], email: cleanEmail };
       users.push(user);
       setStorage('users', users);
     }
     this.currentUser = user;
-    return { token: 'mock-jwt-token', user };
+    return { token: 'local-mode', user };
   },
 
   async register(name, email) {
+    const cleanEmail = email.trim().toLowerCase();
     const users = getStorage('users', []);
-    const user = { _id: 'u_' + Date.now(), name, email };
-    users.push(user);
-    setStorage('users', users);
+    let user = users.find(u => (u.email || '').toLowerCase() === cleanEmail);
+    if (user) {
+      user.name = name.trim();
+      setStorage('users', users);
+    } else {
+      user = { _id: 'u_' + Date.now(), name: name.trim(), email: cleanEmail };
+      users.push(user);
+      setStorage('users', users);
+    }
     this.currentUser = user;
-    return { token: 'mock-jwt-token', user };
+    return { token: 'local-mode', user };
   },
 
   async getGroups() {
-    return getStorage('groups', []);
+    const allGroups = getStorage('groups', []);
+    if (!this.currentUser) return allGroups;
+    const currentId = (this.currentUser._id || this.currentUser.id || '').toString();
+    const currentEmail = (this.currentUser.email || '').toLowerCase().trim();
+
+    return allGroups.filter(g => {
+      const creatorId = (typeof g.createdBy === 'object' ? (g.createdBy._id || g.createdBy.id) : g.createdBy || '').toString();
+      if (creatorId && creatorId === currentId) return true;
+
+      if (Array.isArray(g.members)) {
+        return g.members.some(m => {
+          const mId = (typeof m === 'object' ? (m._id || m.id) : m || '').toString();
+          const mEmail = (typeof m === 'object' ? (m.email || '') : '').toLowerCase().trim();
+          return (mId && mId === currentId) || (mEmail && mEmail === currentEmail);
+        });
+      }
+      return false;
+    });
   },
 
   async createGroup(name, description, memberEmails = []) {
     const users = getStorage('users', []);
-    const members = [this.currentUser];
+    const myId = (this.currentUser._id || this.currentUser.id);
+    const myEmail = (this.currentUser.email || '').toLowerCase().trim();
+    const members = [{ _id: myId, name: this.currentUser.name, email: myEmail }];
 
-    memberEmails.forEach(email => {
-      if (email.trim()) {
-        let u = users.find(x => x.email.toLowerCase() === email.trim().toLowerCase());
+    const emailList = Array.isArray(memberEmails)
+      ? memberEmails
+      : (typeof memberEmails === 'string' ? memberEmails.split(',') : []);
+
+    emailList.forEach(rawEmail => {
+      const cleanEmail = (rawEmail || '').trim().toLowerCase();
+      if (cleanEmail && cleanEmail !== myEmail) {
+        let u = users.find(x => (x.email || '').toLowerCase() === cleanEmail);
         if (!u) {
-          u = { _id: 'u_' + Date.now() + Math.random().toString(36).substring(2, 5), name: email.split('@')[0], email: email.trim() };
+          const defaultName = cleanEmail.split('@')[0];
+          u = {
+            _id: 'u_' + Date.now() + Math.random().toString(36).substring(2, 6),
+            name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+            email: cleanEmail
+          };
           users.push(u);
         }
-        if (!members.find(m => m._id === u._id)) members.push(u);
+        if (!members.find(m => m._id === u._id || m.email === u.email)) {
+          members.push({ _id: u._id, name: u.name, email: u.email });
+        }
       }
     });
 
@@ -101,9 +140,9 @@ const localEngine = {
 
     const newGroup = {
       _id: 'g_' + Date.now(),
-      name,
-      description: description || '',
-      createdBy: this.currentUser._id,
+      name: name.trim(),
+      description: description ? description.trim() : '',
+      createdBy: myId,
       members
     };
 
@@ -111,6 +150,35 @@ const localEngine = {
     groups.unshift(newGroup);
     setStorage('groups', groups);
     return newGroup;
+  },
+
+  async addMember(groupId, email) {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanEmail) throw new Error('Email is required');
+
+    const users = getStorage('users', []);
+    let u = users.find(x => (x.email || '').toLowerCase() === cleanEmail);
+    if (!u) {
+      const defaultName = cleanEmail.split('@')[0];
+      u = {
+        _id: 'u_' + Date.now() + Math.random().toString(36).substring(2, 6),
+        name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+        email: cleanEmail
+      };
+      users.push(u);
+      setStorage('users', users);
+    }
+
+    const groups = getStorage('groups', []);
+    const group = groups.find(g => g._id === groupId);
+    if (!group) throw new Error('Group not found');
+
+    if (!Array.isArray(group.members)) group.members = [];
+    if (!group.members.some(m => (m._id || m) === u._id || m.email?.toLowerCase() === cleanEmail)) {
+      group.members.push({ _id: u._id, name: u.name, email: u.email });
+      setStorage('groups', groups);
+    }
+    return group;
   },
 
   async getGroupDetails(groupId) {
@@ -284,6 +352,15 @@ export const api = {
       return await this.request('/groups', { method: 'POST', body: JSON.stringify({ name, description, memberEmails }) });
     } catch (_e) {
       return await localEngine.createGroup(name, description, memberEmails);
+    }
+  },
+
+  async addMember(groupId, emailOrUserId) {
+    try {
+      const payload = typeof emailOrUserId === 'object' ? emailOrUserId : (emailOrUserId.includes('@') ? { email: emailOrUserId } : { userId: emailOrUserId });
+      return await this.request(`/groups/${groupId}/members`, { method: 'POST', body: JSON.stringify(payload) });
+    } catch (_e) {
+      return await localEngine.addMember(groupId, typeof emailOrUserId === 'string' ? emailOrUserId : (emailOrUserId.email || emailOrUserId.userId));
     }
   },
 

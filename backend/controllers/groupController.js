@@ -6,7 +6,7 @@ const Settlement = require('../models/Settlement');
 exports.createGroup = async (req, res, next) => {
   try {
     const { name, description, memberEmails, members } = req.body;
-    if (!name) {
+    if (!name || !name.trim()) {
       return res.status(400).json({ error: 'Group name is required' });
     }
 
@@ -14,14 +14,35 @@ exports.createGroup = async (req, res, next) => {
     const membersSet = new Set([userId.toString()]);
 
     const itemsToProcess = [];
-    if (Array.isArray(memberEmails)) itemsToProcess.push(...memberEmails);
-    if (Array.isArray(members)) itemsToProcess.push(...members);
+    if (Array.isArray(memberEmails)) {
+      itemsToProcess.push(...memberEmails);
+    } else if (typeof memberEmails === 'string') {
+      itemsToProcess.push(...memberEmails.split(','));
+    }
+
+    if (Array.isArray(members)) {
+      itemsToProcess.push(...members);
+    } else if (typeof members === 'string') {
+      itemsToProcess.push(...members.split(','));
+    }
 
     for (const item of itemsToProcess) {
       if (!item) continue;
-      const strVal = typeof item === 'string' ? item.trim() : (item._id || item.id || item).toString();
+      const strVal = typeof item === 'string' ? item.trim() : (item._id || item.id || item.email || item).toString().trim();
+      if (!strVal) continue;
+
       if (strVal.includes('@')) {
-        const user = await User.findOne({ email: strVal.toLowerCase() });
+        const cleanEmail = strVal.toLowerCase();
+        let user = await User.findOne({ email: cleanEmail });
+        if (!user) {
+          // Create placeholder user so they are immediately part of the group
+          const defaultName = cleanEmail.split('@')[0];
+          user = await User.create({
+            name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+            email: cleanEmail,
+            password: 'placeholder_pending_registration_' + Date.now()
+          });
+        }
         if (user) membersSet.add(user._id.toString());
       } else {
         const user = await User.findById(strVal);
@@ -30,13 +51,15 @@ exports.createGroup = async (req, res, next) => {
     }
 
     const group = await Group.create({
-      name,
-      description: description || '',
+      name: name.trim(),
+      description: description ? description.trim() : '',
       createdBy: userId,
       members: Array.from(membersSet)
     });
 
-    const populatedGroup = await Group.findById(group._id).populate('members', 'name email');
+    const populatedGroup = await Group.findById(group._id)
+      .populate('members', 'name email')
+      .populate('createdBy', 'name email');
 
     res.status(201).json(populatedGroup);
   } catch (err) {
@@ -47,7 +70,15 @@ exports.createGroup = async (req, res, next) => {
 exports.getUserGroups = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
-    const groups = await Group.find({ members: userId })
+    const userEmail = (req.user.email || '').toLowerCase().trim();
+
+    // Query groups where user is in members array OR user is creator
+    const groups = await Group.find({
+      $or: [
+        { members: userId },
+        { createdBy: userId }
+      ]
+    })
       .populate('members', 'name email')
       .populate('createdBy', 'name email')
       .sort({ updatedAt: -1 });
@@ -70,7 +101,8 @@ exports.getGroupById = async (req, res, next) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const isMember = group.members.some(m => (m._id || m).toString() === userId.toString());
+    const isMember = group.members.some(m => (m._id || m).toString() === userId.toString()) ||
+                     group.createdBy?._id?.toString() === userId.toString();
     if (!isMember) {
       return res.status(403).json({ error: 'Access denied: You are not a member of this group' });
     }
@@ -84,10 +116,10 @@ exports.getGroupById = async (req, res, next) => {
 exports.addMember = async (req, res, next) => {
   try {
     const { groupId } = req.params;
-    const { email } = req.body;
+    const { email, userId: targetUserId } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ error: 'User email is required' });
+    if (!email && !targetUserId) {
+      return res.status(400).json({ error: 'User email or userId is required' });
     }
 
     const group = await Group.findById(groupId);
@@ -95,9 +127,25 @@ exports.addMember = async (req, res, next) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const userToAdd = await User.findOne({ email: email.trim().toLowerCase() });
+    let userToAdd = null;
+    if (email) {
+      const cleanEmail = email.trim().toLowerCase();
+      userToAdd = await User.findOne({ email: cleanEmail });
+      if (!userToAdd) {
+        // Auto-create placeholder user
+        const defaultName = cleanEmail.split('@')[0];
+        userToAdd = await User.create({
+          name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
+          email: cleanEmail,
+          password: 'placeholder_pending_registration_' + Date.now()
+        });
+      }
+    } else if (targetUserId) {
+      userToAdd = await User.findById(targetUserId);
+    }
+
     if (!userToAdd) {
-      return res.status(404).json({ error: 'User not found with this email' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     if (group.members.some(m => m.toString() === userToAdd._id.toString())) {
@@ -107,7 +155,9 @@ exports.addMember = async (req, res, next) => {
     group.members.push(userToAdd._id);
     await group.save();
 
-    const updatedGroup = await Group.findById(groupId).populate('members', 'name email');
+    const updatedGroup = await Group.findById(groupId)
+      .populate('members', 'name email')
+      .populate('createdBy', 'name email');
     res.json(updatedGroup);
   } catch (err) {
     next(err);
