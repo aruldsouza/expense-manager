@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { calculateNetBalances, computeOptimizedSettlements } from './debtOptimizer';
 
 // Detect API base at runtime — works for Live Server, Express backend, and Render.com
@@ -13,6 +14,29 @@ function getApiBase() {
 }
 
 const API_BASE = getApiBase();
+
+// ── Axios default export (used by all pages/components via `import api from '...'`) ──
+const axiosInstance = axios.create({
+  baseURL: API_BASE,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+// Attach JWT token from localStorage before every request
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('jwt_token');
+  if (token && token !== 'local-mode') {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Pass through errors so callers can inspect error.response?.data
+axiosInstance.interceptors.response.use(
+  (res) => res,
+  (err) => Promise.reject(err)
+);
+
+export default axiosInstance;
 
 
 // ── One-time cleanup: remove any previously seeded demo data from browser storage ──

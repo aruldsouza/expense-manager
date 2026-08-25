@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('jwt_token');
             if (token) {
                 try {
                     const res = await api.get('/auth/me');
@@ -20,11 +20,11 @@ export const AuthProvider = ({ children }) => {
                         // Backend returns { success: true, data: { user: {...} } }
                         setUser(res.data.data.user);
                     } else {
-                        localStorage.removeItem('token');
+                        localStorage.removeItem('jwt_token');
                     }
                 } catch (error) {
                     console.error("Auth check failed:", error);
-                    localStorage.removeItem('token');
+                    localStorage.removeItem('jwt_token');
                 }
             }
             setLoading(false);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
             if (res.data.success) {
                 // Correctly access nested data based on backend response structure
                 const { token, user } = res.data.data;
-                localStorage.setItem('token', token);
+                localStorage.setItem('jwt_token', token);
                 setUser(user);
                 return { success: true };
             }
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('jwt_token');
         setUser(null);
     };
 
