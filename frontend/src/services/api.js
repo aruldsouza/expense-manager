@@ -287,6 +287,19 @@ const localEngine = {
   }
 };
 
+// ── One-time migration: move token from old key ('token') to new key ('jwt_token') ──
+(function migrateTokenKey() {
+  try {
+    const oldToken = localStorage.getItem('token');
+    const newToken = localStorage.getItem('jwt_token');
+    if (oldToken && !newToken) {
+      localStorage.setItem('jwt_token', oldToken);
+    }
+    // Remove old key regardless so it doesn't cause confusion
+    if (oldToken) localStorage.removeItem('token');
+  } catch (_) {}
+})();
+
 // Main API Export with Auto-Fallback
 export const api = {
   token: localStorage.getItem('jwt_token'),
