@@ -105,30 +105,29 @@ const stripeWebhook = async (req, res) => {
             // Create the Settlement record
             const settlement = await Settlement.create({
                 group: groupId,
-                payer: payerId,
-                payee: payeeId,
+                fromUser: payerId,   // Settlement schema uses fromUser (not payer)
+                toUser: payeeId,     // Settlement schema uses toUser (not payee)
                 amount,
-                note: note || 'Paid via Stripe',
-                isPartial: true, // will be updated below via balance check
+                notes: note || 'Paid via Stripe',
                 transactionId: pi.id
             });
 
             // Notify and emit
             try {
                 const populated = await Settlement.findById(settlement._id)
-                    .populate('payer', 'name email')
-                    .populate('payee', 'name email');
+                    .populate('fromUser', 'name email')
+                    .populate('toUser', 'name email');
 
                 getIO().to(`group:${groupId}`).emit('settlement:new', {
                     settlement: populated,
-                    wasPartial: true,
+                    wasPartial: false,
                     remainingDebt: null
                 });
 
                 await createNotifications(
                     [payeeId],
                     'settlement:new',
-                    `${populated.payer?.name || 'Someone'} settled ₹${amount.toFixed(2)} via Stripe`,
+                    `${populated.fromUser?.name || 'Someone'} settled ₹${amount.toFixed(2)} via Stripe`,
                     { groupId, relatedId: settlement._id }
                 );
             } catch (e) {

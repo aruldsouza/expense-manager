@@ -18,7 +18,13 @@ const groupSchema = new mongoose.Schema({
   members: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  currency: {
+    type: String,
+    default: 'INR',
+    uppercase: true,
+    trim: true
+  }
 }, {
   timestamps: true
 });

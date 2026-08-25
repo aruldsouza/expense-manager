@@ -12,6 +12,7 @@ const BALANCE_TTL = 90; // seconds
 const getGroupBalances = async (req, res, next) => {
     try {
         const groupId = req.params.groupId;
+        const userId = (req.user.id || req.user._id).toString();
         const convertTo = req.query.convertTo ? req.query.convertTo.toUpperCase() : null;
 
         // Skip cache when FX conversion is requested (rates change frequently)
@@ -25,14 +26,16 @@ const getGroupBalances = async (req, res, next) => {
             }
         }
 
-        const group = await Group.findById(groupId).populate('members.user', 'name email');
+        // Group.members is a flat array of ObjectId refs, not { user, role } subdocs
+        const group = await Group.findById(groupId).populate('members', 'name email');
         if (!group) {
             res.status(404);
             throw new Error('Group not found');
         }
 
-        // members is [{ user: {_id, name, email}, role }]
-        if (!group.members.some(m => m.user && m.user._id.toString() === req.user._id.toString())) {
+        // Check membership — members is populated array of User objects
+        const isMember = group.members.some(m => (m._id || m).toString() === userId);
+        if (!isMember) {
             res.status(403);
             throw new Error('Not authorized to access balances for this group');
         }
@@ -41,28 +44,29 @@ const getGroupBalances = async (req, res, next) => {
         const expenses = await Expense.find({ group: groupId });
         const settlements = await Settlement.find({ group: groupId });
 
-        // Initialize balances — each member entry is { user: {...}, role }
+        // Initialize balances keyed by user ID
         const balances = {};
         group.members.forEach(m => {
-            if (m.user) balances[m.user._id.toString()] = { user: m.user, balance: 0 };
+            const id = (m._id || m).toString();
+            balances[id] = { user: m, balance: 0 };
         });
 
-        // Calculate balances from expenses
+        // Calculate balances from expenses — paidBy is the correct field name
         expenses.forEach(expense => {
-            const payerId = expense.payer.toString();
+            const payerId = (expense.paidBy || '').toString();
             if (balances[payerId]) balances[payerId].balance += expense.amount;
             expense.splits.forEach(split => {
-                const userId = split.user.toString();
-                if (balances[userId]) balances[userId].balance -= split.amount;
+                const uid = (split.user || '').toString();
+                if (balances[uid]) balances[uid].balance -= split.amount;
             });
         });
 
-        // Calculate balances from settlements
+        // Calculate balances from settlements — fromUser/toUser are the correct field names
         settlements.forEach(settlement => {
-            const payerId = settlement.payer.toString();
-            const payeeId = settlement.payee.toString();
-            if (balances[payerId]) balances[payerId].balance += settlement.amount;
-            if (balances[payeeId]) balances[payeeId].balance -= settlement.amount;
+            const fromId = (settlement.fromUser || '').toString();
+            const toId = (settlement.toUser || '').toString();
+            if (balances[fromId]) balances[fromId].balance += settlement.amount;
+            if (balances[toId]) balances[toId].balance -= settlement.amount;
         });
 
         // Build response — optionally convert amounts

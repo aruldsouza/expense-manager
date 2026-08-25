@@ -323,8 +323,11 @@ export const api = {
   async login(email, password) {
     try {
       const data = await this.request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-      this.setToken(data.token);
-      return data;
+      // Backend now returns { success, data: { token, user } }
+      const token = data.data?.token || data.token;
+      const user = data.data?.user || data.user;
+      this.setToken(token);
+      return { token, user };
     } catch (_e) {
       // Offline fallback — set a local-mode marker token so session restore works
       const result = await localEngine.login(email);
@@ -336,8 +339,11 @@ export const api = {
   async register(name, email, password) {
     try {
       const data = await this.request('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) });
-      this.setToken(data.token);
-      return data;
+      // Backend now returns { success, data: { token, user } }
+      const token = data.data?.token || data.token;
+      const user = data.data?.user || data.user;
+      this.setToken(token);
+      return { token, user };
     } catch (_e) {
       // Offline fallback — set a local-mode marker token so session restore works
       const result = await localEngine.register(name, email);
@@ -353,9 +359,11 @@ export const api = {
     if (this.token === 'local-mode') {
       return { user: localEngine.currentUser };
     }
-    // Real JWT — verify with backend
+    // Real JWT — verify with backend; backend returns { success, data: { user } }
     try {
-      return await this.request('/auth/me');
+      const data = await this.request('/auth/me');
+      const user = data.data?.user || data.user || null;
+      return { user };
     } catch (_e) {
       // Token expired or invalid — clear it and force re-login
       this.setToken(null);

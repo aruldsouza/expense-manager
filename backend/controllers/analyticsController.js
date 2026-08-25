@@ -7,7 +7,8 @@ const { CATEGORIES } = require('../models/Budget');
 const verifyMembership = async (groupId, userId) => {
     const group = await Group.findById(groupId);
     if (!group) { const e = new Error('Group not found'); e.statusCode = 404; throw e; }
-    if (!group.members.some(m => m.user ? m.user.toString() === userId.toString() : m.toString() === userId.toString())) {
+    // Group.members is a flat ObjectId array
+    if (!group.members.some(m => (m._id || m).toString() === userId.toString())) {
         const e = new Error('Not authorized'); e.statusCode = 403; throw e;
     }
     return group;
@@ -26,7 +27,8 @@ const buildDateFilter = (startDate, endDate) => {
 // @access Private
 const getCategoryAnalytics = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const dateFilter = buildDateFilter(req.query.startDate, req.query.endDate);
 
         const matchStage = { group: require('mongoose').Types.ObjectId.createFromHexString(req.params.groupId) };
@@ -57,7 +59,8 @@ const getCategoryAnalytics = async (req, res, next) => {
 // @access Private
 const getMonthlyTrends = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const dateFilter = buildDateFilter(req.query.startDate, req.query.endDate);
 
         const matchStage = { group: require('mongoose').Types.ObjectId.createFromHexString(req.params.groupId) };
@@ -92,27 +95,29 @@ const getMonthlyTrends = async (req, res, next) => {
 // @access Private
 const getUserStats = async (req, res, next) => {
     try {
-        const group = await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        const group = await verifyMembership(req.params.groupId, userId);
         const dateFilter = buildDateFilter(req.query.startDate, req.query.endDate);
 
         const query = { group: req.params.groupId };
         if (dateFilter) query.date = dateFilter;
 
-        const expenses = await Expense.find(query).populate('payer', 'name').populate('splits.user', 'name');
+        // paidBy is the correct field name (not payer)
+        const expenses = await Expense.find(query).populate('paidBy', 'name').populate('splits.user', 'name');
 
         const userStats = {};
 
-        // Initialize for all group members
-        // group.members can be an array of ObjectIds or an array of objects
+        // Initialize for all group members (flat ObjectId array)
         group.members.forEach(m => {
-            const id = m.user ? m.user.toString() : m.toString();
+            const id = (m._id || m).toString();
             userStats[id] = { name: 'Unknown', paid: 0, share: 0 };
         });
 
         expenses.forEach(e => {
-            const payerId = e.payer._id.toString();
-            if (!userStats[payerId]) userStats[payerId] = { name: e.payer.name, paid: 0, share: 0 };
-            userStats[payerId].name = e.payer.name;
+            if (!e.paidBy) return;
+            const payerId = e.paidBy._id.toString();
+            if (!userStats[payerId]) userStats[payerId] = { name: e.paidBy.name, paid: 0, share: 0 };
+            userStats[payerId].name = e.paidBy.name;
             userStats[payerId].paid += e.amount;
 
             e.splits.forEach(s => {
@@ -156,21 +161,23 @@ const getUserStats = async (req, res, next) => {
 // @access Private
 const exportExpensesCsv = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const dateFilter = buildDateFilter(req.query.startDate, req.query.endDate);
 
         const query = { group: req.params.groupId };
         if (dateFilter) query.date = dateFilter;
 
-        const expenses = await Expense.find(query).populate('payer', 'name email').sort({ date: -1 });
+        // paidBy is the correct field; title is the correct field (not description/payer)
+        const expenses = await Expense.find(query).populate('paidBy', 'name email').sort({ date: -1 });
 
         let csv = 'Date,Description,Category,Amount,Payer,SplitType\n';
         expenses.forEach(e => {
             const date = new Date(e.date).toISOString().split('T')[0];
-            const desc = `"${e.description.replace(/"/g, '""')}"`;
+            const desc = `"${(e.title || '').replace(/"/g, '""')}"`;
             const cat = e.category || 'Other';
             const amt = e.amount;
-            const payer = `"${e.payer?.name || 'Unknown'}"`;
+            const payer = `"${e.paidBy?.name || 'Unknown'}"`;
             const splitType = e.splitType;
             csv += `${date},${desc},${cat},${amt},${payer},${splitType}\n`;
         });
@@ -186,7 +193,8 @@ const exportExpensesCsv = async (req, res, next) => {
 // @access Private
 const getHealthScore = async (req, res, next) => {
     try {
-        const group = await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        const group = await verifyMembership(req.params.groupId, userId);
         const groupId = req.params.groupId;
 
         const [expenses, settlements] = await Promise.all([
@@ -195,57 +203,56 @@ const getHealthScore = async (req, res, next) => {
         ]);
 
         // ─── Factor 1: Settlement Rate (40 pts) ───────────────────────────────
-        // More full (non-partial) settlements relative to total = better
         let settlementScore = 0;
         if (settlements.length > 0) {
             const fullSettlements = settlements.filter(s => !s.isPartial).length;
             settlementScore = Math.round((fullSettlements / settlements.length) * 40);
         } else if (expenses.length === 0) {
-            settlementScore = 40; // Empty group, no debt yet
+            settlementScore = 40;
         }
 
         // ─── Factor 2: Debt Velocity (30 pts) ────────────────────────────────
-        // Gross outstanding debt vs total expenses — lower ratio = better
-        let debtScore = 30; // start optimistic
+        let debtScore = 30;
         const totalExpenseAmount = expenses.reduce((sum, e) => sum + e.amount, 0);
         if (totalExpenseAmount > 0) {
-            // Compute net balances
             const balances = {};
-            const memberIds = group.members.map(m => m.user ? m.user.toString() : m.toString());
+            // Group.members is a flat ObjectId array
+            const memberIds = group.members.map(m => (m._id || m).toString());
             memberIds.forEach(id => { balances[id] = 0; });
 
+            // paidBy is the correct field name (not payer)
             expenses.forEach(e => {
-                const pid = e.payer.toString();
+                const pid = (e.paidBy || '').toString();
                 if (balances[pid] !== undefined) balances[pid] += e.amount;
                 e.splits.forEach(s => {
                     const sid = s.user.toString();
                     if (balances[sid] !== undefined) balances[sid] -= s.amount;
                 });
             });
+            // fromUser/toUser are the correct field names (not payer/payee)
             settlements.forEach(s => {
-                if (balances[s.payer.toString()] !== undefined) balances[s.payer.toString()] += s.amount;
-                if (balances[s.payee.toString()] !== undefined) balances[s.payee.toString()] -= s.amount;
+                const fromId = (s.fromUser || '').toString();
+                const toId = (s.toUser || '').toString();
+                if (balances[fromId] !== undefined) balances[fromId] += s.amount;
+                if (balances[toId] !== undefined) balances[toId] -= s.amount;
             });
 
-            // Total outstanding debt = sum of negative balances
             const totalOutstanding = Object.values(balances)
                 .filter(b => b < 0)
                 .reduce((sum, b) => sum + Math.abs(b), 0);
 
             const debtRatio = totalOutstanding / totalExpenseAmount;
-            // Penalty: 0 debt = 30 pts, 50%+ debt = 0 pts
             debtScore = Math.max(0, Math.round(30 * (1 - Math.min(debtRatio / 0.5, 1))));
         }
 
         // ─── Factor 3: Balance Spread (20 pts) ────────────────────────────────
-        // Low std deviation in balances per member = more evenly shared load
         let spreadScore = 20;
         if (expenses.length > 0 && group.members.length > 1) {
             const memberBalances = {};
-            const mids = group.members.map(m => m.user ? m.user.toString() : m.toString());
+            const mids = group.members.map(m => (m._id || m).toString());
             mids.forEach(id => { memberBalances[id] = 0; });
             expenses.forEach(e => {
-                const pid = e.payer.toString();
+                const pid = (e.paidBy || '').toString();
                 if (memberBalances[pid] !== undefined) memberBalances[pid] += e.amount;
                 e.splits.forEach(s => {
                     const sid = s.user.toString();
@@ -253,27 +260,26 @@ const getHealthScore = async (req, res, next) => {
                 });
             });
             settlements.forEach(s => {
-                if (memberBalances[s.payer.toString()] !== undefined) memberBalances[s.payer.toString()] += s.amount;
-                if (memberBalances[s.payee.toString()] !== undefined) memberBalances[s.payee.toString()] -= s.amount;
+                const fromId = (s.fromUser || '').toString();
+                const toId = (s.toUser || '').toString();
+                if (memberBalances[fromId] !== undefined) memberBalances[fromId] += s.amount;
+                if (memberBalances[toId] !== undefined) memberBalances[toId] -= s.amount;
             });
 
             const vals = Object.values(memberBalances);
             const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
             const variance = vals.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / vals.length;
             const stdDev = Math.sqrt(variance);
-
-            // Normalise: 0 stddev = 20pts, stddev >= 200 = 0pts
             spreadScore = Math.max(0, Math.round(20 * (1 - Math.min(stdDev / 200, 1))));
         }
 
         // ─── Factor 4: Recent Activity (10 pts) ──────────────────────────────
-        // Has the group had any settlement in the last 30 days?
         let activityScore = 0;
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const recentSettlement = settlements.some(s => new Date(s.createdAt) >= thirtyDaysAgo);
         const recentExpense = expenses.some(e => new Date(e.createdAt) >= thirtyDaysAgo);
         if (recentSettlement) activityScore = 10;
-        else if (recentExpense) activityScore = 5; // Active but no recent settlements
+        else if (recentExpense) activityScore = 5;
 
         // ─── Total score & grade ──────────────────────────────────────────────
         const score = Math.min(100, settlementScore + debtScore + spreadScore + activityScore);
@@ -284,26 +290,13 @@ const getHealthScore = async (req, res, next) => {
         else if (score >= 40) grade = 'C';
         else grade = 'D';
 
-        // ─── Suggestions ─────────────────────────────────────────────────────
         const suggestions = [];
-
-        if (settlementScore < 20) {
-            suggestions.push('Many debts remain partially settled. Encourage members to pay in full.');
-        }
-        if (debtScore < 15) {
-            suggestions.push('Outstanding debts are high relative to group spending. Settle up soon.');
-        }
-        if (spreadScore < 10) {
-            suggestions.push('One or more members carry a disproportionate share. Consider rebalancing expenses.');
-        }
-        if (activityScore === 0) {
-            suggestions.push('No recent activity. Log an expense or record a settlement to stay on track.');
-        } else if (activityScore === 5) {
-            suggestions.push('New expenses added recently but no settlements. Consider settling existing debts.');
-        }
-        if (suggestions.length === 0) {
-            suggestions.push('Great job! Your group finances are well-managed. Keep it up! 🎉');
-        }
+        if (settlementScore < 20) suggestions.push('Many debts remain partially settled. Encourage members to pay in full.');
+        if (debtScore < 15) suggestions.push('Outstanding debts are high relative to group spending. Settle up soon.');
+        if (spreadScore < 10) suggestions.push('One or more members carry a disproportionate share. Consider rebalancing expenses.');
+        if (activityScore === 0) suggestions.push('No recent activity. Log an expense or record a settlement to stay on track.');
+        else if (activityScore === 5) suggestions.push('New expenses added recently but no settlements. Consider settling existing debts.');
+        if (suggestions.length === 0) suggestions.push('Great job! Your group finances are well-managed. Keep it up! 🎉');
 
         res.json({
             success: true,

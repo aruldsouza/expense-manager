@@ -273,11 +273,11 @@ const generateExpenseFromRecurring = async (recurring) => {
     }
 
     const expense = await Expense.create({
-        description: `[Recurring] ${recurring.description}`,
+        title: `[Recurring] ${recurring.description}`,  // Expense schema uses 'title' not 'description'
         amount,
         group: recurring.group,
-        payer,
-        splitType,
+        paidBy: payer,                                   // Expense schema uses 'paidBy' not 'payer'
+        splitType: splitType.toLowerCase(),              // Expense schema stores lowercase
         splits: processedSplits
     });
 

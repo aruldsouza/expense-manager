@@ -28,6 +28,10 @@ const settlementSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  transactionId: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true

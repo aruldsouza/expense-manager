@@ -36,9 +36,12 @@ exports.register = async (req, res, next) => {
     const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
+      success: true,
       message: 'User registered successfully',
-      token,
-      user: { id: user._id, _id: user._id, name: user.name, email: user.email }
+      data: {
+        token,
+        user: { id: user._id, _id: user._id, name: user.name, email: user.email }
+      }
     });
   } catch (err) {
     next(err);
@@ -70,9 +73,12 @@ exports.login = async (req, res, next) => {
     const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
+      success: true,
       message: 'Login successful',
-      token,
-      user: { id: user._id, _id: user._id, name: user.name, email: user.email }
+      data: {
+        token,
+        user: { id: user._id, _id: user._id, name: user.name, email: user.email }
+      }
     });
   } catch (err) {
     next(err);
@@ -85,7 +91,10 @@ exports.getMe = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json({ user: { id: user._id, _id: user._id, name: user.name, email: user.email } });
+    res.json({
+      success: true,
+      data: { user: { id: user._id, _id: user._id, name: user.name, email: user.email } }
+    });
   } catch (err) {
     next(err);
   }

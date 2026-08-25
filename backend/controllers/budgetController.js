@@ -8,11 +8,8 @@ const { createNotifications } = require('../utils/notificationHelper');
 const verifyMembership = async (groupId, userId) => {
     const group = await Group.findById(groupId);
     if (!group) { const e = new Error('Group not found'); e.statusCode = 404; throw e; }
-    // members is [{ user: ObjectId, role }] — check m.user, not m itself
-    if (!group.members.some(m => {
-        const ref = m.user?._id || m.user;
-        return ref && ref.toString() === userId.toString();
-    })) {
+    // Group.members is a flat ObjectId array
+    if (!group.members.some(m => (m._id || m).toString() === userId.toString())) {
         const e = new Error('Not authorized'); e.statusCode = 403; throw e;
     }
     return group;
@@ -31,13 +28,14 @@ const currentMonthYear = () => {
 // @access Private
 const upsertBudget = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const { category, monthYear, limit } = req.body;
         const my = monthYear || currentMonthYear();
 
         const budget = await Budget.findOneAndUpdate(
             { group: req.params.groupId, category, monthYear: my },
-            { limit, createdBy: req.user._id, group: req.params.groupId, category, monthYear: my },
+            { limit, createdBy: userId, group: req.params.groupId, category, monthYear: my },
             { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
         );
         res.status(201).json({ success: true, data: budget });
@@ -74,7 +72,8 @@ const upsertBudget = async (req, res, next) => {
 // @access Private
 const getBudgets = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const monthYear = req.query.month || currentMonthYear();
         const budgets = await Budget.find({ group: req.params.groupId, monthYear });
         res.json({ success: true, data: budgets, monthYear });
@@ -88,7 +87,8 @@ const getBudgets = async (req, res, next) => {
 // @access Private
 const updateBudget = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const budget = await Budget.findOneAndUpdate(
             { _id: req.params.id, group: req.params.groupId },
             { limit: req.body.limit },
@@ -106,7 +106,8 @@ const updateBudget = async (req, res, next) => {
 // @access Private
 const deleteBudget = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const budget = await Budget.findOneAndDelete({ _id: req.params.id, group: req.params.groupId });
         if (!budget) { res.status(404); throw new Error('Budget not found'); }
         res.json({ success: true, data: {} });
@@ -122,7 +123,8 @@ const deleteBudget = async (req, res, next) => {
 // @access Private
 const getBudgetStatus = async (req, res, next) => {
     try {
-        await verifyMembership(req.params.groupId, req.user._id);
+        const userId = (req.user.id || req.user._id).toString();
+        await verifyMembership(req.params.groupId, userId);
         const monthYear = req.query.month || currentMonthYear();
         const [year, month] = monthYear.split('-').map(Number);
         const startDate = new Date(year, month - 1, 1);
