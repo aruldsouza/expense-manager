@@ -51,7 +51,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     } finally {
       setLoading(false);
     }
-  }, [group._id, group]);
+  }, [group]);
 
   useEffect(() => {
     loadGroupData();

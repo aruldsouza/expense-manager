@@ -50,7 +50,9 @@ const DEMO_IDS = ['u1', 'u2', 'u3', 'u4', 'g1', 'g2', 'e1', 'e2', 'e3'];
       localStorage.removeItem('expense_mgr_expenses');
       localStorage.removeItem('expense_mgr_settlements');
     }
-  } catch (_) {}
+  } catch (_) {
+    // Ignore error during cleanup
+  }
 })();
 
 // LocalStorage Helper
@@ -297,7 +299,9 @@ const localEngine = {
     }
     // Remove old key regardless so it doesn't cause confusion
     if (oldToken) localStorage.removeItem('token');
-  } catch (_) {}
+  } catch (_) {
+    // Ignore migration error
+  }
 })();
 
 // Main API Export with Auto-Fallback
