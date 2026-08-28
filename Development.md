@@ -220,31 +220,31 @@
 
 ### Task 9.1
 
-* [ ] Test receipt extraction using receipts containing multiple items, taxes, discounts, and different currencies.
+* [x] Test receipt extraction using receipts containing multiple items, taxes, discounts, and different currencies.
 
 ### Task 9.2
 
-* [ ] Test receipts with poor image quality, rotated images, handwritten content, and partially unreadable text.
+* [x] Test receipts with poor image quality, rotated images, handwritten content, and partially unreadable text.
 
 ### Task 9.3
 
-* [ ] Test invalid file types, oversized files, empty uploads, and corrupted images.
+* [x] Test invalid file types, oversized files, empty uploads, and corrupted images.
 
 ### Task 9.4
 
-* [ ] Test AI extraction accuracy against manually verified receipt values.
+* [x] Test AI extraction accuracy against manually verified receipt values.
 
 ### Task 9.5
 
-* [ ] Test expense creation from successfully extracted receipt data.
+* [x] Test expense creation from successfully extracted receipt data.
 
 ### Task 9.6
 
-* [ ] Test receipt-based split calculations for multiple users and shared items.
+* [x] Test receipt-based split calculations for multiple users and shared items.
 
 ### Task 9.7
 
-* [ ] Verify that all existing Expense Manager features continue working after integration.
+* [x] Verify that all existing Expense Manager features continue working after integration.
 
 ---
 

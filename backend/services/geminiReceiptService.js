@@ -118,9 +118,8 @@ const CURRENCY_SYMBOL_MAP = {
     '円':  'JPY',
     'JPY': 'JPY',
     '元':  'CNY',
-    '¥':   'CNY',  // Covered by both; context-dependent — default to CNY for mainland
-    'CNY': 'CNY',
     'RMB': 'CNY',
+    'CNY': 'CNY',
     'د.إ': 'AED',
     'AED': 'AED',
     'ر.س': 'SAR',
@@ -336,6 +335,7 @@ const VALID_CATEGORIES = [
 const CATEGORY_KEYWORD_MAP = [
     { category: 'Food & Dining',  keywords: ['restaurant', 'cafe', 'coffee', 'pizza', 'burger', 'biryani', 'swiggy', 'zomato', 'doordash', 'ubereats', 'domino', 'kfc', 'mcdonald', 'subway', 'starbucks', 'bar ', 'grill', 'kitchen', 'dhaba', 'bakery', 'diner', 'bistro', 'eatery', 'taco', 'sushi', 'noodle', 'pasta', 'tea', 'juice'] },
     { category: 'Grocery',        keywords: ['grocery', 'supermarket', 'hypermarket', 'bigbasket', 'reliance fresh', 'dmart', 'walmart', 'safeway', 'kroger', 'whole foods', 'trader joe', 'aldi', 'lidl', 'tesco', 'costco', 'fresh', 'mart', 'provisions', 'kirana', 'vegetables', 'fruits', 'milk', 'bread', 'eggs', 'rice', 'flour', 'dal', 'pulses', 'spices'] },
+    { category: 'Electronics',    keywords: ['electronics', 'mobile', 'laptop', 'computer', 'tablet', 'iphone', 'samsung', 'headphone', 'earphone', 'charger', 'cable', 'printer', 'camera', 'tv', 'television', 'apple store', 'best buy', 'croma', 'reliance digital', 'gadget', 'appliance'] },
     { category: 'Shopping',       keywords: ['mall', 'clothing', 'apparel', 'fashion', 'zara', 'h&m', 'nike', 'adidas', 'amazon', 'flipkart', 'myntra', 'boutique', 'store', 'shop', 'retail', 'departmental', 'outlet', 't-shirt', 'jeans', 'shoes', 'accessories', 'handbag', 'jewellery', 'watch', 'lifestyle', 'max fashion', 'westside'] },
     { category: 'Transportation', keywords: ['uber', 'ola', 'lyft', 'taxi', 'cab', 'auto', 'metro', 'bus', 'train', 'flight', 'fuel', 'petrol', 'diesel', 'gas station', 'parking', 'toll', 'rapido', 'blablacar', 'redbus'] },
     { category: 'Healthcare',     keywords: ['pharmacy', 'medical', 'hospital', 'clinic', 'doctor', 'dentist', 'apollo', 'medplus', 'netmeds', '1mg', 'diagnostics', 'lab', 'medicine', 'tablet', 'capsule', 'prescription', 'health', 'chemist', 'drugstore', 'walgreens', 'cvs', 'boots'] },
