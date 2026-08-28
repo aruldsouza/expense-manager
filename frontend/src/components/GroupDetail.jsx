@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import ScanReceiptModal from './ScanReceiptModal';
 
 export default function GroupDetail({ group, currentUser, onBack }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'transactions'
@@ -30,6 +31,10 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting, setInviting] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(group);
+
+  // Scan Receipt Modal State (Task 4.1)
+  const [showScanModal, setShowScanModal] = useState(false);
+  const [scannedReceiptData, setScannedReceiptData] = useState(null);
 
   const loadGroupData = React.useCallback(async () => {
     setLoading(true);
@@ -229,6 +234,19 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           </button>
           <button className="btn btn-secondary" onClick={() => setShowSettleModal(true)}>
             💵 Settle Up
+          </button>
+          {/* Task 4.1 — Scan Receipt button (does not change existing expense flow) */}
+          <button
+            id="scan-receipt-trigger"
+            className="btn btn-secondary"
+            onClick={() => setShowScanModal(true)}
+            style={{
+              background: 'linear-gradient(135deg,rgba(99,102,241,0.15),rgba(6,182,212,0.1))',
+              border: '1px solid rgba(99,102,241,0.35)',
+              color: 'var(--accent-cyan)',
+            }}
+          >
+            📷 Scan Receipt
           </button>
           <button className="btn btn-primary" onClick={() => setShowExpenseModal(true)}>
             + Add Expense
@@ -672,6 +690,24 @@ export default function GroupDetail({ group, currentUser, onBack }) {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Task 4 — Scan Receipt Modal */}
+      {showScanModal && (
+        <ScanReceiptModal
+          groupCurrency={currentGroup.currency || group.currency || 'INR'}
+          onClose={() => setShowScanModal(false)}
+          onConfirm={(data) => {
+            setScannedReceiptData(data);
+            setShowScanModal(false);
+            // Task 5 hook: scannedReceiptData is now available for expense creation
+            // Pre-fill the expense modal with the scanned total amount + merchant name
+            if (data.total)     setExpAmount(String(data.total));
+            if (data.merchant)  setExpTitle(data.merchant);
+            if (data.category)  setExpCategory(data.category);
+            setShowExpenseModal(true);
+          }}
+        />
       )}
     </div>
   );

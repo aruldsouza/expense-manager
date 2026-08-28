@@ -88,31 +88,31 @@
 
 ### Task 4.1
 
-* [ ] Add a “Scan Receipt” option to the existing Expense Manager frontend without changing the existing expense creation flow.
+* [x] Add a “Scan Receipt” option to the existing Expense Manager frontend without changing the existing expense creation flow.
 
 ### Task 4.2
 
-* [ ] Create a receipt upload interface with drag-and-drop and file selection support.
+* [x] Create a receipt upload interface with drag-and-drop and file selection support.
 
 ### Task 4.3
 
-* [ ] Display an upload preview before processing the receipt.
+* [x] Display an upload preview before processing the receipt.
 
 ### Task 4.4
 
-* [ ] Show a loading state while Gemini analyzes the receipt.
+* [x] Show a loading state while Gemini analyzes the receipt.
 
 ### Task 4.5
 
-* [ ] Display the extracted merchant, date, items, subtotal, tax, total, currency, and category in an editable review form.
+* [x] Display the extracted merchant, date, items, subtotal, tax, total, currency, and category in an editable review form.
 
 ### Task 4.6
 
-* [ ] Allow users to correct any AI-extracted information before saving the expense.
+* [x] Allow users to correct any AI-extracted information before saving the expense.
 
 ### Task 4.7
 
-* [ ] Clearly indicate that the displayed information was extracted by AI and can be edited.
+* [x] Clearly indicate that the displayed information was extracted by AI and can be edited.
 
 ---
 

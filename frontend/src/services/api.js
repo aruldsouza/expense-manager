@@ -467,6 +467,36 @@ export const api = {
     } catch (_e) {
       return await localEngine.getTransactions(groupId);
     }
+  },
+
+  /**
+   * Task 4 — Scan Receipt
+   * Sends a receipt image file to the backend Gemini extraction endpoint.
+   * Uses FormData (multipart) so the file buffer is sent correctly.
+   *
+   * @param {File} imageFile - The receipt image File object from the file input or drop event
+   * @returns {Promise<object>} - { success, data: { merchant, date, currency, ... } }
+   */
+  async scanReceipt(imageFile) {
+    const formData = new FormData();
+    formData.append('receipt', imageFile);
+
+    const res = await fetch(`${API_BASE}/receipt/scan`, {
+      method: 'POST',
+      headers: {
+        // Do NOT set Content-Type — the browser sets it automatically with boundary for FormData
+        ...(this.token ? { Authorization: `Bearer ${this.token}` } : {})
+      },
+      body: formData
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data.error || `Receipt scan failed (HTTP ${res.status})`);
+    }
+
+    return data;
   }
 };
 
