@@ -21,6 +21,7 @@
 
 import React, { useState, useRef } from 'react';
 import { api } from '../services/api';
+import SmartSplitModal from './SmartSplitModal';
 
 /* ─── Style tokens (match existing dark glassmorphic system) ───────────────── */
 const S = {
@@ -218,6 +219,10 @@ export default function CreateExpenseFromReceiptModal({
   const [error, setError]       = useState('');
   const saveInProgress          = useRef(false);     // extra guard
 
+  /* ── Task 6 state: smart split ── */
+  const [showSmartSplit, setShowSmartSplit] = useState(false);
+  const [smartSplits, setSmartSplits]       = useState(null);  // null = equal split
+
   /* ── Toggle a member in/out of the split ── */
   const toggleMember = (id) => {
     setSelectedMembers(prev =>
@@ -233,23 +238,31 @@ export default function CreateExpenseFromReceiptModal({
     if (!paidBy) throw new Error('Please select who paid this expense.');
     if (selectedMembers.length === 0) throw new Error('Please select at least one member to split with.');
 
-    // Equal split among selected members
-    const perPerson = parseFloat((numAmount / selectedMembers.length).toFixed(2));
-    let assigned = 0;
-    const splits = selectedMembers.map((uid, idx) => {
-      let share = perPerson;
-      // Last member absorbs rounding remainder
-      if (idx === selectedMembers.length - 1) {
-        share = parseFloat((numAmount - assigned).toFixed(2));
-      } else {
-        assigned += share;
-      }
-      return {
-        user:       uid,
-        amount:     share,
-        percentage: parseFloat(((share / numAmount) * 100).toFixed(2)),
-      };
-    });
+    let splits;
+    let splitType = 'equal';
+
+    // Task 6: use smart splits if the user applied them
+    if (smartSplits && smartSplits.length > 0) {
+      splits    = smartSplits;
+      splitType = 'unequal';
+    } else {
+      // Fallback: equal split among selected members
+      const perPerson = parseFloat((numAmount / selectedMembers.length).toFixed(2));
+      let assigned = 0;
+      splits = selectedMembers.map((uid, idx) => {
+        let share = perPerson;
+        if (idx === selectedMembers.length - 1) {
+          share = parseFloat((numAmount - assigned).toFixed(2));
+        } else {
+          assigned += share;
+        }
+        return {
+          user:       uid,
+          amount:     share,
+          percentage: parseFloat(((share / numAmount) * 100).toFixed(2)),
+        };
+      });
+    }
 
     return {
       title:     title.trim(),
@@ -257,7 +270,7 @@ export default function CreateExpenseFromReceiptModal({
       paidBy,
       category,
       date:      date || undefined,
-      splitType: 'equal',
+      splitType,
       splits,
       // Store receipt metadata for Task 7 (receipt history)
       receiptMeta: {
@@ -490,9 +503,59 @@ export default function CreateExpenseFromReceiptModal({
             </div>
           </div>
 
-          {/* ── Split selection ── */}
+          {/* ── Split section ── */}
           <div style={{ marginBottom: '1rem' }}>
-            <p style={S.sectionHeading}>👥 Split Among</p>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.6rem' }}>
+              <p style={S.sectionHeading}>👥 Split Among</p>
+              {/* Task 6.1 — Smart Split trigger */}
+              {receiptData.lineItems?.length > 0 && !saved && (
+                <button
+                  id="smart-split-btn"
+                  style={{
+                    background: smartSplits
+                      ? 'rgba(245,158,11,0.15)'
+                      : 'rgba(99,102,241,0.12)',
+                    border: `1px solid ${smartSplits ? 'rgba(245,158,11,0.4)' : 'rgba(99,102,241,0.35)'}`,
+                    color: smartSplits ? 'var(--accent-amber)' : 'var(--primary)',
+                    borderRadius: '6px', padding: '0.35rem 0.75rem',
+                    fontSize: '0.78rem', fontWeight: '700', cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onClick={() => setShowSmartSplit(true)}
+                >
+                  {smartSplits ? '🔀 Edit Smart Split' : '🔀 Smart Split by Items'}
+                </button>
+              )}
+            </div>
+            {/* Smart split summary badge */}
+            {smartSplits && (
+              <div style={{
+                marginBottom:'0.65rem', padding:'0.5rem 0.85rem',
+                background:'rgba(245,158,11,0.08)',
+                border:'1px solid rgba(245,158,11,0.25)',
+                borderRadius:'8px', fontSize:'0.82rem',
+              }}>
+                <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'0.3rem' }}>
+                  <span style={{ color:'var(--accent-amber)', fontWeight:'700' }}>🔀 Smart Split Active</span>
+                  <button
+                    style={{ background:'none', border:'none', color:'var(--text-dim)',
+                      fontSize:'0.78rem', cursor:'pointer', padding:0 }}
+                    onClick={() => setSmartSplits(null)}
+                  >↺ Use equal split</button>
+                </div>
+                {smartSplits.map(s => {
+                  const m = members.find(m => getMemberId(m) === s.user);
+                  return m ? (
+                    <div key={s.user} style={{ display:'flex', justifyContent:'space-between',
+                      color:'var(--text-muted)', fontSize:'0.8rem' }}>
+                      <span>{getMemberName(m)}</span>
+                      <span style={{ color:'#fff', fontWeight:'600' }}>{currency} {s.amount.toFixed(2)}</span>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            )}
+
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {members.map(m => {
                 const id       = getMemberId(m);
@@ -570,6 +633,22 @@ export default function CreateExpenseFromReceiptModal({
           </button>
         </div>
       </div>
+
+      {/* Task 6 — Smart Split Modal (rendered on top) */}
+      {showSmartSplit && (
+        <SmartSplitModal
+          receiptData={receiptData}
+          members={members}
+          paidBy={paidBy}
+          currency={currency}
+          totalAmount={parseFloat(amount) || receiptData.total || 0}
+          onClose={() => setShowSmartSplit(false)}
+          onConfirm={(splits) => {
+            setSmartSplits(splits);
+            setShowSmartSplit(false);
+          }}
+        />
+      )}
     </div>
   );
 }

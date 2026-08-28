@@ -144,27 +144,27 @@
 
 ### Task 6.1
 
-* [ ] Add an AI-generated split suggestion based on the extracted receipt line items.
+* [x] Add an AI-generated split suggestion based on the extracted receipt line items.
 
 ### Task 6.2
 
-* [ ] Allow users to select which receipt items belong to each group member.
+* [x] Allow users to select which receipt items belong to each group member.
 
 ### Task 6.3
 
-* [ ] Calculate each member’s share automatically from their selected items.
+* [x] Calculate each member’s share automatically from their selected items.
 
 ### Task 6.4
 
-* [ ] Handle shared items by allowing users to split an item between multiple members.
+* [x] Handle shared items by allowing users to split an item between multiple members.
 
 ### Task 6.5
 
-* [ ] Include tax, discount, and applicable charges correctly when calculating member shares.
+* [x] Include tax, discount, and applicable charges correctly when calculating member shares.
 
 ### Task 6.6
 
-* [ ] Allow users to manually override the suggested split before saving.
+* [x] Allow users to manually override the suggested split before saving.
 
 ---
 
