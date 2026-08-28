@@ -104,10 +104,20 @@ exports.createGroup = async (req, res, next) => {
 exports.getUserGroups = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
-    const userEmail = (req.user.email || '').toLowerCase().trim();
+    let userEmail = (req.user.email || '').toLowerCase().trim();
 
-    // 1. Find all user IDs matching this user's email (including placeholder accounts from invites)
-    const matchingUsers = await User.find({ email: userEmail });
+    if (!userEmail) {
+      const activeUser = await User.findById(userId);
+      if (activeUser && activeUser.email) {
+        userEmail = activeUser.email.toLowerCase().trim();
+      }
+    }
+
+    // 1. Find all user IDs matching this user's email (case-insensitive regex)
+    const matchingUsers = userEmail
+      ? await User.find({ email: { $regex: new RegExp(`^${userEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } })
+      : await User.find({ _id: userId });
+
     const allUserIds = matchingUsers.map(u => u._id);
     if (!allUserIds.some(id => id.toString() === userId.toString())) {
       allUserIds.push(userId);
@@ -129,7 +139,7 @@ exports.getUserGroups = async (req, res, next) => {
       let needsSave = false;
       const rawMemberIds = group.members.map(m => {
         const mEmail = (m.email || '').toLowerCase().trim();
-        if (mEmail === userEmail && m._id && m._id.toString() !== userId.toString()) {
+        if (userEmail && mEmail === userEmail && m._id && m._id.toString() !== userId.toString()) {
           needsSave = true;
           return userId;
         }

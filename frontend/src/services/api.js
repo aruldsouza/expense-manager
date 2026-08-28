@@ -392,51 +392,30 @@ export const api = {
   },
 
   async login(email, password) {
-    try {
-      const data = await this.request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-      // Backend now returns { success, data: { token, user } }
-      const token = data.data?.token || data.token;
-      const user = data.data?.user || data.user;
-      this.setToken(token);
-      return { token, user };
-    } catch (_e) {
-      // Offline fallback — set a local-mode marker token so session restore works
-      const result = await localEngine.login(email);
-      this.setToken('local-mode');
-      return result;
-    }
+    const data = await this.request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    const token = data.data?.token || data.token;
+    const user = data.data?.user || data.user;
+    if (token) this.setToken(token);
+    return { token, user };
   },
 
   async register(name, email, password) {
-    try {
-      const data = await this.request('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) });
-      // Backend now returns { success, data: { token, user } }
-      const token = data.data?.token || data.token;
-      const user = data.data?.user || data.user;
-      this.setToken(token);
-      return { token, user };
-    } catch (_e) {
-      // Offline fallback — set a local-mode marker token so session restore works
-      const result = await localEngine.register(name, email);
-      this.setToken('local-mode');
-      return result;
-    }
+    const data = await this.request('/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) });
+    const token = data.data?.token || data.token;
+    const user = data.data?.user || data.user;
+    if (token) this.setToken(token);
+    return { token, user };
   },
 
   async getMe() {
-    // No token at all — not logged in, don't hit the backend
-    if (!this.token) return { user: null };
-    // Local offline session — restore from localStorage without a network call
-    if (this.token === 'local-mode') {
-      return { user: localEngine.currentUser };
-    }
-    // Real JWT — verify with backend; backend returns { success, data: { user } }
+    const token = this.token || (typeof localStorage !== 'undefined' ? localStorage.getItem('jwt_token') : null);
+    if (!token || token === 'local-mode') return { user: null };
+
     try {
       const data = await this.request('/auth/me');
       const user = data.data?.user || data.user || null;
       return { user };
     } catch (_e) {
-      // Token expired or invalid — clear it and force re-login
       this.setToken(null);
       return { user: null };
     }
@@ -444,27 +423,25 @@ export const api = {
 
   async getGroups() {
     try {
-      return await this.request('/groups');
+      const res = await this.request('/groups');
+      if (Array.isArray(res)) return res;
+      if (res && Array.isArray(res.data)) return res.data;
+      if (res && Array.isArray(res.groups)) return res.groups;
+      return [];
     } catch (_e) {
-      return await localEngine.getGroups();
+      return [];
     }
   },
 
   async createGroup(name, description, memberEmails) {
-    try {
-      return await this.request('/groups', { method: 'POST', body: JSON.stringify({ name, description, memberEmails }) });
-    } catch (_e) {
-      return await localEngine.createGroup(name, description, memberEmails);
-    }
+    const res = await this.request('/groups', { method: 'POST', body: JSON.stringify({ name, description, memberEmails }) });
+    return res.data || res;
   },
 
   async addMember(groupId, emailOrUserId) {
-    try {
-      const payload = typeof emailOrUserId === 'object' ? emailOrUserId : (emailOrUserId.includes('@') ? { email: emailOrUserId } : { userId: emailOrUserId });
-      return await this.request(`/groups/${groupId}/members`, { method: 'POST', body: JSON.stringify(payload) });
-    } catch (_e) {
-      return await localEngine.addMember(groupId, typeof emailOrUserId === 'string' ? emailOrUserId : (emailOrUserId.email || emailOrUserId.userId));
-    }
+    const payload = typeof emailOrUserId === 'object' ? emailOrUserId : (emailOrUserId.includes('@') ? { email: emailOrUserId } : { userId: emailOrUserId });
+    const res = await this.request(`/groups/${groupId}/members`, { method: 'POST', body: JSON.stringify(payload) });
+    return res.data || res;
   },
 
   async getGroupDetails(groupId) {
