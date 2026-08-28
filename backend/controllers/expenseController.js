@@ -90,28 +90,62 @@ exports.addExpense = async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid splitType. Allowed: equal, unequal, percentage' });
     }
 
+    // ── Task 8.4: Validate & sanitize all AI-generated receipt metadata ───────
+    let sanitizedReceiptMeta = null;
+    if (receiptMeta && typeof receiptMeta === 'object') {
+      const sanitizeNumber = (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const n = parseFloat(v);
+        return isFinite(n) && n >= 0 ? parseFloat(n.toFixed(4)) : null;
+      };
+
+      const sanitizeString = (v, maxLen = 200) => {
+        if (!v || typeof v !== 'string') return null;
+        const trimmed = v.trim();
+        return trimmed.length > 0 ? trimmed.substring(0, maxLen) : null;
+      };
+
+      const sanitizedLineItems = Array.isArray(receiptMeta.lineItems)
+        ? receiptMeta.lineItems
+            .filter(item => item && typeof item === 'object')
+            .map(item => ({
+              name: sanitizeString(item.name, 200) || 'Item',
+              quantity: sanitizeNumber(item.quantity),
+              unitPrice: sanitizeNumber(item.unitPrice),
+              totalPrice: sanitizeNumber(item.totalPrice)
+            }))
+            .slice(0, 100) // Cap to max 100 line items for safety
+        : [];
+
+      let validScannedAt = new Date();
+      if (receiptMeta.scannedAt) {
+        const parsedDate = new Date(receiptMeta.scannedAt);
+        if (!isNaN(parsedDate.getTime())) validScannedAt = parsedDate;
+      }
+
+      sanitizedReceiptMeta = {
+        merchant:      sanitizeString(receiptMeta.merchant, 200),
+        currency:      sanitizeString(receiptMeta.currency, 10)?.toUpperCase() || null,
+        subtotal:      sanitizeNumber(receiptMeta.subtotal),
+        tax:           sanitizeNumber(receiptMeta.tax),
+        discount:      sanitizeNumber(receiptMeta.discount),
+        serviceCharge: sanitizeNumber(receiptMeta.serviceCharge),
+        lineItems:     sanitizedLineItems,
+        scannedAt:     validScannedAt
+      };
+    }
+
     const expense = await Expense.create({
       group: groupId,
-      title,
+      title: title.trim().substring(0, 200),
       amount: numAmount,
       paidBy,
       splitType,
       splits: calculatedSplits,
       category: category || 'General',
       date: date || new Date(),
-      // Task 7.2 — Persist receipt metadata if provided; null otherwise
-      receiptMeta: receiptMeta
-        ? {
-            merchant:      receiptMeta.merchant      || null,
-            currency:      receiptMeta.currency      || null,
-            subtotal:      receiptMeta.subtotal      != null ? parseFloat(receiptMeta.subtotal)      : null,
-            tax:           receiptMeta.tax           != null ? parseFloat(receiptMeta.tax)           : null,
-            discount:      receiptMeta.discount      != null ? parseFloat(receiptMeta.discount)      : null,
-            serviceCharge: receiptMeta.serviceCharge != null ? parseFloat(receiptMeta.serviceCharge) : null,
-            lineItems:     Array.isArray(receiptMeta.lineItems) ? receiptMeta.lineItems : [],
-            scannedAt:     receiptMeta.scannedAt ? new Date(receiptMeta.scannedAt) : new Date()
-          }
-        : null
+      // Task 7.2 & 8.4 — Persist strictly sanitized receipt metadata
+      receiptMeta: sanitizedReceiptMeta
     });
 
     const populatedExpense = await Expense.findById(expense._id)

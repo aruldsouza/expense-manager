@@ -192,27 +192,27 @@
 
 ### Task 8.1
 
-* [ ] Handle Gemini API timeout, quota, authentication, and server errors gracefully.
+* [x] Handle Gemini API timeout, quota, authentication, and server errors gracefully.
 
 ### Task 8.2
 
-* [ ] Display user-friendly error messages instead of exposing backend or Gemini errors.
+* [x] Display user-friendly error messages instead of exposing backend or Gemini errors.
 
 ### Task 8.3
 
-* [ ] Ensure the Gemini API key is stored only on the backend.
+* [x] Ensure the Gemini API key is stored only on the backend.
 
 ### Task 8.4
 
-* [ ] Validate all AI-generated data on the backend before storing it in the database.
+* [x] Validate all AI-generated data on the backend before storing it in the database.
 
 ### Task 8.5
 
-* [ ] Prevent malicious or unsupported files from being processed.
+* [x] Prevent malicious or unsupported files from being processed.
 
 ### Task 8.6
 
-* [ ] Ensure the new receipt feature does not break existing authentication, expenses, analytics, or other Expense Manager functionality.
+* [x] Ensure the new receipt feature does not break existing authentication, expenses, analytics, or other Expense Manager functionality.
 
 ---
 

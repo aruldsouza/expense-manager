@@ -446,6 +446,41 @@ function validateAndNormalize(raw) {
     };
 }
 
+// ─── Task 8.5 — File signature (magic bytes) validation ────────────────────────
+/**
+ * Validates the file buffer's magic bytes against expected image signatures
+ * to prevent MIME-spoofing and malicious file execution.
+ *
+ * @param {Buffer} buffer
+ * @param {string} mimeType
+ * @returns {boolean}
+ */
+function validateImageMagicBytes(buffer, mimeType) {
+    if (!buffer || !Buffer.isBuffer(buffer) || buffer.length < 12) return false;
+
+    // JPEG signature: FF D8 FF
+    if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+        return buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF;
+    }
+
+    // PNG signature: 89 50 4E 47 0D 0A 1A 0A
+    if (mimeType === 'image/png') {
+        return buffer[0] === 0x89 && buffer[1] === 0x50 &&
+               buffer[2] === 0x4E && buffer[3] === 0x47 &&
+               buffer[4] === 0x0D && buffer[5] === 0x0A &&
+               buffer[6] === 0x1A && buffer[7] === 0x0A;
+    }
+
+    // WEBP signature: 'RIFF' (offset 0..3) ... 'WEBP' (offset 8..11)
+    if (mimeType === 'image/webp') {
+        const isRiff = buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46;
+        const isWebp = buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50;
+        return isRiff && isWebp;
+    }
+
+    return false;
+}
+
 // ─── Custom error class ────────────────────────────────────────────────────────
 class GeminiReceiptError extends Error {
     constructor(message, code, status = 500) {
@@ -460,8 +495,8 @@ class GeminiReceiptError extends Error {
 function parseGeminiResponse(rawText) {
     if (!rawText || typeof rawText !== 'string' || rawText.trim().length === 0) {
         throw new GeminiReceiptError(
-            'Gemini returned an empty response for this receipt.',
-            'EMPTY_RESPONSE', 502
+            'Could not extract receipt data. The receipt might be blurry or unreadable.',
+            'EMPTY_RESPONSE', 422
         );
     }
 
@@ -474,8 +509,8 @@ function parseGeminiResponse(rawText) {
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
         throw new GeminiReceiptError(
-            'Could not find a valid JSON object in the Gemini response.',
-            'PARSE_ERROR', 502
+            'Could not extract structured data from the receipt image. Please ensure the receipt is well-lit and clear.',
+            'PARSE_ERROR', 422
         );
     }
 
@@ -483,55 +518,55 @@ function parseGeminiResponse(rawText) {
         return JSON.parse(jsonMatch[0]);
     } catch {
         throw new GeminiReceiptError(
-            'Gemini returned malformed JSON that could not be parsed.',
-            'PARSE_ERROR', 502
+            'Extracted receipt content was malformed. Please try uploading a clearer photo.',
+            'PARSE_ERROR', 422
         );
     }
 }
 
-// ─── Map Gemini API errors → GeminiReceiptError ───────────────────────────────
+// ─── Task 8.1 & 8.2 — Map Gemini API errors → User-friendly GeminiReceiptError ──
 function handleGeminiApiError(err) {
     const message = err.message || '';
 
     if (message.includes('API_KEY_INVALID') || message.includes('API key not valid')) {
         return new GeminiReceiptError(
-            'The Gemini API key is invalid or has been revoked. Please check GEMINI_API_KEY.',
+            'AI receipt scanning is temporarily unavailable. Please try again later.',
             'AUTH_ERROR', 503
         );
     }
     if (message.includes('RESOURCE_EXHAUSTED') || message.includes('quota') ||
         message.includes('rate limit') || err.status === 429) {
         return new GeminiReceiptError(
-            'The Gemini API quota has been exceeded. Please try again later.',
+            'AI receipt scanner is receiving high traffic. Please wait a moment and try again.',
             'QUOTA_EXCEEDED', 429
         );
     }
     if (message.includes('ETIMEDOUT') || message.includes('timeout') || message.includes('ECONNRESET')) {
         return new GeminiReceiptError(
-            'The request to the Gemini API timed out. Please try again.',
+            'Receipt analysis timed out. Please try again with a smaller or clearer image.',
             'TIMEOUT', 504
         );
     }
     if (message.includes('SAFETY') || message.includes('blocked')) {
         return new GeminiReceiptError(
-            'The receipt image was blocked by Gemini content filters. Please try a different image.',
+            'The receipt image could not be processed due to safety guidelines. Please upload a clear receipt photo.',
             'CONTENT_BLOCKED', 422
         );
     }
     if (message.includes('INVALID_ARGUMENT') || err.status === 400) {
         return new GeminiReceiptError(
-            'The receipt image could not be processed by Gemini. Ensure it is a clear, supported image.',
+            'The receipt image is invalid or corrupted. Please upload a valid JPG, PNG, or WEBP image.',
             'INVALID_IMAGE', 422
         );
     }
     if (err.status >= 500) {
         return new GeminiReceiptError(
-            'The Gemini API returned a server error. Please try again later.',
+            'AI service encountered an unexpected error. Please try again shortly.',
             'GEMINI_SERVER_ERROR', 502
         );
     }
     return new GeminiReceiptError(
-        'An unexpected error occurred while contacting the Gemini API.',
+        'Unable to process receipt image. Please verify the image is readable and try again.',
         'UNKNOWN_ERROR', 500
     );
 }
@@ -548,25 +583,33 @@ function handleGeminiApiError(err) {
  * @throws {GeminiReceiptError}
  */
 async function extractReceiptData(imageBuffer, mimeType) {
-    // Guard: API key
+    // Guard: API key (Task 8.3)
     if (!process.env.GEMINI_API_KEY) {
         throw new GeminiReceiptError(
-            'Gemini AI is not configured. Set GEMINI_API_KEY in the server environment.',
+            'AI receipt scanning is not configured on the server.',
             'MISSING_API_KEY', 503
         );
     }
 
-    // Guard: mime type
+    // Guard: mime type (Task 8.5)
     if (!SUPPORTED_MIME_TYPES.includes(mimeType)) {
         throw new GeminiReceiptError(
-            `Unsupported image type: ${mimeType}. Supported types: JPG, PNG, WEBP.`,
+            `Unsupported image type: ${mimeType}. Please upload a JPG, PNG, or WEBP receipt.`,
             'UNSUPPORTED_FORMAT', 415
         );
     }
 
-    // Guard: buffer
+    // Guard: buffer validity (Task 8.5)
     if (!imageBuffer || !Buffer.isBuffer(imageBuffer) || imageBuffer.length === 0) {
-        throw new GeminiReceiptError('Image buffer is empty or invalid.', 'INVALID_IMAGE', 422);
+        throw new GeminiReceiptError('Image file is empty or corrupted.', 'INVALID_IMAGE', 422);
+    }
+
+    // Guard: magic bytes verification against mime type (Task 8.5)
+    if (!validateImageMagicBytes(imageBuffer, mimeType)) {
+        throw new GeminiReceiptError(
+            'Uploaded file content does not match its declared image format. Please upload a genuine JPG, PNG, or WEBP image.',
+            'MALICIOUS_OR_CORRUPT_FILE', 415
+        );
     }
 
     // Prepare image part for Gemini
@@ -577,12 +620,19 @@ async function extractReceiptData(imageBuffer, mimeType) {
         }
     };
 
-    // Call Gemini API
+    // Call Gemini API with timeout protection (Task 8.1)
     let rawText;
+    const TIMEOUT_MS = 35000;
     try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
-        const result = await model.generateContent([RECEIPT_EXTRACTION_PROMPT, imagePart]);
+
+        const apiCallPromise = model.generateContent([RECEIPT_EXTRACTION_PROMPT, imagePart]);
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('ETIMEDOUT: Receipt analysis timed out')), TIMEOUT_MS);
+        });
+
+        const result = await Promise.race([apiCallPromise, timeoutPromise]);
         rawText = result.response.text();
     } catch (err) {
         if (err instanceof GeminiReceiptError) throw err;
@@ -592,7 +642,7 @@ async function extractReceiptData(imageBuffer, mimeType) {
     // Parse JSON from Gemini text response
     const rawJson = parseGeminiResponse(rawText);
 
-    // Validate, normalize, and return
+    // Validate, normalize, and return (Task 8.4)
     return validateAndNormalize(rawJson);
 }
 
@@ -600,6 +650,7 @@ module.exports = {
     extractReceiptData,
     GeminiReceiptError,
     SUPPORTED_MIME_TYPES,
+    validateImageMagicBytes,
     // Exported for unit testing
     normalizeCurrency,
     normalizeDateString,

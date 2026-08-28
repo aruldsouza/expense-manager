@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const API_URL = 'http://localhost:5002/api';
+const PORT = process.env.PORT || 5001;
+const API_URL = `http://localhost:${PORT}/api`;
 
 const runVerification = async () => {
     try {
