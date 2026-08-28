@@ -5,6 +5,7 @@
   "description": "Smart Expense Splitter with Greedy Debt Simplification Algorithm",
   "scripts": {
     "start": "cd backend && node server.js",
+    "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm install && npm run build",
     "postinstall": "cd backend && npm install && cd ../frontend && npm install",
     "dev:backend": "cd backend && npm start",

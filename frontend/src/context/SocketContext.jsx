@@ -9,10 +9,13 @@ function getSocketUrl() {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace('/api', '').replace(/\/+$/, '');
   }
-  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
-    return 'https://expense-manager-5h2m.onrender.com';
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
+      return 'http://localhost:5001';
+    }
   }
-  return 'http://localhost:5001';
+  return 'https://expense-manager-5h2m.onrender.com';
 }
 
 const SOCKET_URL = getSocketUrl();

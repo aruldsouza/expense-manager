@@ -62,12 +62,16 @@ exports.login = async (req, res, next) => {
     }
 
     if (user.password && user.password.startsWith('placeholder_pending_registration_')) {
-      return res.status(400).json({ error: 'Please register your account first to activate your invite' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      // User was invited to a group before registering.
+      // Auto-claim and activate their account with the password they provided!
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+      await user.save();
+    } else {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: 'Invalid email or password' });
+      }
     }
 
     const token = jwt.sign({ id: user._id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });

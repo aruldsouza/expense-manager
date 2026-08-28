@@ -1,16 +1,20 @@
 import axios from 'axios';
 import { calculateNetBalances, computeOptimizedSettlements } from './debtOptimizer';
 
-// Detect API base at runtime — works for Live Server, Express backend, and Render.com
+// Detect API base at runtime — works for localhost, Vercel, Render, and custom domains
 function getApiBase() {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
   }
-  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
-    return 'https://expense-manager-5h2m.onrender.com/api';
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    // Local development only
+    if (host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.')) {
+      return 'http://localhost:5001/api';
+    }
   }
-  // Local development (any port — Live Server 5500, Express 5001, Vite 5173, etc.)
-  return 'http://localhost:5001/api';
+  // All deployed / cloud environments (Vercel, Render, etc.)
+  return 'https://expense-manager-5h2m.onrender.com/api';
 }
 
 const API_BASE = getApiBase();
@@ -120,12 +124,17 @@ const localEngine = {
 
     return allGroups.filter(g => {
       const creatorId = (typeof g.createdBy === 'object' ? (g.createdBy._id || g.createdBy.id) : g.createdBy || '').toString();
-      if (creatorId && creatorId === currentId) return true;
+      if (creatorId && (creatorId === currentId || creatorId.toLowerCase() === currentEmail)) return true;
 
       if (Array.isArray(g.members)) {
         return g.members.some(m => {
-          const mId = (typeof m === 'object' ? (m._id || m.id) : m || '').toString();
-          const mEmail = (typeof m === 'object' ? (m.email || '') : '').toLowerCase().trim();
+          if (!m) return false;
+          if (typeof m === 'string') {
+            const cleanM = m.toLowerCase().trim();
+            return cleanM === currentId.toLowerCase() || cleanM === currentEmail;
+          }
+          const mId = (m._id || m.id || '').toString();
+          const mEmail = (m.email || '').toLowerCase().trim();
           return (mId && mId === currentId) || (mEmail && mEmail === currentEmail);
         });
       }
@@ -156,7 +165,7 @@ const localEngine = {
           };
           users.push(u);
         }
-        if (!members.find(m => m._id === u._id || m.email === u.email)) {
+        if (!members.find(m => m._id === u._id || (m.email || '').toLowerCase() === cleanEmail)) {
           members.push({ _id: u._id, name: u.name, email: u.email });
         }
       }
@@ -200,7 +209,7 @@ const localEngine = {
     if (!group) throw new Error('Group not found');
 
     if (!Array.isArray(group.members)) group.members = [];
-    if (!group.members.some(m => (m._id || m) === u._id || m.email?.toLowerCase() === cleanEmail)) {
+    if (!group.members.some(m => (m._id || m.id || m) === u._id || (m.email || '').toLowerCase() === cleanEmail)) {
       group.members.push({ _id: u._id, name: u.name, email: u.email });
       setStorage('groups', groups);
     }

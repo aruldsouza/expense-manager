@@ -466,6 +466,36 @@ export default function GroupDetail({ group, currentUser, onBack }) {
               <button onClick={() => setShowExpenseModal(false)} style={{ background: 'none', color: 'var(--text-dim)', fontSize: '1.2rem' }}>✕</button>
             </div>
 
+            {/* Task 10.1: Quick scan trigger inside manual add modal */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '0.65rem 0.85rem', marginBottom: '0.85rem',
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.12), rgba(6,182,212,0.08))',
+              border: '1px solid rgba(99,102,241,0.25)',
+              borderRadius: 'var(--radius-sm)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+                <span>✨</span>
+                <span>Have a receipt photo?</span>
+              </div>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => {
+                  setShowExpenseModal(false);
+                  setShowScanModal(true);
+                }}
+                style={{
+                  background: 'rgba(99,102,241,0.2)',
+                  borderColor: 'rgba(99,102,241,0.4)',
+                  color: 'var(--accent-cyan)',
+                  fontSize: '0.78rem', padding: '0.3rem 0.65rem'
+                }}
+              >
+                📷 Scan &amp; Auto-fill
+              </button>
+            </div>
+
             <form onSubmit={handleAddExpense} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Expense Title</label>

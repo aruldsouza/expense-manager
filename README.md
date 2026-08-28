@@ -104,9 +104,10 @@ expense-manager/
     ```
     *   Create a `.env` file in the `backend` directory:
         ```env
-        PORT=5000
+        PORT=5001
         MONGO_URI=your_mongodb_connection_string
         JWT_SECRET=your_jwt_secret_key
+        GEMINI_API_KEY=your_google_gemini_api_key
         NODE_ENV=development
         ```
 
@@ -121,9 +122,9 @@ expense-manager/
 1.  **Start Backend:**
     ```bash
     # In /backend terminal
-    npm run dev
+    npm start
     ```
-    *   Server runs on `http://localhost:5000` (or your specified PORT).
+    *   Server runs on `http://localhost:5001`.
 
 2.  **Start Frontend:**
     ```bash
@@ -131,6 +132,34 @@ expense-manager/
     npm run dev
     ```
     *   Client runs on `http://localhost:5173`.
+
+---
+
+## 🤖 AI-Powered Smart Receipt Extraction
+
+SplitSmart integrates Google Gemini 1.5 Flash Vision to automatically extract and parse receipt photos:
+
+*   **Zero Manual Entry**: Upload receipt photos (JPG, PNG, WEBP, up to 5 MB) via drag-and-drop or file picker.
+*   **Complete OCR & Field Normalization**:
+    *   Merchant / Vendor name with address noise stripping.
+    *   Transaction date normalized to standard `YYYY-MM-DD`.
+    *   Currency detection and ISO 4217 code normalization (`USD`, `INR`, `EUR`, `GBP`, `AED`, `SGD`, etc.).
+    *   Full line item breakdown (item description, quantity, unit price, line total).
+    *   Breakdown of subtotal, discounts, GST/VAT/taxes, and service/delivery fees.
+    *   Automatic intelligent category prediction.
+*   **Smart Split by Items**:
+    *   Item-level assignment matrix across group members.
+    *   Automatic equal division of shared items (`÷ N`).
+    *   Proportional allocation of taxes, discounts, and service fees.
+    *   Per-member manual overrides with live balance reconciliation.
+*   **Enterprise-Grade Security**:
+    *   `GEMINI_API_KEY` is strictly held on the server; zero exposure to the client.
+    *   In-memory processing only (`multer.memoryStorage()`) — no disk or public image storage.
+    *   Binary magic-byte file signature validation to block spoofed or malicious uploads.
+    *   AI endpoint rate limiting (`aiLimiter`).
+*   **Persistent Receipt History**:
+    *   Every expense created from a receipt preserves the full line-item metadata (`receiptMeta`).
+    *   Clickable `📄 Receipt` badge in the transaction ledger opens a dedicated slide-in receipt viewer.
 
 ---
 
@@ -148,9 +177,12 @@ expense-manager/
 *   `DELETE /api/groups/:id` - Delete a group (Creator only)
 
 ### Expenses
-*   `POST /api/groups/:groupId/expenses` - Add an expense
+*   `POST /api/groups/:groupId/expenses` - Add an expense (supports `receiptMeta`)
 *   `GET /api/groups/:groupId/expenses` - Get group expenses
 *   `GET /api/groups/:groupId/balances` - Get detailed group balances
+
+### AI Receipt Scanning
+*   `POST /api/receipt/scan` - Analyze receipt image via Gemini Vision (requires JWT Bearer token & multipart form `receipt`)
 
 ### Settlements
 *   `POST /api/groups/:groupId/settlements` - Record a payment
@@ -162,9 +194,17 @@ expense-manager/
 
 ---
 
-## 📸 Screenshots
+## 🧪 Testing
 
-*(Add screenshots of your Dashboard, Add Expense Modal, and Group Details here)*
+Run the automated test suite to verify backend, security, and AI receipt pipelines:
+
+```bash
+# Run Task 9 AI Receipt Test Suite (16/16 tests)
+node backend/tests/testTask9Receipts.js
+
+# Run full backend regression verification
+node backend/verify_backend.js
+```
 
 ---
 

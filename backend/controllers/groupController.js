@@ -106,18 +106,59 @@ exports.getUserGroups = async (req, res, next) => {
     const userId = req.user.id || req.user._id;
     const userEmail = (req.user.email || '').toLowerCase().trim();
 
-    // Query groups where user is in members array OR user is creator
+    // 1. Find all user IDs matching this user's email (including placeholder accounts from invites)
+    const matchingUsers = await User.find({ email: userEmail });
+    const allUserIds = matchingUsers.map(u => u._id);
+    if (!allUserIds.some(id => id.toString() === userId.toString())) {
+      allUserIds.push(userId);
+    }
+
+    // 2. Query all groups where user is either in members list OR created the group
     const groups = await Group.find({
       $or: [
-        { members: userId },
-        { createdBy: userId }
+        { members: { $in: allUserIds } },
+        { createdBy: { $in: allUserIds } }
       ]
     })
       .populate('members', 'name email')
       .populate('createdBy', 'name email')
       .sort({ updatedAt: -1 });
 
-    res.json(groups);
+    // 3. Auto-heal: Ensure current active userId is in the group.members array
+    for (const group of groups) {
+      let needsSave = false;
+      const rawMemberIds = group.members.map(m => {
+        const mEmail = (m.email || '').toLowerCase().trim();
+        if (mEmail === userEmail && m._id && m._id.toString() !== userId.toString()) {
+          needsSave = true;
+          return userId;
+        }
+        return m._id || m;
+      });
+
+      if (!rawMemberIds.some(id => id.toString() === userId.toString())) {
+        rawMemberIds.push(userId);
+        needsSave = true;
+      }
+
+      if (needsSave) {
+        group.members = rawMemberIds;
+        await group.save();
+      }
+    }
+
+    // Return populated groups
+    const populatedGroups = await Group.find({
+      $or: [
+        { members: { $in: allUserIds } },
+        { createdBy: { $in: allUserIds } }
+      ]
+    })
+      .populate('members', 'name email')
+      .populate('createdBy', 'name email')
+      .sort({ updatedAt: -1 });
+
+    res.json(populatedGroups);
   } catch (err) {
     next(err);
   }
@@ -127,6 +168,8 @@ exports.getGroupById = async (req, res, next) => {
   try {
     const { groupId } = req.params;
     const userId = req.user.id || req.user._id;
+    const userEmail = (req.user.email || '').toLowerCase().trim();
+
     const group = await Group.findById(groupId)
       .populate('members', 'name email')
       .populate('createdBy', 'name email');
@@ -135,8 +178,12 @@ exports.getGroupById = async (req, res, next) => {
       return res.status(404).json({ error: 'Group not found' });
     }
 
-    const isMember = group.members.some(m => (m._id || m).toString() === userId.toString()) ||
-                     group.createdBy?._id?.toString() === userId.toString();
+    const isMember = group.members.some(m => {
+      const mId = (m._id || m).toString();
+      const mEmail = (m.email || '').toLowerCase().trim();
+      return mId === userId.toString() || (userEmail && mEmail === userEmail);
+    }) || group.createdBy?._id?.toString() === userId.toString();
+
     if (!isMember) {
       return res.status(403).json({ error: 'Access denied: You are not a member of this group' });
     }
@@ -166,7 +213,7 @@ exports.addMember = async (req, res, next) => {
       const cleanEmail = email.trim().toLowerCase();
       userToAdd = await User.findOne({ email: cleanEmail });
       if (!userToAdd) {
-        // Auto-create placeholder user
+        // Auto-create placeholder user so they are immediately part of the group
         const defaultName = cleanEmail.split('@')[0];
         userToAdd = await User.create({
           name: defaultName.charAt(0).toUpperCase() + defaultName.slice(1),
@@ -182,12 +229,12 @@ exports.addMember = async (req, res, next) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (group.members.some(m => m.toString() === userToAdd._id.toString())) {
-      return res.status(400).json({ error: 'User is already a member of this group' });
+    // Check if user is already a member
+    const alreadyMember = group.members.some(m => m.toString() === userToAdd._id.toString());
+    if (!alreadyMember) {
+      group.members.push(userToAdd._id);
+      await group.save();
     }
-
-    group.members.push(userToAdd._id);
-    await group.save();
 
     const updatedGroup = await Group.findById(groupId)
       .populate('members', 'name email')
@@ -197,7 +244,7 @@ exports.addMember = async (req, res, next) => {
     const inviterEmail = req.user.email || '';
 
     // Send email invitation asynchronously
-    if (userToAdd.email) {
+    if (userToAdd.email && !alreadyMember) {
       sendGroupInviteEmail({
         toEmail: userToAdd.email,
         inviterName,
@@ -209,12 +256,14 @@ exports.addMember = async (req, res, next) => {
     }
 
     // Create in-app notification
-    Notification.create({
-      recipient: userToAdd._id,
-      type: 'group:invite',
-      message: `${inviterName} invited you to join the expense group "${updatedGroup.name}".`,
-      groupId: updatedGroup._id
-    }).catch(() => {});
+    if (!alreadyMember) {
+      Notification.create({
+        recipient: userToAdd._id,
+        type: 'group:invite',
+        message: `${inviterName} invited you to join the expense group "${updatedGroup.name}".`,
+        groupId: updatedGroup._id
+      }).catch(() => {});
+    }
 
     res.json(updatedGroup);
   } catch (err) {

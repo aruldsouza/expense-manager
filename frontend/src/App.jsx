@@ -12,6 +12,15 @@ export default function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchGroups = async () => {
+    try {
+      const groupsData = await api.getGroups();
+      setGroups(groupsData || []);
+    } catch (_) {
+      // Keep existing groups if network error
+    }
+  };
+
   // On mount: try to restore logged-in session from stored JWT
   useEffect(() => {
     (async () => {
@@ -20,8 +29,7 @@ export default function App() {
         const meRes = await api.getMe();
         if (meRes && meRes.user) {
           setCurrentUser(meRes.user);
-          const groupsData = await api.getGroups();
-          setGroups(groupsData || []);
+          await fetchGroups();
         }
       } catch (_) {
         // No valid session — stays on auth page
@@ -39,8 +47,7 @@ export default function App() {
       res = await api.login(email, password);
     }
     setCurrentUser(res.user);
-    const groupsData = await api.getGroups();
-    setGroups(groupsData || []);
+    await fetchGroups();
   };
 
   const handleLogout = () => {
@@ -52,7 +59,7 @@ export default function App() {
 
   const handleCreateGroup = async (name, description, memberEmails) => {
     const newGroup = await api.createGroup(name, description, memberEmails);
-    setGroups(prev => [newGroup, ...prev]);
+    await fetchGroups();
     setSelectedGroup(newGroup);
   };
 
@@ -87,7 +94,10 @@ export default function App() {
       <Navbar
         currentUser={currentUser}
         onLogout={handleLogout}
-        onSelectGroup={() => setSelectedGroup(null)}
+        onSelectGroup={() => {
+          setSelectedGroup(null);
+          fetchGroups();
+        }}
       />
 
       <main>
@@ -95,7 +105,10 @@ export default function App() {
           <GroupDetail
             group={selectedGroup}
             currentUser={currentUser}
-            onBack={() => setSelectedGroup(null)}
+            onBack={() => {
+              setSelectedGroup(null);
+              fetchGroups();
+            }}
           />
         ) : (
           <GroupList
