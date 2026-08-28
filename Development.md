@@ -120,23 +120,23 @@
 
 ### Task 5.1
 
-* [ ] Add a “Create Expense” action to the receipt review screen.
+* [x] Add a “Create Expense” action to the receipt review screen.
 
 ### Task 5.2
 
-* [ ] Map the confirmed receipt data to the existing Expense Manager expense schema.
+* [x] Map the confirmed receipt data to the existing Expense Manager expense schema.
 
 ### Task 5.3
 
-* [ ] Automatically populate the expense amount, description, category, date, merchant, and currency from the confirmed receipt.
+* [x] Automatically populate the expense amount, description, category, date, merchant, and currency from the confirmed receipt.
 
 ### Task 5.4
 
-* [ ] Save the confirmed expense using the existing expense creation API.
+* [x] Save the confirmed expense using the existing expense creation API.
 
 ### Task 5.5
 
-* [ ] Prevent duplicate expense creation when the user repeatedly clicks the save button.
+* [x] Prevent duplicate expense creation when the user repeatedly clicks the save button.
 
 ---
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import ScanReceiptModal from './ScanReceiptModal';
+import CreateExpenseFromReceiptModal from './CreateExpenseFromReceiptModal';
 
 export default function GroupDetail({ group, currentUser, onBack }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'transactions'
@@ -35,6 +36,9 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   // Scan Receipt Modal State (Task 4.1)
   const [showScanModal, setShowScanModal] = useState(false);
   const [scannedReceiptData, setScannedReceiptData] = useState(null);
+
+  // Create Expense from Receipt Modal State (Task 5.1)
+  const [showReceiptExpenseModal, setShowReceiptExpenseModal] = useState(false);
 
   const loadGroupData = React.useCallback(async () => {
     setLoading(true);
@@ -700,12 +704,26 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           onConfirm={(data) => {
             setScannedReceiptData(data);
             setShowScanModal(false);
-            // Task 5 hook: scannedReceiptData is now available for expense creation
-            // Pre-fill the expense modal with the scanned total amount + merchant name
-            if (data.total)     setExpAmount(String(data.total));
-            if (data.merchant)  setExpTitle(data.merchant);
-            if (data.category)  setExpCategory(data.category);
-            setShowExpenseModal(true);
+            // Task 5: open the dedicated expense-creation modal instead of generic one
+            setShowReceiptExpenseModal(true);
+          }}
+        />
+      )}
+
+      {/* Task 5 — Create Expense from Receipt Modal */}
+      {showReceiptExpenseModal && scannedReceiptData && (
+        <CreateExpenseFromReceiptModal
+          receiptData={scannedReceiptData}
+          group={currentGroup}
+          currentUser={currentUser}
+          onClose={() => {
+            setShowReceiptExpenseModal(false);
+            setScannedReceiptData(null);
+          }}
+          onSuccess={() => {
+            setShowReceiptExpenseModal(false);
+            setScannedReceiptData(null);
+            loadGroupData();   // Task 5.4: refresh balances & expense list
           }}
         />
       )}
