@@ -52,35 +52,35 @@
 
 ### Task 3.1
 
-* [ ] Create a Gemini prompt that instructs the AI to accurately analyze the complete receipt image.
+* [x] Create a Gemini prompt that instructs the AI to accurately analyze the complete receipt image.
 
 ### Task 3.2
 
-* [ ] Extract the merchant or store name automatically from the receipt.
+* [x] Extract the merchant or store name automatically from the receipt.
 
 ### Task 3.3
 
-* [ ] Extract the transaction date and normalize it into a consistent date format.
+* [x] Extract the transaction date and normalize it into a consistent date format.
 
 ### Task 3.4
 
-* [ ] Extract the currency symbol or currency code and normalize it.
+* [x] Extract the currency symbol or currency code and normalize it.
 
 ### Task 3.5
 
-* [ ] Extract every identifiable receipt line item with item name, quantity, unit price, and total price.
+* [x] Extract every identifiable receipt line item with item name, quantity, unit price, and total price.
 
 ### Task 3.6
 
-* [ ] Extract subtotal, discounts, tax, service charges, and final total when available.
+* [x] Extract subtotal, discounts, tax, service charges, and final total when available.
 
 ### Task 3.7
 
-* [ ] Automatically suggest an expense category based on the merchant and receipt items.
+* [x] Automatically suggest an expense category based on the merchant and receipt items.
 
 ### Task 3.8
 
-* [ ] Ensure missing or unreadable information is returned as null instead of hallucinating values.
+* [x] Ensure missing or unreadable information is returned as null instead of hallucinating values.
 
 ---
 
