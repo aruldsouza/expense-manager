@@ -156,22 +156,28 @@ const Dashboard = () => {
         const fetchAll = async () => {
             try {
                 const [statsRes, groupsRes] = await Promise.all([
-                    api.get('/dashboard/stats'),
-                    api.get('/groups')
+                    api.get('/dashboard/stats').catch(() => ({ data: {} })),
+                    api.get('/groups').catch(() => ({ data: [] }))
                 ]);
 
-                if (statsRes.data.success) setStats(statsRes.data.data);
+                if (statsRes.data?.success) {
+                    setStats(statsRes.data.data);
+                }
 
-                if (groupsRes.data.success) {
-                    setGroups(groupsRes.data.data);
+                // Handle both direct array and { success: true, data: [...] } formats
+                const groupsList = Array.isArray(groupsRes.data)
+                    ? groupsRes.data
+                    : (groupsRes.data?.data || groupsRes.data?.groups || (Array.isArray(groupsRes) ? groupsRes : []));
 
-                    if (groupsRes.data.data.length > 0) {
-                        const firstGroupId = groupsRes.data.data[0]._id;
-                        try {
-                            const cRes = await api.get(`/groups/${firstGroupId}/analytics/category`);
-                            if (cRes.data.success) setCategoryData(cRes.data.data);
-                        } catch { /* optional */ }
-                    }
+                setGroups(groupsList);
+
+                if (groupsList.length > 0) {
+                    const firstGroupId = groupsList[0]._id;
+                    try {
+                        const cRes = await api.get(`/groups/${firstGroupId}/analytics/category`);
+                        if (cRes.data?.success) setCategoryData(cRes.data.data);
+                        else if (Array.isArray(cRes.data)) setCategoryData(cRes.data);
+                    } catch { /* optional */ }
                 }
             } catch (err) {
                 console.error('Dashboard fetch error', err);

@@ -67,7 +67,7 @@ const CreateGroup = () => {
                 members: selectedMembers.map(m => m._id)
             });
 
-            if (res.data.success) {
+            if (res.data?.success || res.data?._id || res.status === 201 || res.status === 200) {
                 navigate('/dashboard');
             }
         } catch (err) {

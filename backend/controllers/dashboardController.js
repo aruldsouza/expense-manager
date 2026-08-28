@@ -19,9 +19,21 @@ const getDashboardStats = async (req, res, next) => {
             return res.json({ success: true, data: cached, fromCache: true });
         }
 
-        // 1. Active Groups (members can be array of ObjectIds or objects)
+        // 1. Active Groups: Find all user IDs matching this email to include invite placeholders
+        const User = require('../models/User');
+        const userEmail = (req.user.email || '').toLowerCase().trim();
+        const matchingUsers = await User.find({ email: userEmail });
+        const allUserIds = matchingUsers.map(u => u._id);
+        if (!allUserIds.some(id => id.toString() === userId.toString())) {
+            allUserIds.push(userId);
+        }
+
         const groups = await Group.find({
-            $or: [{ members: userId }, { 'members.user': userId }]
+            $or: [
+                { members: { $in: allUserIds } },
+                { 'members.user': { $in: allUserIds } },
+                { createdBy: { $in: allUserIds } }
+            ]
         });
         const activeGroupsCount = groups.length;
         const groupIds = groups.map(g => g._id);

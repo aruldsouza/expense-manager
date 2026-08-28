@@ -69,6 +69,21 @@ const reportRoutes = require('./routes/reportRoutes');
 const splitTemplateRoutes = require('./routes/splitTemplateRoutes');
 const receiptRoutes = require('./routes/receiptRoutes');
 
+// Backward compatibility: forward legacy/cached client requests (/groups, /auth, etc.) to /api/*
+app.use((req, res, next) => {
+  if (!req.url.startsWith('/api') && (
+    req.url.startsWith('/groups') ||
+    req.url.startsWith('/auth') ||
+    req.url.startsWith('/receipt') ||
+    req.url.startsWith('/dashboard') ||
+    req.url.startsWith('/currencies') ||
+    req.url.startsWith('/notifications')
+  )) {
+    req.url = `/api${req.url}`;
+  }
+  next();
+});
+
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
