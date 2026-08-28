@@ -8,7 +8,7 @@ exports.addExpense = async (req, res, next) => {
     const amount = req.body.amount;
     const paidBy = req.body.paidBy || req.body.payer;
     const splitType = (req.body.splitType || 'equal').toLowerCase();
-    const { splits, category, date } = req.body;
+    const { splits, category, date, receiptMeta } = req.body;  // Task 7.2
     const userId = req.user.id || req.user._id;
 
     if (!title || !amount || parseFloat(amount) <= 0 || !paidBy) {
@@ -98,7 +98,20 @@ exports.addExpense = async (req, res, next) => {
       splitType,
       splits: calculatedSplits,
       category: category || 'General',
-      date: date || new Date()
+      date: date || new Date(),
+      // Task 7.2 — Persist receipt metadata if provided; null otherwise
+      receiptMeta: receiptMeta
+        ? {
+            merchant:      receiptMeta.merchant      || null,
+            currency:      receiptMeta.currency      || null,
+            subtotal:      receiptMeta.subtotal      != null ? parseFloat(receiptMeta.subtotal)      : null,
+            tax:           receiptMeta.tax           != null ? parseFloat(receiptMeta.tax)           : null,
+            discount:      receiptMeta.discount      != null ? parseFloat(receiptMeta.discount)      : null,
+            serviceCharge: receiptMeta.serviceCharge != null ? parseFloat(receiptMeta.serviceCharge) : null,
+            lineItems:     Array.isArray(receiptMeta.lineItems) ? receiptMeta.lineItems : [],
+            scannedAt:     receiptMeta.scannedAt ? new Date(receiptMeta.scannedAt) : new Date()
+          }
+        : null
     });
 
     const populatedExpense = await Expense.findById(expense._id)

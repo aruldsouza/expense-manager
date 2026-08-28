@@ -172,19 +172,19 @@
 
 ### Task 7.1
 
-* [ ] Add receipt information to the existing expense data model without breaking existing expenses.
+* [x] Add receipt information to the existing expense data model without breaking existing expenses.
 
 ### Task 7.2
 
-* [ ] Store the extracted receipt metadata associated with the created expense.
+* [x] Store the extracted receipt metadata associated with the created expense.
 
 ### Task 7.3
 
-* [ ] Display a receipt indicator on expenses created through receipt scanning.
+* [x] Display a receipt indicator on expenses created through receipt scanning.
 
 ### Task 7.4
 
-* [ ] Allow users to view the extracted receipt details from the expense details page.
+* [x] Allow users to view the extracted receipt details from the expense details page.
 
 ---
 

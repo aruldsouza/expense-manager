@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import ScanReceiptModal from './ScanReceiptModal';
 import CreateExpenseFromReceiptModal from './CreateExpenseFromReceiptModal';
+import ReceiptDetailDrawer from './ReceiptDetailDrawer';
 
 export default function GroupDetail({ group, currentUser, onBack }) {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'transactions'
@@ -39,6 +40,9 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
   // Create Expense from Receipt Modal State (Task 5.1)
   const [showReceiptExpenseModal, setShowReceiptExpenseModal] = useState(false);
+
+  // Receipt Detail Drawer State (Task 7.3 / 7.4)
+  const [selectedReceiptExpense, setSelectedReceiptExpense] = useState(null);
 
   const loadGroupData = React.useCallback(async () => {
     setLoading(true);
@@ -403,12 +407,31 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                     padding: '0.85rem 1rem',
                     background: 'rgba(15, 23, 42, 0.5)',
                     borderRadius: 'var(--radius-sm)',
-                    borderLeft: `4px solid ${isExpense ? 'var(--primary)' : 'var(--accent-emerald)'}`
+                    borderLeft: `4px solid ${isExpense ? (tx.receiptMeta ? 'var(--accent-cyan)' : 'var(--primary)') : 'var(--accent-emerald)'}`
                   }}>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', fontSize: '0.95rem' }}>
-                        <span>{isExpense ? '🛒' : '🤝'}</span>
+                        <span>{isExpense ? (tx.receiptMeta ? '📷' : '🛒') : '🤝'}</span>
                         <span>{isExpense ? tx.title : `Settlement: ${tx.fromUser?.name || 'User'} paid ${tx.toUser?.name || 'User'}`}</span>
+                        {/* Task 7.3 — Receipt indicator badge */}
+                        {isExpense && tx.receiptMeta && (
+                          <button
+                            id={`receipt-badge-${tx._id}`}
+                            onClick={() => setSelectedReceiptExpense(tx)}
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                              padding: '0.15rem 0.5rem',
+                              background: 'rgba(6,182,212,0.12)',
+                              border: '1px solid rgba(6,182,212,0.3)',
+                              borderRadius: '999px', fontSize: '0.7rem', fontWeight: '700',
+                              color: 'var(--accent-cyan)', cursor: 'pointer',
+                              transition: 'all 0.2s', flexShrink: 0,
+                            }}
+                            title="View extracted receipt details"
+                          >
+                            📄 Receipt
+                          </button>
+                        )}
                       </div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
                         {isExpense ? `Paid by ${tx.paidBy?.name || 'Member'} • ${tx.category || 'General'}` : (tx.notes || 'No notes')}
@@ -725,6 +748,14 @@ export default function GroupDetail({ group, currentUser, onBack }) {
             setScannedReceiptData(null);
             loadGroupData();   // Task 5.4: refresh balances & expense list
           }}
+        />
+      )}
+
+      {/* Task 7.4 — Receipt Detail Drawer */}
+      {selectedReceiptExpense && (
+        <ReceiptDetailDrawer
+          expense={selectedReceiptExpense}
+          onClose={() => setSelectedReceiptExpense(null)}
         />
       )}
     </div>

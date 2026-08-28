@@ -16,6 +16,29 @@ const splitSchema = new mongoose.Schema({
   }
 }, { _id: false });
 
+/**
+ * Task 7.1 — Receipt metadata subdocument.
+ * All fields are optional so existing expenses without receipt data
+ * are completely backward-compatible. Mongoose ignores missing fields.
+ */
+const lineItemSchema = new mongoose.Schema({
+  name:       { type: String },
+  quantity:   { type: Number, default: null },
+  unitPrice:  { type: Number, default: null },
+  totalPrice: { type: Number, default: null }
+}, { _id: false });
+
+const receiptMetaSchema = new mongoose.Schema({
+  merchant:      { type: String,  default: null },
+  currency:      { type: String,  default: null },
+  subtotal:      { type: Number,  default: null },
+  tax:           { type: Number,  default: null },
+  discount:      { type: Number,  default: null },
+  serviceCharge: { type: Number,  default: null },
+  lineItems:     { type: [lineItemSchema], default: [] },
+  scannedAt:     { type: Date,    default: null }
+}, { _id: false });
+
 const expenseSchema = new mongoose.Schema({
   group: {
     type: mongoose.Schema.Types.ObjectId,
@@ -50,6 +73,11 @@ const expenseSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  // Task 7.1 — Optional receipt metadata; null for manually-entered expenses
+  receiptMeta: {
+    type: receiptMetaSchema,
+    default: null
   }
 }, {
   timestamps: true
