@@ -235,6 +235,13 @@ const localEngine = {
     return group;
   },
 
+  async deleteGroup(groupId) {
+    const groups = getStorage('groups', []);
+    const filtered = groups.filter(g => g._id !== groupId);
+    setStorage('groups', filtered);
+    return { success: true };
+  },
+
   async getGroupDetails(groupId) {
     const groups = getStorage('groups', []);
     return groups.find(g => g._id === groupId) || null;
@@ -462,6 +469,15 @@ export const api = {
       return res.group || res.data || res;
     } catch (_e) {
       return await localEngine.removeMember(groupId, memberId);
+    }
+  },
+
+  async deleteGroup(groupId) {
+    try {
+      const res = await this.request(`/groups/${groupId}`, { method: 'DELETE' });
+      return res.data || res;
+    } catch (_e) {
+      return await localEngine.deleteGroup(groupId);
     }
   },
 

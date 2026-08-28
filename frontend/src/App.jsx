@@ -12,16 +12,44 @@ export default function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getGroupIdFromUrlOrStorage = () => {
+    const hash = window.location.hash || '';
+    if (hash.startsWith('#/group/')) {
+      return hash.replace('#/group/', '').trim();
+    }
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('group')) {
+      return params.get('group').trim();
+    }
+    return localStorage.getItem('active_group_id') || null;
+  };
+
   const fetchGroups = async () => {
     try {
       const groupsData = await api.getGroups();
       setGroups(groupsData || []);
+      return groupsData || [];
     } catch (_) {
-      // Keep existing groups if network error
+      return [];
     }
   };
 
-  // On mount: try to restore logged-in session from stored JWT
+  const handleSelectGroup = (g) => {
+    if (g) {
+      const gId = (g._id || g.id || '').toString();
+      setSelectedGroup(g);
+      localStorage.setItem('active_group_id', gId);
+      window.location.hash = `#/group/${gId}`;
+    } else {
+      setSelectedGroup(null);
+      localStorage.removeItem('active_group_id');
+      if (window.location.hash.startsWith('#/group/')) {
+        window.history.pushState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+  };
+
+  // On mount: try to restore logged-in session and active group
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -29,7 +57,23 @@ export default function App() {
         const meRes = await api.getMe();
         if (meRes && meRes.user) {
           setCurrentUser(meRes.user);
-          await fetchGroups();
+          const groupsData = await fetchGroups();
+
+          // Restore previously opened group from URL or storage
+          const targetGroupId = getGroupIdFromUrlOrStorage();
+          if (targetGroupId) {
+            const found = (groupsData || []).find(g => (g._id || g.id).toString() === targetGroupId.toString());
+            if (found) {
+              setSelectedGroup(found);
+            } else {
+              try {
+                const groupDetails = await api.getGroupDetails(targetGroupId);
+                if (groupDetails) setSelectedGroup(groupDetails);
+              } catch (_) {
+                handleSelectGroup(null);
+              }
+            }
+          }
         }
       } catch (_) {
         // No valid session — stays on auth page
@@ -39,6 +83,28 @@ export default function App() {
     })();
   }, []);
 
+  // Listen to hash changes for smooth forward/back navigation
+  useEffect(() => {
+    const onHashChange = async () => {
+      const gId = getGroupIdFromUrlOrStorage();
+      if (!gId) {
+        setSelectedGroup(null);
+      } else {
+        const match = groups.find(g => (g._id || g.id).toString() === gId.toString());
+        if (match) {
+          setSelectedGroup(match);
+        } else {
+          try {
+            const gd = await api.getGroupDetails(gId);
+            if (gd) setSelectedGroup(gd);
+          } catch (_) {}
+        }
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [groups]);
+
   const handleAuthSuccess = async ({ type, name, email, password }) => {
     let res;
     if (type === 'register') {
@@ -47,20 +113,26 @@ export default function App() {
       res = await api.login(email, password);
     }
     setCurrentUser(res.user);
-    await fetchGroups();
+    const groupsData = await fetchGroups();
+
+    const targetGroupId = getGroupIdFromUrlOrStorage();
+    if (targetGroupId) {
+      const found = (groupsData || []).find(g => (g._id || g.id).toString() === targetGroupId.toString());
+      if (found) setSelectedGroup(found);
+    }
   };
 
   const handleLogout = () => {
     api.setToken(null);
     setCurrentUser(null);
-    setSelectedGroup(null);
+    handleSelectGroup(null);
     setGroups([]);
   };
 
   const handleCreateGroup = async (name, description, memberEmails) => {
     const newGroup = await api.createGroup(name, description, memberEmails);
     await fetchGroups();
-    setSelectedGroup(newGroup);
+    handleSelectGroup(newGroup);
   };
 
   // ── Loading splash ──
@@ -95,7 +167,7 @@ export default function App() {
         currentUser={currentUser}
         onLogout={handleLogout}
         onSelectGroup={() => {
-          setSelectedGroup(null);
+          handleSelectGroup(null);
           fetchGroups();
         }}
       />
@@ -106,14 +178,14 @@ export default function App() {
             group={selectedGroup}
             currentUser={currentUser}
             onBack={() => {
-              setSelectedGroup(null);
+              handleSelectGroup(null);
               fetchGroups();
             }}
           />
         ) : (
           <GroupList
             groups={groups}
-            onSelectGroup={(g) => setSelectedGroup(g)}
+            onSelectGroup={(g) => handleSelectGroup(g)}
             onCreateGroup={handleCreateGroup}
           />
         )}

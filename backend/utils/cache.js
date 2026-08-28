@@ -96,4 +96,15 @@ const delPattern = async (pattern) => {
     }
 };
 
-module.exports = { get, set, del, delPattern };
+/**
+ * Clear all cache keys.
+ */
+const clear = async () => {
+    try {
+        await delPattern('*');
+    } catch {
+        /* silent */
+    }
+};
+
+module.exports = { get, set, del, delPattern, clear };

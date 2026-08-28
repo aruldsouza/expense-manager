@@ -2,6 +2,7 @@ const Group = require('../models/Group');
 const Expense = require('../models/Expense');
 const Settlement = require('../models/Settlement');
 const User = require('../models/User');
+const cache = require('../utils/cache');
 
 const computeNetBalances = async (groupId) => {
   const group = await Group.findById(groupId).populate('members', 'name email');
@@ -178,6 +179,9 @@ exports.recordSettlement = async (req, res, next) => {
     const populated = await Settlement.findById(settlement._id)
       .populate('fromUser', 'name email')
       .populate('toUser', 'name email');
+
+    // Invalidate dashboard stats cache so dashboards update instantly
+    cache.clear().catch(() => {});
 
     res.status(201).json({
       success: true,

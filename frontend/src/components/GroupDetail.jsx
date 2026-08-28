@@ -5,7 +5,14 @@ import CreateExpenseFromReceiptModal from './CreateExpenseFromReceiptModal';
 import ReceiptDetailDrawer from './ReceiptDetailDrawer';
 
 export default function GroupDetail({ group, currentUser, onBack }) {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'transactions'
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem(`active_tab_${group._id || group.id}`) || 'overview';
+  });
+
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem(`active_tab_${group._id || group.id}`, tab);
+  };
   const [expenses, setExpenses] = useState([]);
   const [balances, setBalances] = useState([]);
   const [optimized, setOptimized] = useState([]);
@@ -44,9 +51,15 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
   // Receipt Detail Drawer State (Task 7.3 / 7.4)
   const [selectedReceiptExpense, setSelectedReceiptExpense] = useState(null);
+  const [actionFeedback, setActionFeedback] = useState(null);
 
-  const loadGroupData = React.useCallback(async () => {
-    setLoading(true);
+  const showNotification = (msg, type = 'success') => {
+    setActionFeedback({ msg, type });
+    setTimeout(() => setActionFeedback(null), 3000);
+  };
+
+  const loadGroupData = React.useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [expData, balData, optData, txData, grpData] = await Promise.all([
         api.getExpenses(group._id),
@@ -63,7 +76,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     } catch (err) {
       console.error('Error loading group data:', err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [group]);
 
@@ -78,23 +91,25 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       const initial = {};
       const numMembers = group.members.length;
       const numAmount = parseFloat(expAmount) || 0;
+      const perShare = numMembers > 0 ? Math.round((numAmount / numMembers) * 100) / 100 : 0;
+      const perPct = numMembers > 0 ? Math.round((100 / numMembers) * 10) / 10 : 0;
 
       group.members.forEach(m => {
-        const mId = m._id || m.id;
-        initial[mId] = {
+        const id = m._id || m.id;
+        initial[id] = {
           selected: true,
-          amount: (numAmount / (numMembers || 1)).toFixed(2),
-          percentage: (100 / (numMembers || 1)).toFixed(1)
+          amount: perShare,
+          percentage: perPct
         };
       });
       setCustomSplits(initial);
     }
-  }, [group.members, expAmount, splitType]);
+  }, [group.members, expAmount]);
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
     if (!expTitle.trim() || !expAmount || parseFloat(expAmount) <= 0) {
-      alert('Please enter a valid title and positive amount');
+      showNotification('Please enter a valid title and positive amount', 'error');
       return;
     }
 
@@ -116,7 +131,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       }, 0);
 
       if (Math.abs(totalCustomSum - numAmount) > 0.05) {
-        alert(`Sum of split amounts (₹${totalCustomSum.toFixed(2)}) must equal total expense amount (₹${numAmount.toFixed(2)})`);
+        showNotification(`Sum of split amounts (₹${totalCustomSum.toFixed(2)}) must equal total expense amount (₹${numAmount.toFixed(2)})`, 'error');
         return;
       }
 
@@ -132,7 +147,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       }, 0);
 
       if (Math.abs(totalPct - 100) > 0.1) {
-        alert(`Total percentage (${totalPct.toFixed(1)}%) must equal 100%`);
+        showNotification(`Total percentage (${totalPct.toFixed(1)}%) must equal 100%`, 'error');
         return;
       }
 
@@ -147,6 +162,9 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     }
 
     try {
+      setShowExpenseModal(false);
+      setExpTitle('');
+      setExpAmount('');
       await api.addExpense(group._id, {
         title: expTitle,
         amount: numAmount,
@@ -155,45 +173,42 @@ export default function GroupDetail({ group, currentUser, onBack }) {
         splitType,
         splits: splitsPayload
       });
-
-      setShowExpenseModal(false);
-      setExpTitle('');
-      setExpAmount('');
-      loadGroupData();
+      loadGroupData(true);
+      showNotification('Expense added successfully!');
     } catch (err) {
-      alert(err.message || 'Failed to add expense');
+      showNotification(err.message || 'Failed to add expense', 'error');
     }
   };
 
   const handleRecordSettlement = async (e) => {
     e.preventDefault();
     if (!settleFrom || !settleTo || !settleAmount || parseFloat(settleAmount) <= 0) {
-      alert('Please select both payer and recipient, and enter a valid positive settlement amount.');
+      showNotification('Please select both payer and recipient, and enter a valid positive settlement amount.', 'error');
       return;
     }
 
     if (settleFrom.toString() === settleTo.toString()) {
-      alert('Payer and Recipient must be different members.');
+      showNotification('Payer and Recipient must be different members.', 'error');
       return;
     }
 
     try {
-      await api.recordSettlement(group._id, {
-        fromUser: settleFrom,
-        toUser: settleTo,
-        amount: parseFloat(settleAmount),
-        notes: settleNotes
-      });
-
       setShowSettleModal(false);
+      const amt = settleAmount;
       setSettleFrom('');
       setSettleTo('');
       setSettleAmount('');
       setSettleNotes('');
-      await loadGroupData();
-      alert('Settlement payment recorded successfully!');
+      await api.recordSettlement(group._id, {
+        fromUser: settleFrom,
+        toUser: settleTo,
+        amount: parseFloat(amt),
+        notes: settleNotes
+      });
+      loadGroupData(true);
+      showNotification('Settlement payment recorded successfully!');
     } catch (err) {
-      alert(err.message || 'Failed to record settlement');
+      showNotification(err.message || 'Failed to record settlement', 'error');
     }
   };
 
@@ -201,13 +216,14 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     e.preventDefault();
     if (!inviteEmail || !inviteEmail.trim()) return;
     setInviting(true);
+    const emailToInvite = inviteEmail.trim();
     try {
-      await api.addMember(group._id, inviteEmail.trim());
       setInviteEmail('');
-      await loadGroupData();
-      alert('Member invited successfully!');
+      await api.addMember(group._id, emailToInvite);
+      loadGroupData(true);
+      showNotification(`"${emailToInvite}" added to the group!`);
     } catch (err) {
-      alert(err.message || 'Failed to invite member');
+      showNotification(err.message || 'Failed to invite member', 'error');
     } finally {
       setInviting(false);
     }
@@ -220,10 +236,10 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     setRemovingMemberId(memberId);
     try {
       await api.removeMember(group._id, memberId);
-      await loadGroupData();
-      alert(`"${memberName || 'Member'}" has been removed from the group.`);
+      loadGroupData(true);
+      showNotification(`"${memberName || 'Member'}" removed from group`);
     } catch (err) {
-      alert(err.message || 'Failed to remove member');
+      showNotification(err.message || 'Failed to remove member', 'error');
     } finally {
       setRemovingMemberId(null);
     }
@@ -246,8 +262,51 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const creatorId = (typeof currentGroup.createdBy === 'object' ? (currentGroup.createdBy?._id || currentGroup.createdBy?.id) : currentGroup.createdBy || '').toString();
   const isCreator = currentUserId === creatorId;
 
+  const [deletingGroup, setDeletingGroup] = useState(false);
+
+  const handleDeleteGroup = async () => {
+    const grpTitle = currentGroup.name || group.name || 'this group';
+    if (!window.confirm(`⚠️ Are you sure you want to permanently delete "${grpTitle}"?\n\nAll recorded expenses, balances, and settlements for this group will be deleted. This cannot be undone.`)) {
+      return;
+    }
+    setDeletingGroup(true);
+    try {
+      await api.deleteGroup(group._id || group.id);
+      showNotification('Group deleted successfully');
+      if (onBack) onBack();
+    } catch (err) {
+      showNotification(err.message || 'Failed to delete group', 'error');
+      setDeletingGroup(false);
+    }
+  };
+
   return (
     <div>
+      {/* Instant Action Feedback Notification Banner */}
+      {actionFeedback && (
+        <div style={{
+          position: 'fixed',
+          top: '1.5rem',
+          right: '1.5rem',
+          zIndex: 9999,
+          padding: '0.85rem 1.4rem',
+          borderRadius: '12px',
+          background: actionFeedback.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.95)',
+          backdropFilter: 'blur(10px)',
+          color: '#fff',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+          fontWeight: '600',
+          fontSize: '0.92rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.6rem',
+          animation: 'fadeIn 0.2s ease-out'
+        }}>
+          <span>{actionFeedback.type === 'error' ? '⚠️' : '✅'}</span>
+          <span>{actionFeedback.msg}</span>
+        </div>
+      )}
+
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
@@ -258,14 +317,14 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{currentGroup.description || group.description}</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <button className="btn btn-secondary" onClick={() => setShowInviteModal(true)}>
             👥 Members ({currentGroup.members?.length || 0})
           </button>
           <button className="btn btn-secondary" onClick={() => setShowSettleModal(true)}>
             💵 Settle Up
           </button>
-          {/* Task 4.1 — Scan Receipt button (does not change existing expense flow) */}
+          {/* Task 4.1 — Scan Receipt button */}
           <button
             id="scan-receipt-trigger"
             className="btn btn-secondary"
@@ -281,6 +340,32 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           <button className="btn btn-primary" onClick={() => setShowExpenseModal(true)}>
             + Add Expense
           </button>
+
+          {/* Delete Group Button for Creator */}
+          {isCreator && (
+            <button
+              id="delete-group-btn"
+              onClick={handleDeleteGroup}
+              disabled={deletingGroup}
+              style={{
+                background: 'rgba(244, 63, 94, 0.12)',
+                border: '1px solid rgba(244, 63, 94, 0.35)',
+                color: 'var(--accent-rose)',
+                padding: '0.55rem 0.95rem',
+                borderRadius: 'var(--radius-sm)',
+                fontWeight: '600',
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem'
+              }}
+              title="Permanently delete group"
+            >
+              {deletingGroup ? 'Deleting...' : '🗑️ Delete Group'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -308,10 +393,10 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
       {/* Tabs */}
       <div className="tabs">
-        <button className={`tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
+        <button className={`tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => handleTabSwitch('overview')}>
           Balances & Optimization
         </button>
-        <button className={`tab ${activeTab === 'transactions' ? 'active' : ''}`} onClick={() => setActiveTab('transactions')}>
+        <button className={`tab ${activeTab === 'transactions' ? 'active' : ''}`} onClick={() => handleTabSwitch('transactions')}>
           Transaction History ({transactions.length})
         </button>
       </div>

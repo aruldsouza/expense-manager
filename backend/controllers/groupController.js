@@ -4,6 +4,7 @@ const Expense = require('../models/Expense');
 const Settlement = require('../models/Settlement');
 const Notification = require('../models/Notification');
 const { sendGroupInviteEmail } = require('../utils/mailer');
+const cache = require('../utils/cache');
 
 exports.createGroup = async (req, res, next) => {
   try {
@@ -74,28 +75,32 @@ exports.createGroup = async (req, res, next) => {
       .populate('members', 'name email')
       .populate('createdBy', 'name email');
 
-    // Asynchronously dispatch email invites & create in-app notifications
-    for (const invited of invitedEmailsList) {
-      // 1. Send Email
-      sendGroupInviteEmail({
-        toEmail: invited.email,
-        inviterName,
-        inviterEmail,
-        groupName: group.name,
-        groupDescription: group.description,
-        groupId: group._id
-      }).catch(e => console.warn('Email invite dispatch error:', e.message));
+    // Invalidate dashboard stats cache so dashboards update instantly
+    cache.clear().catch(() => {});
 
-      // 2. Create in-app notification
-      Notification.create({
-        recipient: invited.userId,
-        type: 'group:invite',
-        message: `${inviterName} invited you to join the expense group "${group.name}".`,
-        groupId: group._id
-      }).catch(() => {});
-    }
-
+    // Respond to user immediately without network delay
     res.status(201).json(populatedGroup);
+
+    // Asynchronously dispatch email invites & create in-app notifications in background
+    setImmediate(() => {
+      for (const invited of invitedEmailsList) {
+        sendGroupInviteEmail({
+          toEmail: invited.email,
+          inviterName,
+          inviterEmail,
+          groupName: group.name,
+          groupDescription: group.description,
+          groupId: group._id
+        }).catch(e => console.warn('Email invite dispatch error:', e.message));
+
+        Notification.create({
+          recipient: invited.userId,
+          type: 'group:invite',
+          message: `${inviterName} invited you to join the expense group "${group.name}".`,
+          groupId: group._id
+        }).catch(() => {});
+      }
+    });
   } catch (err) {
     next(err);
   }
@@ -253,29 +258,34 @@ exports.addMember = async (req, res, next) => {
     const inviterName = req.user.name || 'Group Admin';
     const inviterEmail = req.user.email || '';
 
-    // Send email invitation asynchronously
-    if (userToAdd.email && !alreadyMember) {
-      sendGroupInviteEmail({
-        toEmail: userToAdd.email,
-        inviterName,
-        inviterEmail,
-        groupName: updatedGroup.name,
-        groupDescription: updatedGroup.description,
-        groupId: updatedGroup._id
-      }).catch(e => console.warn('Email invite dispatch error:', e.message));
-    }
+    // Invalidate dashboard stats cache so dashboards update instantly
+    cache.clear().catch(() => {});
 
-    // Create in-app notification
-    if (!alreadyMember) {
-      Notification.create({
-        recipient: userToAdd._id,
-        type: 'group:invite',
-        message: `${inviterName} invited you to join the expense group "${updatedGroup.name}".`,
-        groupId: updatedGroup._id
-      }).catch(() => {});
-    }
-
+    // Respond immediately
     res.json(updatedGroup);
+
+    // Send email invitation and create notifications asynchronously in background
+    setImmediate(() => {
+      if (userToAdd.email && !alreadyMember) {
+        sendGroupInviteEmail({
+          toEmail: userToAdd.email,
+          inviterName,
+          inviterEmail,
+          groupName: updatedGroup.name,
+          groupDescription: updatedGroup.description,
+          groupId: updatedGroup._id
+        }).catch(e => console.warn('Email invite dispatch error:', e.message));
+      }
+
+      if (!alreadyMember) {
+        Notification.create({
+          recipient: userToAdd._id,
+          type: 'group:invite',
+          message: `${inviterName} invited you to join the expense group "${updatedGroup.name}".`,
+          groupId: updatedGroup._id
+        }).catch(() => {});
+      }
+    });
   } catch (err) {
     next(err);
   }
@@ -312,6 +322,9 @@ exports.removeMember = async (req, res, next) => {
       .populate('members', 'name email')
       .populate('createdBy', 'name email');
 
+    // Invalidate dashboard stats cache so dashboards update instantly
+    cache.clear().catch(() => {});
+
     res.json({
       success: true,
       message: 'Member removed successfully',
@@ -341,7 +354,10 @@ exports.deleteGroup = async (req, res, next) => {
     await Expense.deleteMany({ group: groupId });
     await Settlement.deleteMany({ group: groupId });
 
-    res.json({ message: 'Group deleted successfully' });
+    // Invalidate dashboard stats cache so dashboards update instantly
+    cache.clear().catch(() => {});
+
+    res.json({ success: true, message: 'Group deleted successfully' });
   } catch (err) {
     next(err);
   }

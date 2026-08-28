@@ -1,5 +1,6 @@
 const Expense = require('../models/Expense');
 const Group = require('../models/Group');
+const cache = require('../utils/cache');
 
 exports.addExpense = async (req, res, next) => {
   try {
@@ -151,6 +152,9 @@ exports.addExpense = async (req, res, next) => {
     const populatedExpense = await Expense.findById(expense._id)
       .populate('paidBy', 'name email')
       .populate('splits.user', 'name email');
+
+    // Invalidate dashboard stats cache so dashboards update instantly
+    cache.clear().catch(() => {});
 
     res.status(201).json(populatedExpense);
   } catch (err) {
