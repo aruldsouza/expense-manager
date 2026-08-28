@@ -67,6 +67,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const recurringExpenseRoutes = require('./routes/recurringExpenseRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const splitTemplateRoutes = require('./routes/splitTemplateRoutes');
+const receiptRoutes = require('./routes/receiptRoutes');
 
 // Mount Routes
 app.use('/api/auth', authRoutes);
@@ -85,6 +86,7 @@ app.use('/api/groups/:groupId/payments', paymentRoutes);
 app.use('/api/groups/:groupId/recurring', recurringExpenseRoutes);
 app.use('/api/groups/:groupId/reports', reportRoutes);
 app.use('/api/groups/:groupId/templates', splitTemplateRoutes);
+app.use('/api/receipt', receiptRoutes);
 
 // Serve static frontend build if present
 const frontendDistPath = path.join(__dirname, '../frontend/dist');
