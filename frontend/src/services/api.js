@@ -223,6 +223,18 @@ const localEngine = {
     return group;
   },
 
+  async removeMember(groupId, memberId) {
+    const groups = getStorage('groups', []);
+    const group = groups.find(g => g._id === groupId);
+    if (!group) throw new Error('Group not found');
+
+    if (Array.isArray(group.members)) {
+      group.members = group.members.filter(m => (m._id || m.id || m).toString() !== memberId.toString());
+      setStorage('groups', groups);
+    }
+    return group;
+  },
+
   async getGroupDetails(groupId) {
     const groups = getStorage('groups', []);
     return groups.find(g => g._id === groupId) || null;
@@ -444,6 +456,15 @@ export const api = {
     return res.data || res;
   },
 
+  async removeMember(groupId, memberId) {
+    try {
+      const res = await this.request(`/groups/${groupId}/members/${memberId}`, { method: 'DELETE' });
+      return res.group || res.data || res;
+    } catch (_e) {
+      return await localEngine.removeMember(groupId, memberId);
+    }
+  },
+
   async getGroupDetails(groupId) {
     try {
       return await this.request(`/groups/${groupId}`);
@@ -485,11 +506,14 @@ export const api = {
   },
 
   async recordSettlement(groupId, data) {
-    try {
-      return await this.request(`/groups/${groupId}/settlements`, { method: 'POST', body: JSON.stringify(data) });
-    } catch (_e) {
-      return await localEngine.recordSettlement(groupId, data);
-    }
+    const payload = {
+      fromUser: data.fromUser || data.payer,
+      toUser: data.toUser || data.payee,
+      amount: parseFloat(data.amount),
+      notes: data.notes || data.note || ''
+    };
+    const res = await this.request(`/groups/${groupId}/settlements`, { method: 'POST', body: JSON.stringify(payload) });
+    return res.data || res;
   },
 
   async getTransactions(groupId) {

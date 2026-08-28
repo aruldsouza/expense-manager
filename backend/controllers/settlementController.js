@@ -20,27 +20,37 @@ const computeNetBalances = async (groupId) => {
     };
   });
 
+  const getUid = (u) => {
+    if (!u) return '';
+    if (typeof u === 'string') return u;
+    if (u._id) return u._id.toString();
+    if (u.id) return u.id.toString();
+    return u.toString();
+  };
+
   // Calculate from Expenses
   expenses.forEach(exp => {
-    const payerId = exp.paidBy.toString();
+    const payerId = getUid(exp.paidBy || exp.payer);
     if (balances[payerId]) {
       balances[payerId].totalPaid += exp.amount;
       balances[payerId].netBalance += exp.amount;
     }
 
-    exp.splits.forEach(split => {
-      const uId = split.user.toString();
-      if (balances[uId]) {
-        balances[uId].totalOwed += split.amount;
-        balances[uId].netBalance -= split.amount;
-      }
-    });
+    if (Array.isArray(exp.splits)) {
+      exp.splits.forEach(split => {
+        const uId = getUid(split.user);
+        if (balances[uId]) {
+          balances[uId].totalOwed += split.amount;
+          balances[uId].netBalance -= split.amount;
+        }
+      });
+    }
   });
 
   // Adjust for Settlements
   settlements.forEach(settle => {
-    const fromId = settle.fromUser.toString();
-    const toId = settle.toUser.toString();
+    const fromId = getUid(settle.fromUser || settle.payer);
+    const toId = getUid(settle.toUser || settle.payee);
 
     if (balances[fromId]) {
       balances[fromId].netBalance += settle.amount;
@@ -138,12 +148,13 @@ exports.recordSettlement = async (req, res, next) => {
   try {
     const { groupId } = req.params;
     const userId = req.user.id || req.user._id;
-    const fromUser = req.body.fromUser || userId;
+    const fromUser = req.body.fromUser || req.body.payer || userId;
     const toUser = req.body.toUser || req.body.payee;
-    const { amount, notes } = req.body;
+    const amount = parseFloat(req.body.amount);
+    const notes = req.body.notes || req.body.note || '';
 
-    if (!fromUser || !toUser || !amount || parseFloat(amount) <= 0) {
-      return res.status(400).json({ error: 'fromUser (or authenticated user), toUser (or payee), and positive amount are required' });
+    if (!fromUser || !toUser || !amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ error: 'fromUser (or payer), toUser (or payee), and positive amount are required' });
     }
 
     if (fromUser.toString() === toUser.toString()) {
@@ -159,8 +170,8 @@ exports.recordSettlement = async (req, res, next) => {
       group: groupId,
       fromUser,
       toUser,
-      amount: parseFloat(amount),
-      notes: notes || '',
+      amount,
+      notes,
       date: new Date()
     });
 
@@ -168,7 +179,17 @@ exports.recordSettlement = async (req, res, next) => {
       .populate('fromUser', 'name email')
       .populate('toUser', 'name email');
 
-    res.status(201).json(populated);
+    res.status(201).json({
+      success: true,
+      message: 'Settlement recorded successfully',
+      data: populated,
+      meta: {
+        settlement: populated,
+        wasPartial: false,
+        remainingDebt: 0
+      },
+      ...populated.toObject()
+    });
   } catch (err) {
     next(err);
   }

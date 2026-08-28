@@ -281,6 +281,48 @@ exports.addMember = async (req, res, next) => {
   }
 };
 
+exports.removeMember = async (req, res, next) => {
+  try {
+    const { groupId, memberId } = req.params;
+    const userId = req.user.id || req.user._id;
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' });
+    }
+
+    const isCreator = group.createdBy.toString() === userId.toString();
+    const isSelf = memberId.toString() === userId.toString();
+
+    // Only group creator can remove others, or a member can leave the group themselves
+    if (!isCreator && !isSelf) {
+      return res.status(403).json({ error: 'Only the group creator can remove other members' });
+    }
+
+    // Group creator cannot be removed (group should be deleted instead)
+    if (group.createdBy.toString() === memberId.toString()) {
+      return res.status(400).json({ error: 'The group creator cannot be removed from the group' });
+    }
+
+    // Filter out the member
+    group.members = group.members.filter(m => (m._id || m).toString() !== memberId.toString());
+    await group.save();
+
+    const updatedGroup = await Group.findById(groupId)
+      .populate('members', 'name email')
+      .populate('createdBy', 'name email');
+
+    res.json({
+      success: true,
+      message: 'Member removed successfully',
+      group: updatedGroup,
+      ...updatedGroup.toObject()
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.deleteGroup = async (req, res, next) => {
   try {
     const { groupId } = req.params;

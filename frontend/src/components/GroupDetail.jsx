@@ -32,6 +32,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting, setInviting] = useState(false);
+  const [removingMemberId, setRemovingMemberId] = useState(null);
   const [currentGroup, setCurrentGroup] = useState(group);
 
   // Scan Receipt Modal State (Task 4.1)
@@ -167,12 +168,12 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const handleRecordSettlement = async (e) => {
     e.preventDefault();
     if (!settleFrom || !settleTo || !settleAmount || parseFloat(settleAmount) <= 0) {
-      alert('Please fill out all settlement fields');
+      alert('Please select both payer and recipient, and enter a valid positive settlement amount.');
       return;
     }
 
-    if (settleFrom === settleTo) {
-      alert('Payer and Receiver must be different users');
+    if (settleFrom.toString() === settleTo.toString()) {
+      alert('Payer and Recipient must be different members.');
       return;
     }
 
@@ -189,7 +190,8 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       setSettleTo('');
       setSettleAmount('');
       setSettleNotes('');
-      loadGroupData();
+      await loadGroupData();
+      alert('Settlement payment recorded successfully!');
     } catch (err) {
       alert(err.message || 'Failed to record settlement');
     }
@@ -202,12 +204,28 @@ export default function GroupDetail({ group, currentUser, onBack }) {
     try {
       await api.addMember(group._id, inviteEmail.trim());
       setInviteEmail('');
-      setShowInviteModal(false);
       await loadGroupData();
+      alert('Member invited successfully!');
     } catch (err) {
       alert(err.message || 'Failed to invite member');
     } finally {
       setInviting(false);
+    }
+  };
+
+  const handleRemoveMember = async (memberId, memberName) => {
+    if (!window.confirm(`Are you sure you want to remove "${memberName || 'this member'}" from "${currentGroup.name}"?`)) {
+      return;
+    }
+    setRemovingMemberId(memberId);
+    try {
+      await api.removeMember(group._id, memberId);
+      await loadGroupData();
+      alert(`"${memberName || 'Member'}" has been removed from the group.`);
+    } catch (err) {
+      alert(err.message || 'Failed to remove member');
+    } finally {
+      setRemovingMemberId(null);
     }
   };
 
@@ -224,6 +242,10 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const userBalObj = balances.find(b => (b.user._id || b.user.id) === (currentUser ? (currentUser._id || currentUser.id) : null));
   const userNetPosition = userBalObj ? userBalObj.netBalance : 0;
 
+  const currentUserId = (currentUser?._id || currentUser?.id || '').toString();
+  const creatorId = (typeof currentGroup.createdBy === 'object' ? (currentGroup.createdBy?._id || currentGroup.createdBy?.id) : currentGroup.createdBy || '').toString();
+  const isCreator = currentUserId === creatorId;
+
   return (
     <div>
       {/* Top Header */}
@@ -238,7 +260,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
 
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button className="btn btn-secondary" onClick={() => setShowInviteModal(true)}>
-            👥 Invite Member
+            👥 Members ({currentGroup.members?.length || 0})
           </button>
           <button className="btn btn-secondary" onClick={() => setShowSettleModal(true)}>
             💵 Settle Up
@@ -634,9 +656,15 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Payer (Who paid?)</label>
                 <select className="glass-input" value={settleFrom} onChange={e => setSettleFrom(e.target.value)} required>
                   <option value="">Select Payer...</option>
-                  {(currentGroup.members || group.members).map(m => (
-                    <option key={m._id || m.id} value={m._id || m.id} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>{m.name}</option>
-                  ))}
+                  {(currentGroup.members || group.members).map((m, idx) => {
+                    const mId = (m._id || m.id || m).toString();
+                    const mName = m.name || m.email?.split('@')[0] || `Member ${idx + 1}`;
+                    return (
+                      <option key={mId || idx} value={mId} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>
+                        {mName} {m.email ? `(${m.email})` : ''}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -644,9 +672,15 @@ export default function GroupDetail({ group, currentUser, onBack }) {
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>Recipient (Who received?)</label>
                 <select className="glass-input" value={settleTo} onChange={e => setSettleTo(e.target.value)} required>
                   <option value="">Select Recipient...</option>
-                  {(currentGroup.members || group.members).map(m => (
-                    <option key={m._id || m.id} value={m._id || m.id} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>{m.name}</option>
-                  ))}
+                  {(currentGroup.members || group.members).map((m, idx) => {
+                    const mId = (m._id || m.id || m).toString();
+                    const mName = m.name || m.email?.split('@')[0] || `Member ${idx + 1}`;
+                    return (
+                      <option key={mId || idx} value={mId} style={{ background: 'var(--bg-secondary)', color: '#fff' }}>
+                        {mName} {m.email ? `(${m.email})` : ''}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -683,68 +717,113 @@ export default function GroupDetail({ group, currentUser, onBack }) {
         </div>
       )}
 
-      {/* Invite Member Modal */}
+      {/* Manage Members & Invite Modal */}
       {showInviteModal && (
         <div className="modal-overlay" onClick={() => setShowInviteModal(false)}>
-          <div className="glass-card modal-content" onClick={e => e.stopPropagation()}>
+          <div className="glass-card modal-content" style={{ maxWidth: '540px' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>👥 Invite Member to Group</h2>
-              <button onClick={() => setShowInviteModal(false)} style={{ background: 'none', color: 'var(--text-dim)', fontSize: '1.2rem' }}>✕</button>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>👥 Group Members & Invites</h2>
+              <button onClick={() => setShowInviteModal(false)} style={{ background: 'none', color: 'var(--text-dim)', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <form onSubmit={handleInviteMember} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem', fontWeight: '600' }}>
-                  INVITE BY EMAIL
-                </label>
-                <input
-                  className="glass-input"
-                  type="email"
-                  placeholder="friend@email.com"
-                  value={inviteEmail}
-                  onChange={e => setInviteEmail(e.target.value)}
-                  required
-                />
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.4rem', display: 'block', lineHeight: 1.4 }}>
-                  ✉️ An invitation email will be sent automatically. When your friend registers or signs in with this email, this group will instantly appear in their dashboard!
-                </span>
-              </div>
+            {/* Current Members List with Remove Option */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.6rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                CURRENT MEMBERS ({currentGroup.members?.length || 0})
+              </label>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                <button className="btn btn-secondary" type="button" onClick={() => setShowInviteModal(false)}>Cancel</button>
-                <button className="btn btn-primary" type="submit" disabled={inviting}>
-                  {inviting ? 'Sending Invite...' : '🚀 Send Email Invite'}
-                </button>
-              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '220px', overflowY: 'auto' }}>
+                {currentGroup.members && currentGroup.members.map((m, idx) => {
+                  const mId = (m._id || m.id || m).toString();
+                  const isMemberCreator = mId === creatorId;
+                  const isCurrentUser = mId === currentUserId;
+                  const displayName = m.name || m.email?.split('@')[0] || 'Member';
 
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.4rem', fontWeight: '600' }}>
-                  OR SHARE DIRECT LINK
-                </label>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input
-                    className="glass-input"
-                    type="text"
-                    readOnly
-                    value={window.location.origin}
-                    style={{ fontSize: '0.85rem', opacity: 0.8 }}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={(e) => {
-                      navigator.clipboard.writeText(window.location.origin);
-                      const original = e.currentTarget.innerText;
-                      e.currentTarget.innerText = '✓ Copied!';
-                      setTimeout(() => { if (e.currentTarget) e.currentTarget.innerText = original; }, 2000);
-                    }}
-                    style={{ whiteSpace: 'nowrap' }}
-                  >
-                    📋 Copy Link
-                  </button>
+                  return (
+                    <div
+                      key={mId || idx}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.65rem 0.85rem',
+                        background: 'rgba(15, 23, 42, 0.6)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        borderRadius: 'var(--radius-sm)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        <div style={{
+                          width: '32px', height: '32px', borderRadius: '50%',
+                          background: `hsl(${(idx * 85) % 360}, 65%, 50%)`,
+                          color: '#fff', fontSize: '0.82rem', fontWeight: '700',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}>
+                          {displayName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: '600', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <span>{displayName}</span>
+                            {isCurrentUser && <span style={{ fontSize: '0.72rem', color: 'var(--accent-cyan)' }}>(You)</span>}
+                            {isMemberCreator && <span className="badge badge-amber" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>👑 Creator</span>}
+                          </div>
+                          {m.email && <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)' }}>{m.email}</div>}
+                        </div>
+                      </div>
+
+                      {/* Remove Person Button */}
+                      {!isMemberCreator && (isCreator || isCurrentUser) && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMember(mId, displayName)}
+                          disabled={removingMemberId === mId}
+                          style={{
+                            background: 'rgba(244, 63, 94, 0.12)',
+                            border: '1px solid rgba(244, 63, 94, 0.3)',
+                            color: 'var(--accent-rose)',
+                            borderRadius: '6px',
+                            padding: '0.3rem 0.65rem',
+                            fontSize: '0.78rem',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          title={isCurrentUser ? 'Leave group' : 'Remove member'}
+                        >
+                          {removingMemberId === mId ? 'Removing...' : (isCurrentUser ? '🚪 Leave' : '🗑️ Remove')}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.2rem' }}>
+              <form onSubmit={handleInviteMember} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.4rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    INVITE NEW MEMBER BY EMAIL
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      className="glass-input"
+                      type="email"
+                      placeholder="friend@email.com"
+                      value={inviteEmail}
+                      onChange={e => setInviteEmail(e.target.value)}
+                      required
+                    />
+                    <button className="btn btn-primary" type="submit" disabled={inviting} style={{ whiteSpace: 'nowrap' }}>
+                      {inviting ? 'Inviting...' : '+ Add'}
+                    </button>
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.35rem', display: 'block' }}>
+                    ✉️ Added members will automatically see this group in their dashboard.
+                  </span>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       )}
