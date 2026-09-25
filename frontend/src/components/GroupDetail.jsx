@@ -259,7 +259,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
   const userNetPosition = userBalObj ? userBalObj.netBalance : 0;
 
   const currentUserId = (currentUser?._id || currentUser?.id || '').toString();
-  const creatorId = (typeof currentGroup.createdBy === 'object' ? (currentGroup.createdBy?._id || currentGroup.createdBy?.id) : currentGroup.createdBy || '').toString();
+  const creatorId = (typeof currentGroup.createdBy === 'object' ? (currentGroup.createdBy?._id || currentGroup.createdBy?.id || '') : currentGroup.createdBy || '').toString();
   const isCreator = currentUserId === creatorId;
 
   const [deletingGroup, setDeletingGroup] = useState(false);

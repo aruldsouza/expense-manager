@@ -224,7 +224,7 @@ export default function SmartSplitModal({
     }));
 
   const [items, setItems]           = useState(initItems);
-  const [hovered, setHovered]       = useState(null);
+  const [_hovered, setHovered]      = useState(null);
   /* Task 6.6: per-member manual override amounts */
   const [overrides, setOverrides]   = useState({});
 

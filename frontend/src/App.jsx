@@ -97,7 +97,7 @@ export default function App() {
           try {
             const gd = await api.getGroupDetails(gId);
             if (gd) setSelectedGroup(gd);
-          } catch (_) {}
+          } catch (_) { /* group not found; ignore */ }
         }
       }
     };
