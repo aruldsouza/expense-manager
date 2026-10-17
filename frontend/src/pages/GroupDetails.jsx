@@ -2,11 +2,12 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import { FaMoneyBillWave, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet, FaRobot } from 'react-icons/fa';
+import { FaMoneyBillWave, FaHandHoldingUsd, FaPlus, FaHistory, FaArrowLeft, FaSync, FaChartPie, FaWallet, FaRobot, FaCalculator, FaBalanceScale } from 'react-icons/fa';
 import AddExpense from '../components/AddExpense';
 import ExpenseList from '../components/ExpenseList';
 import BalanceList from '../components/BalanceList';
 import SettlementList from '../components/SettlementList';
+import DebtSummary from '../components/DebtSummary';
 import RecordSettlement from '../components/RecordSettlement';
 import TransactionList from '../components/TransactionList';
 import BudgetManager from '../components/BudgetManager';
@@ -25,6 +26,7 @@ import { FaUserShield, FaCog, FaFileAlt } from 'react-icons/fa';
 // Memoized Components
 const MemoizedExpenseList = React.memo(ExpenseList);
 const MemoizedBalanceList = React.memo(BalanceList);
+const MemoizedDebtSummary = React.memo(DebtSummary);
 const MemoizedSettlementList = React.memo(SettlementList);
 const MemoizedTransactionList = React.memo(TransactionList);
 
@@ -177,6 +179,16 @@ const GroupDetails = () => {
                         <Tab eventKey="balances" title={<><FaBalanceScale className="me-2" />Balances</>}>
                             <div className="p-3">
                                 <MemoizedBalanceList groupId={groupId} groupCurrency={group.currency} refreshTrigger={refreshTrigger} />
+                            </div>
+                        </Tab>
+                        <Tab eventKey="debt-summary" title={<><FaCalculator className="me-2 text-info" />Debt Summary</>}>
+                            <div className="p-3">
+                                <MemoizedDebtSummary
+                                    groupId={groupId}
+                                    groupCurrency={group.currency}
+                                    refreshTrigger={refreshTrigger}
+                                    onSettle={handleOpenSettlement}
+                                />
                             </div>
                         </Tab>
                         <Tab eventKey="settlements" title={<><FaHandHoldingUsd className="me-2" />Settlements</>}>

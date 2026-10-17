@@ -50,6 +50,19 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
+/**
+ * 7.1 & 7.2 Fetch optimized settlements from backend with fallback support
+ */
+export const getOptimizedDebts = async (groupId) => {
+  try {
+    const res = await axiosInstance.get(`/groups/${groupId}/settlements/optimized`);
+    return res.data;
+  } catch (err) {
+    console.warn(`Failed to fetch optimized settlements for group ${groupId}:`, err.message);
+    return await localEngine.getOptimizedSettlements(groupId);
+  }
+};
+
 
 // ── Clean slate: clear all cached test sessions and local storage data ──
 (function wipeCache() {
@@ -290,7 +303,19 @@ const localEngine = {
   async getOptimizedSettlements(groupId) {
     const balances = await this.getBalances(groupId);
     const optimized = computeOptimizedSettlements(balances);
-    return { optimizedTransactions: optimized, totalTransactions: optimized.length };
+    return {
+      success: true,
+      data: optimized,
+      optimizedTransactions: optimized,
+      totalTransactions: optimized.length,
+      balances,
+      stats: {
+        originalTransactionsCount: optimized.length,
+        optimizedTransactionsCount: optimized.length,
+        transactionsSaved: 0,
+        reductionPercentage: 0
+      }
+    };
   },
 
   async recordSettlement(groupId, { fromUser, toUser, amount, notes }) {
@@ -519,6 +544,10 @@ export const api = {
     } catch (_e) {
       return await localEngine.getOptimizedSettlements(groupId);
     }
+  },
+
+  async getOptimizedDebts(groupId) {
+    return this.getOptimizedSettlements(groupId);
   },
 
   async recordSettlement(groupId, data) {

@@ -1,74 +1,20 @@
+const mongoose = require('mongoose');
 const Group = require('../models/Group');
 const Expense = require('../models/Expense');
 const Settlement = require('../models/Settlement');
 const User = require('../models/User');
 const cache = require('../utils/cache');
+const { calculateGroupNetBalances } = require('../services/netBalanceService');
+const { optimizeGroupDebts } = require('../services/debtOptimizationService');
 
 const computeNetBalances = async (groupId) => {
-  const group = await Group.findById(groupId).populate('members', 'name email');
-  if (!group) return null;
-
-  const expenses = await Expense.find({ group: groupId });
-  const settlements = await Settlement.find({ group: groupId });
-
-  const balances = {};
-  group.members.forEach(member => {
-    balances[member._id.toString()] = {
-      user: member,
-      netBalance: 0,
-      totalPaid: 0,
-      totalOwed: 0
-    };
-  });
-
-  const getUid = (u) => {
-    if (!u) return '';
-    if (typeof u === 'string') return u;
-    if (u._id) return u._id.toString();
-    if (u.id) return u.id.toString();
-    return u.toString();
-  };
-
-  // Calculate from Expenses
-  expenses.forEach(exp => {
-    const payerId = getUid(exp.paidBy || exp.payer);
-    if (balances[payerId]) {
-      balances[payerId].totalPaid += exp.amount;
-      balances[payerId].netBalance += exp.amount;
-    }
-
-    if (Array.isArray(exp.splits)) {
-      exp.splits.forEach(split => {
-        const uId = getUid(split.user);
-        if (balances[uId]) {
-          balances[uId].totalOwed += split.amount;
-          balances[uId].netBalance -= split.amount;
-        }
-      });
-    }
-  });
-
-  // Adjust for Settlements
-  settlements.forEach(settle => {
-    const fromId = getUid(settle.fromUser || settle.payer);
-    const toId = getUid(settle.toUser || settle.payee);
-
-    if (balances[fromId]) {
-      balances[fromId].netBalance += settle.amount;
-    }
-    if (balances[toId]) {
-      balances[toId].netBalance -= settle.amount;
-    }
-  });
-
-  // Format balances rounded to 2 decimal places
-  return Object.values(balances).map(b => ({
-    user: b.user,
-    balance: Math.round(b.netBalance * 100) / 100,
-    netBalance: Math.round(b.netBalance * 100) / 100,
-    totalPaid: Math.round(b.totalPaid * 100) / 100,
-    totalOwed: Math.round(b.totalOwed * 100) / 100
-  }));
+  try {
+    const result = await calculateGroupNetBalances(groupId);
+    return result.balances;
+  } catch (err) {
+    if (err.statusCode === 404) return null;
+    throw err;
+  }
 };
 
 exports.getGroupBalances = async (req, res, next) => {
@@ -84,63 +30,75 @@ exports.getGroupBalances = async (req, res, next) => {
   }
 };
 
+/**
+ * 5️⃣ & 6️⃣ GET /api/groups/:groupId/settlements/optimized
+ * Returns the greedily optimized settlement transactions, member balance details,
+ * and comprehensive optimization statistics.
+ */
 exports.getOptimizedSettlements = async (req, res, next) => {
   try {
     const { groupId } = req.params;
-    const balances = await computeNetBalances(groupId);
-    if (!balances) {
-      return res.status(404).json({ error: 'Group not found' });
+
+    // 5.2 Validate groupId
+    if (!groupId || !mongoose.Types.ObjectId.isValid(groupId)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid or missing Group ID'
+      });
     }
 
-    // Debtors have negative net balance, Creditors have positive net balance
-    const debtors = [];
-    const creditors = [];
+    // 5.3 Verify authentication
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required'
+      });
+    }
+    const currentUserId = (req.user.id || req.user._id).toString();
 
-    balances.forEach(b => {
-      if (b.netBalance < -0.01) {
-        debtors.push({ user: b.user, amount: Math.abs(b.netBalance) });
-      } else if (b.netBalance > 0.01) {
-        creditors.push({ user: b.user, amount: b.netBalance });
-      }
-    });
-
-    // Greedy Debt Simplification
-    debtors.sort((a, b) => b.amount - a.amount);
-    creditors.sort((a, b) => b.amount - a.amount);
-
-    const optimized = [];
-    let i = 0;
-    let j = 0;
-
-    while (i < debtors.length && j < creditors.length) {
-      const debtor = debtors[i];
-      const creditor = creditors[j];
-
-      const settleAmount = Math.min(debtor.amount, creditor.amount);
-      const roundedAmount = Math.round(settleAmount * 100) / 100;
-
-      if (roundedAmount > 0) {
-        optimized.push({
-          fromUser: debtor.user,
-          toUser: creditor.user,
-          from: debtor.user,
-          to: creditor.user,
-          amount: roundedAmount
-        });
-      }
-
-      debtor.amount -= roundedAmount;
-      creditor.amount -= roundedAmount;
-
-      if (debtor.amount <= 0.01) i++;
-      if (creditor.amount <= 0.01) j++;
+    // 5.4 Verify group membership
+    const group = await Group.findById(groupId).lean();
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        error: 'Group not found'
+      });
     }
 
-    res.json({
-      optimizedTransactions: optimized,
-      totalTransactions: optimized.length
+    const isMember = (group.createdBy && group.createdBy.toString() === currentUserId) ||
+      (Array.isArray(group.members) && group.members.some(m => (m._id || m).toString() === currentUserId));
+
+    if (!isMember) {
+      return res.status(403).json({
+        success: false,
+        error: 'Not authorized to access settlements for this group'
+      });
+    }
+
+    // 5.5 - 5.7 & 6.1 - 6.6 Calculate net balances, greedy debt minimization, and statistics
+    const optimization = await optimizeGroupDebts(groupId);
+
+    // 5.8 Return optimized settlement list
+    // 5.9 Return member balance information
+    // 6.5 Include optimization statistics
+    return res.json({
+      success: true,
+      data: optimization.optimizedTransactions, // Array alias for frontend components
+      optimizedTransactions: optimization.optimizedTransactions,
+      totalTransactions: optimization.totalTransactions,
+      balances: optimization.balances,
+      creditors: optimization.creditors,
+      debtors: optimization.debtors,
+      totalCreditorAmount: optimization.totalCreditorAmount,
+      totalDebtorAmount: optimization.totalDebtorAmount,
+      isBalanced: optimization.isBalanced,
+      stats: optimization.stats
     });
   } catch (err) {
+    // 5.10 Add proper error handling
+    if (err.statusCode === 404) {
+      return res.status(404).json({ success: false, error: err.message });
+    }
     next(err);
   }
 };

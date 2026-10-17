@@ -8,6 +8,7 @@ import StripePaymentModal from './StripePaymentModal';
 const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) => {
     const [settlements, setSettlements] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [stripeModal, setStripeModal] = useState(null); // { payeeId, payeeName, amount }
@@ -15,15 +16,22 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
     const gc = groupCurrency || 'INR';
 
     const fetchData = useCallback(async () => {
+        setLoading(true);
+        setError('');
         try {
             const [settlementRes, optimizedRes] = await Promise.all([
                 api.get(`/groups/${groupId}/settlements`),
                 api.get(`/groups/${groupId}/settlements/optimized`)
             ]);
-            if (settlementRes.data.success) setSettlements(settlementRes.data.data);
-            if (optimizedRes.data.success) setRecommendations(optimizedRes.data.data);
-        } catch {
-            setError('Failed to load settlement data');
+            if (settlementRes.data && settlementRes.data.success) {
+                setSettlements(settlementRes.data.data || []);
+            }
+            if (optimizedRes.data && optimizedRes.data.success) {
+                setRecommendations(optimizedRes.data.data || optimizedRes.data.optimizedTransactions || []);
+                setStats(optimizedRes.data.stats || null);
+            }
+        } catch (err) {
+            setError(err.response?.data?.error || err.message || 'Failed to load settlement data');
         } finally {
             setLoading(false);
         }
@@ -42,14 +50,26 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
     };
 
     if (loading) return <div className="text-center py-4"><Spinner animation="border" variant="success" size="sm" /></div>;
-    if (error) return <Alert variant="danger">{error}</Alert>;
+    if (error) return (
+        <Alert variant="danger" className="d-flex justify-content-between align-items-center">
+            <span>{error}</span>
+            <Button variant="outline-danger" size="sm" onClick={fetchData}>Retry</Button>
+        </Alert>
+    );
 
     return (
         <div className="animate-fade-in">
             {/* Suggested Settlements */}
-            {recommendations.length > 0 && (
+            {recommendations.length > 0 ? (
                 <div className="mb-4">
-                    <h6 className="text-uppercase text-muted fw-bold small mb-3">💡 Suggested Payments</h6>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h6 className="text-uppercase text-muted fw-bold small mb-0">💡 Suggested Payments</h6>
+                        {stats && stats.reductionPercentage > 0 && (
+                            <Badge bg="success" className="bg-opacity-75 fw-bold px-2 py-1">
+                                ⚡ {stats.reductionPercentage}% fewer transactions ({stats.transactionsSaved} saved)
+                            </Badge>
+                        )}
+                    </div>
                     <ListGroup variant="flush" className="rounded-3 shadow-sm overflow-hidden">
                         {recommendations.map((rec, index) => {
                             if (!rec.from || !rec.to) return null;
@@ -91,6 +111,11 @@ const SettlementList = ({ groupId, groupCurrency, refreshTrigger, onSettle }) =>
                             );
                         })}
                     </ListGroup>
+                </div>
+            ) : (
+                <div className="mb-4 p-3 rounded-3 text-center glass-card border border-success border-opacity-25 bg-success bg-opacity-10">
+                    <span className="fw-bold text-success">🎉 All settled up!</span>
+                    <div className="text-muted small mt-1">All members are squared away. No payments are required.</div>
                 </div>
             )}
 

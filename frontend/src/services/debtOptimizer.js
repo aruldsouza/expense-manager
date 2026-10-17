@@ -85,6 +85,8 @@ export function computeOptimizedSettlements(balances) {
       optimized.push({
         fromUser: debtor.user,
         toUser: creditor.user,
+        from: debtor.user,
+        to: creditor.user,
         amount: roundedAmount
       });
     }
