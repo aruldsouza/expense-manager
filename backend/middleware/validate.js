@@ -4,12 +4,14 @@ const { check, validationResult } = require('express-validator');
 const validate = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        const errorList = errors.array().map(err => ({
+            field: err.path || err.param,
+            message: err.msg
+        }));
         return res.status(400).json({
+            error: errorList[0].message,
             success: false,
-            errors: errors.array().map(err => ({
-                field: err.path,
-                message: err.msg
-            }))
+            errors: errorList
         });
     }
     next();
@@ -32,18 +34,33 @@ const loginValidation = [
 const groupValidation = [
     check('name', 'Group name is required').not().isEmpty().trim().escape(),
     check('description').optional().trim().escape(),
-    check('type').optional().isIn(['TRIP', 'HOME', 'COUPLE', 'OTHER']),
     check('members').optional().isArray(),
     check('currency').optional().isLength({ min: 3, max: 3 }).withMessage('Currency must be a 3-letter ISO 4217 code').toUpperCase(),
     validate
 ];
 
 const expenseValidation = [
-    check('description', 'Description is required').not().isEmpty().trim().escape(),
+    check().custom((value, { req }) => {
+        const title = req.body.title || req.body.description;
+        if (!title || typeof title !== 'string' || !title.trim()) {
+            throw new Error('Expense title or description is required');
+        }
+        return true;
+    }),
     check('amount', 'Amount must be a positive number').isFloat({ min: 0.01 }),
-    check('payer', 'Payer ID is required').not().isEmpty(),
-    check('splitType').optional().isIn(['EQUAL', 'UNEQUAL', 'PERCENT']),
-    check('category').optional().isIn(['Food', 'Travel', 'Utilities', 'Rent', 'Entertainment', 'Shopping', 'Health', 'Transport', 'Other', 'Custom']),
+    check().custom((value, { req }) => {
+        const payer = req.body.paidBy || req.body.payer;
+        if (!payer) {
+            throw new Error('Payer ID is required');
+        }
+        return true;
+    }),
+    check('splitType').optional().custom((val) => {
+        if (!['equal', 'unequal', 'percent', 'percentage'].includes(val.toLowerCase())) {
+            throw new Error('splitType must be EQUAL, UNEQUAL, or PERCENT');
+        }
+        return true;
+    }),
     validate
 ];
 
@@ -54,13 +71,35 @@ const settlementValidation = [
 ];
 
 const recurringExpenseValidation = [
-    check('description', 'Description is required').not().isEmpty().trim().escape(),
+    check().custom((val, { req }) => {
+        const desc = req.body.title || req.body.description;
+        if (!desc || typeof desc !== 'string' || !desc.trim()) {
+            throw new Error('Title or description is required');
+        }
+        return true;
+    }),
     check('amount', 'Amount must be a positive number').isFloat({ min: 0.01 }),
-    check('payer', 'Valid payer ID is required').isMongoId(),
-    check('splitType').optional().isIn(['EQUAL', 'UNEQUAL', 'PERCENT']),
-    check('frequency', 'Frequency must be daily, weekly, monthly, or custom').isIn(['daily', 'weekly', 'monthly', 'custom']),
+    check().custom((val, { req }) => {
+        const payer = req.body.payer || req.body.paidBy;
+        if (!payer) {
+            throw new Error('Valid payer ID is required');
+        }
+        return true;
+    }),
+    check('splitType').optional().custom((val) => {
+        if (!['equal', 'unequal', 'percent', 'percentage'].includes((val || '').toLowerCase())) {
+            throw new Error('splitType must be EQUAL, UNEQUAL, or PERCENT');
+        }
+        return true;
+    }),
+    check('frequency', 'Frequency must be daily, weekly, monthly, or custom').custom((val) => {
+        if (!['daily', 'weekly', 'monthly', 'custom'].includes((val || '').toLowerCase())) {
+            throw new Error('Frequency must be daily, weekly, monthly, or custom');
+        }
+        return true;
+    }),
     check('cronExpression')
-        .if(check('frequency').equals('custom'))
+        .if((val, { req }) => (req.body.frequency || '').toLowerCase() === 'custom')
         .not().isEmpty().withMessage('Cron expression is required for custom frequency'),
     validate
 ];

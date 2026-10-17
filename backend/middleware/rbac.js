@@ -41,16 +41,16 @@ const requireRole = (requiredRole) => {
                 return memberId ? memberId.toString() === userId.toString() : false;
             });
 
-            if (!membership) {
+            const isCreator = (group.createdBy || group.creator)?.toString() === userId.toString();
+            if (!membership && !isCreator) {
                 res.status(403);
                 throw new Error('Not authorized: You are not a member of this group');
             }
 
             // Normalise legacy members without a role to 'Member' (except creator who is 'Admin')
-            let userRole = typeof membership === 'object' && membership.role ? membership.role : null;
+            let userRole = typeof membership === 'object' && membership && membership.role ? membership.role : null;
             if (!userRole) {
-                const creatorId = group.createdBy || group.creator;
-                userRole = creatorId && creatorId.toString() === userId.toString() ? 'Admin' : 'Member';
+                userRole = isCreator ? 'Admin' : 'Member';
             }
 
             // Compare numerical levels

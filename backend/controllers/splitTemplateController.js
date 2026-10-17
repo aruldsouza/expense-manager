@@ -5,9 +5,9 @@ const Group = require('../models/Group');
 const verifyMembership = async (groupId, userId) => {
     const group = await Group.findById(groupId);
     if (!group) { const e = new Error('Group not found'); e.statusCode = 404; throw e; }
-    const isMember = group.members.some(m =>
-        m.user ? m.user.toString() === userId.toString() : m.toString() === userId.toString()
-    );
+    const uStr = (userId?._id || userId || '').toString();
+    const isMember = (group.createdBy && group.createdBy.toString() === uStr) ||
+        group.members.some(m => (m?._id || m?.user?._id || m?.user || m)?.toString() === uStr);
     if (!isMember) { const e = new Error('Not authorized'); e.statusCode = 403; throw e; }
     return group;
 };
@@ -40,11 +40,14 @@ const createTemplate = async (req, res, next) => {
             res.status(400); throw new Error('name and splitType are required');
         }
 
+        let normalizedSplitType = (splitType || 'EQUAL').toUpperCase();
+        if (normalizedSplitType === 'PERCENTAGE') normalizedSplitType = 'PERCENT';
+
         const template = await SplitTemplate.create({
             group: req.params.groupId,
             createdBy: req.user._id,
             name,
-            splitType,
+            splitType: normalizedSplitType,
             involvedMembers: involvedMembers || [],
             splits: splits || [],
             defaultPayer: defaultPayer || null,

@@ -1,1 +1,6 @@
-#task.mdbackend/data
+node_modules/
+.DS_Store
+*.log
+*-log.txt
+dist/
+dev-dist/

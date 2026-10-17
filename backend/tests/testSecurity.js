@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:5002/api';
+const PORT = process.env.PORT || 5001;
+const API_URL = `http://localhost:${PORT}/api`;
 
 const runTests = async () => {
     try {
@@ -74,18 +75,18 @@ const runTests = async () => {
 
         // 4. Test User (for Auth checks)
         const u1 = await post(`${API_URL}/auth/register`, { name: 'Valid User', email: `valid_${Date.now()}@example.com`, password: 'password123' });
-        const token = u1.data.token;
+        const token = u1.data.token || u1.data.data?.token;
 
         // 5. Test Invalid Expense Amount
         console.log('\n5. Testing Invalid Expense Amount...');
         // Create group first
         const groupRes = await post(`${API_URL}/groups`, { name: 'Sec Group' }, token);
-        const groupId = groupRes.data.data._id; // Note: structure data.data for created group
+        const groupId = groupRes.data._id || groupRes.data.data?._id;
 
         const expRes = await post(`${API_URL}/groups/${groupId}/expenses`, {
             description: 'Negative',
             amount: -100,
-            payer: u1.data.data.user.id,
+            payer: u1.data.user?.id || u1.data.data?.user?.id || u1.data.data?.user?._id,
             splitType: 'EQUAL'
         }, token);
 

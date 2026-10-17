@@ -10,7 +10,10 @@ const verifyMembership = async (groupId, userId) => {
         err.statusCode = 404;
         throw err;
     }
-    if (!group.members.map(m => m.toString()).includes(userId.toString())) {
+    const uStr = (userId?._id || userId || '').toString();
+    const isMember = (group.createdBy && group.createdBy.toString() === uStr) ||
+        group.members.some(m => (m?._id || m?.user?._id || m?.user || m)?.toString() === uStr);
+    if (!isMember) {
         const err = new Error('Not authorized to access this group');
         err.statusCode = 403;
         throw err;
@@ -37,9 +40,14 @@ const createRecurringExpense = async (req, res, next) => {
     try {
         const group = await verifyMembership(req.params.groupId, req.user._id);
         const { description, amount, payer, splitType, splits, frequency, cronExpression, startDate } = req.body;
+        const effectiveDesc = (description || req.body.title);
+        const effectivePayer = (payer || req.body.paidBy)?.toString();
+        const normFrequency = (frequency || 'monthly').toLowerCase();
 
         // Validate payer is in group
-        if (!group.members.map(m => m.toString()).includes(payer)) {
+        const isPayerInGroup = (group.createdBy && group.createdBy.toString() === effectivePayer) ||
+            group.members.some(m => (m?._id || m?.user?._id || m?.user || m)?.toString() === effectivePayer);
+        if (!isPayerInGroup) {
             res.status(400);
             throw new Error('Payer must be a member of the group');
         }
@@ -47,14 +55,14 @@ const createRecurringExpense = async (req, res, next) => {
         const start = startDate ? new Date(startDate) : new Date();
 
         const recurring = await RecurringExpense.create({
-            description,
+            description: effectiveDesc,
             amount,
             group: req.params.groupId,
-            payer,
-            splitType: splitType || 'EQUAL',
+            payer: effectivePayer,
+            splitType: (splitType || 'EQUAL').toUpperCase(),
             splits: splits || [],
-            frequency,
-            cronExpression: frequency === 'custom' ? cronExpression : null,
+            frequency: normFrequency,
+            cronExpression: normFrequency === 'custom' ? cronExpression : null,
             startDate: start,
             nextRunAt: start,
             createdBy: req.user._id

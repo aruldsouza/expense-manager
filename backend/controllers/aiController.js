@@ -17,13 +17,12 @@ const askAI = async (req, res, next) => {
         const { groupId } = req.params;
 
         // ─── Verify membership ────────────────────────────────────────────────
-        const group = await Group.findById(groupId).populate('members.user', 'name email');
+        const group = await Group.findById(groupId).populate('members', 'name email');
         if (!group) { res.status(404); throw new Error('Group not found'); }
 
-        const isMember = group.members.some(m => {
-            const uid = m.user ? m.user._id.toString() : m.toString();
-            return uid === req.user._id.toString();
-        });
+        const uStr = (req.user._id || req.user.id || '').toString();
+        const isMember = (group.createdBy && group.createdBy.toString() === uStr) ||
+            group.members.some(m => (m?._id || m?.user?._id || m?.user || m)?.toString() === uStr);
         if (!isMember) { res.status(403); throw new Error('Not authorized'); }
 
         // ─── Build context from real group data (last 90 days) ───────────────
@@ -45,9 +44,9 @@ const askAI = async (req, res, next) => {
         // Build member balance map
         const memberNames = {};
         group.members.forEach(m => {
-            const uid = m.user ? m.user._id.toString() : m.toString();
-            const name = m.user ? m.user.name : 'Unknown';
-            memberNames[uid] = name;
+            const uid = (m?._id || m?.user?._id || m?.user || m)?.toString();
+            const name = m?.name || m?.user?.name || 'Unknown';
+            if (uid) memberNames[uid] = name;
         });
 
         const balances = {};

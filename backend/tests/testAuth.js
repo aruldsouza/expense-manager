@@ -3,7 +3,8 @@
  * Run with: node testAuth.js
  */
 
-const BASE_URL = 'http://localhost:3000/api/auth';
+const PORT = process.env.PORT || 5001;
+const BASE_URL = `http://localhost:${PORT}/api/auth`;
 
 // Test data
 const testUser = {

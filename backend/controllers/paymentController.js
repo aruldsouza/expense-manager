@@ -22,13 +22,16 @@ const createPaymentIntent = async (req, res, next) => {
         const stripe = getStripe();
         const { groupId } = req.params;
         const { payeeId, amount, note } = req.body;
-        const payerId = req.user._id.toString();
+        const payerId = (req.user._id || req.user.id).toString();
 
         // Validate group membership
         const group = await Group.findById(groupId);
         if (!group) { res.status(404); throw new Error('Group not found'); }
 
-        const memberIds = group.members.map(m => m.user ? m.user.toString() : m.toString());
+        const getMemberId = (m) => (m?._id || m?.user?._id || m?.user || m)?.toString();
+        const memberIds = group.members.map(getMemberId);
+        if (group.createdBy) memberIds.push(group.createdBy.toString());
+
         if (!memberIds.includes(payerId) || !memberIds.includes(payeeId)) {
             res.status(400); throw new Error('Payer and payee must be members of the group');
         }
@@ -95,7 +98,9 @@ const stripeWebhook = async (req, res) => {
             const group = await Group.findById(groupId);
             if (!group) throw new Error('Group not found for webhook');
 
-            const memberIds = group.members.map(m => m.user ? m.user.toString() : m.toString());
+            const getMemberId = (m) => (m?._id || m?.user?._id || m?.user || m)?.toString();
+            const memberIds = group.members.map(getMemberId);
+            if (group.createdBy) memberIds.push(group.createdBy.toString());
             if (!memberIds.includes(payerId) || !memberIds.includes(payeeId)) {
                 throw new Error('Invalid payer or payee for group');
             }

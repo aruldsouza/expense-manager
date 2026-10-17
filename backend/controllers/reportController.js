@@ -7,15 +7,13 @@ const User = require('../models/User');
 
 // ─── Helper: verify membership ───────────────────────────────────────────────
 const verifyMembership = async (groupId, userId) => {
-    const group = await Group.findById(groupId).populate('members.user', 'name email');
+    const group = await Group.findById(groupId).populate('members', 'name email');
     if (!group) { const e = new Error('Group not found'); e.statusCode = 404; throw e; }
 
-    // support both flat-member and object-member arrays
-    const isMember = group.members.some(m =>
-        m.user
-            ? m.user._id.toString() === userId.toString()
-            : m.toString() === userId.toString()
-    );
+    const uStr = (userId?._id || userId || '').toString();
+    const isMember = (group.createdBy && group.createdBy.toString() === uStr) ||
+        group.members.some(m => (m?._id || m?.user?._id || m?.user || m)?.toString() === uStr);
+
     if (!isMember) { const e = new Error('Not authorized'); e.statusCode = 403; throw e; }
     return group;
 };
@@ -28,16 +26,16 @@ const buildReportData = async (groupId, startDate, endDate) => {
     const query = { group: groupId, ...(Object.keys(dateFilter).length ? { date: dateFilter } : {}) };
 
     const [expenses, settlements] = await Promise.all([
-        Expense.find(query).populate('payer', 'name email').populate('splits.user', 'name').sort({ date: -1 }).limit(200),
-        Settlement.find({ group: groupId }).populate('payer', 'name').populate('payee', 'name').sort({ date: -1 }).limit(100)
+        Expense.find(query).populate('paidBy', 'name email').populate('splits.user', 'name').sort({ date: -1 }).limit(200),
+        Settlement.find({ group: groupId }).populate('fromUser', 'name').populate('toUser', 'name').sort({ date: -1 }).limit(100)
     ]);
 
-    const totalAmount = expenses.reduce((s, e) => s + e.amount, 0);
-    const settledAmount = settlements.reduce((s, st) => s + st.amount, 0);
+    const totalAmount = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+    const settledAmount = settlements.reduce((s, st) => s + (st.amount || 0), 0);
 
     // Category totals
     const categoryTotals = {};
-    expenses.forEach(e => { categoryTotals[e.category || 'Other'] = (categoryTotals[e.category || 'Other'] || 0) + e.amount; });
+    expenses.forEach(e => { categoryTotals[e.category || 'Other'] = (categoryTotals[e.category || 'Other'] || 0) + (e.amount || 0); });
     const categoryRows = Object.entries(categoryTotals)
         .sort((a, b) => b[1] - a[1])
         .map(([cat, total]) => ({ category: cat, total }));
@@ -45,20 +43,23 @@ const buildReportData = async (groupId, startDate, endDate) => {
     // Member balances
     const balances = {};
     expenses.forEach(e => {
-        const pid = e.payer?._id?.toString() || e.payer.toString();
-        balances[pid] = balances[pid] || { name: e.payer?.name || 'Unknown', paid: 0, share: 0 };
-        balances[pid].paid += e.amount;
-        e.splits.forEach(s => {
-            const sid = s.user?._id?.toString() || s.user.toString();
+        const payerObj = e.paidBy || e.payer;
+        const pid = payerObj?._id?.toString() || payerObj?.toString() || 'unknown';
+        balances[pid] = balances[pid] || { name: payerObj?.name || 'Unknown', paid: 0, share: 0 };
+        balances[pid].paid += (e.amount || 0);
+        (e.splits || []).forEach(s => {
+            const sid = s.user?._id?.toString() || s.user?.toString() || 'unknown';
             balances[sid] = balances[sid] || { name: s.user?.name || 'Unknown', paid: 0, share: 0 };
-            balances[sid].share += s.amount;
+            balances[sid].share += (s.amount || 0);
         });
     });
     settlements.forEach(st => {
-        const pid = st.payer?._id?.toString() || st.payer.toString();
-        const qid = st.payee?._id?.toString() || st.payee.toString();
-        if (balances[pid]) balances[pid].paid += st.amount;
-        if (balances[qid]) balances[qid] && (balances[qid].share += st.amount);
+        const fromObj = st.fromUser || st.payer;
+        const toObj = st.toUser || st.payee;
+        const pid = fromObj?._id?.toString() || fromObj?.toString();
+        const qid = toObj?._id?.toString() || toObj?.toString();
+        if (pid && balances[pid]) balances[pid].paid += (st.amount || 0);
+        if (qid && balances[qid]) balances[qid].share += (st.amount || 0);
     });
     const memberRows = Object.values(balances).map(m => ({
         name: m.name,
@@ -198,11 +199,11 @@ const generatePdfReport = async (req, res, next) => {
                 const rowBg = ri % 2 === 0 ? '#f9f9f9' : 'white';
                 doc.rect(48, y - 2, doc.page.width - 96, 14).fill(rowBg);
                 const cells = [
-                    new Date(e.date).toLocaleDateString('en-GB'),
-                    e.description.substring(0, 35),
+                    new Date(e.date || e.createdAt).toLocaleDateString('en-GB'),
+                    (e.description || e.title || 'Expense').substring(0, 35),
                     e.category || 'Other',
-                    `${currency}${e.amount.toFixed(2)}`,
-                    e.payer?.name || 'Unknown'
+                    `${currency}${(e.amount || 0).toFixed(2)}`,
+                    e.paidBy?.name || e.payer?.name || 'Unknown'
                 ];
                 cells.forEach((cell, i) => {
                     const cx = 48 + exColW.slice(0, i).reduce((a, b) => a + b, 0);
