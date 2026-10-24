@@ -107,9 +107,35 @@ export const CurrencyProvider = ({ children }) => {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useCurrency = () => {
     const ctx = useContext(CurrencyContext);
-    if (!ctx) throw new Error('useCurrency must be used within CurrencyProvider');
+    if (!ctx) {
+        return {
+            displayCurrency: 'INR',
+            setDisplayCurrency: () => {},
+            supportedCurrencies: ['INR', 'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'SGD'],
+            convertAmount: async (amount) => amount,
+            formatCurrency: (amount, currencyCode = 'INR') => {
+                const code = currencyCode?.toUpperCase() || 'INR';
+                try {
+                    return new Intl.NumberFormat(undefined, {
+                        style: 'currency',
+                        currency: code,
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }).format(amount);
+                } catch {
+                    const symbols = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CAD: 'CA$', AUD: 'A$', JPY: '¥', SGD: 'S$' };
+                    return `${symbols[code] || code + ' '}${Number(amount || 0).toFixed(2)}`;
+                }
+            },
+            getCurrencySymbol: (code = 'INR') => {
+                const symbols = { INR: '₹', USD: '$', EUR: '€', GBP: '£', CAD: 'CA$', AUD: 'A$', JPY: '¥', SGD: 'S$' };
+                return symbols[code?.toUpperCase()] || code;
+            }
+        };
+    }
     return ctx;
 };
+
 
 
 export default CurrencyContext;

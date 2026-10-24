@@ -3,6 +3,8 @@ import { api } from '../services/api';
 import ScanReceiptModal from './ScanReceiptModal';
 import CreateExpenseFromReceiptModal from './CreateExpenseFromReceiptModal';
 import ReceiptDetailDrawer from './ReceiptDetailDrawer';
+import DebtFlowVisualizer from './DebtFlowVisualizer';
+
 
 export default function GroupDetail({ group, currentUser, onBack }) {
   const [activeTab, setActiveTab] = useState(() => {
@@ -324,6 +326,24 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           <button className="btn btn-secondary" onClick={() => setShowSettleModal(true)}>
             💵 Settle Up
           </button>
+          {/* 12.1 Simplify Debts Action */}
+          <button
+            id="simplify-debts-trigger"
+            className="btn btn-secondary"
+            onClick={() => {
+              handleTabSwitch('overview');
+              loadGroupData(true);
+              showNotification('⚡ Greedy debt simplification calculated!');
+            }}
+            style={{
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.15))',
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              color: '#38bdf8',
+              fontWeight: '600'
+            }}
+          >
+            ⚡ Simplify Debts
+          </button>
           {/* Task 4.1 — Scan Receipt button */}
           <button
             id="scan-receipt-trigger"
@@ -340,6 +360,7 @@ export default function GroupDetail({ group, currentUser, onBack }) {
           <button className="btn btn-primary" onClick={() => setShowExpenseModal(true)}>
             + Add Expense
           </button>
+
 
           {/* Delete Group Button for Creator */}
           {isCreator && (
@@ -406,95 +427,181 @@ export default function GroupDetail({ group, currentUser, onBack }) {
       ) : activeTab === 'overview' ? (
         <div className="grid-2">
           {/* Member Net Balances */}
-          <div className="glass-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem' }}>Member Net Balances</h3>
-              <span className="badge badge-cyan">{(currentGroup.members || group.members || []).length} Members</span>
+          <div className="glass-card" style={{ gridColumn: '1 / -1' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.2rem' }}>
+                  👥 Member Net Balances
+                </h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
+                  Detailed financial standing, total paid, and total owed per member
+                </p>
+              </div>
+              <span className="badge badge-cyan" style={{ fontSize: '0.82rem', padding: '0.35rem 0.8rem' }}>
+                {(currentGroup.members || group.members || []).length} Members
+              </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {balances.map(b => {
-                const isPositive = b.netBalance > 0.01;
-                const isNegative = b.netBalance < -0.01;
-                return (
-                  <div key={b.user._id || b.user.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0.85rem', background: 'rgba(15, 23, 42, 0.5)', borderRadius: 'var(--radius-sm)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                      <div style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: '700',
-                        fontSize: '0.85rem'
-                      }}>
-                        {b.user.name ? b.user.name.charAt(0).toUpperCase() : '?'}
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
-                          {b.user.name}
-                          {(b.user._id || b.user.id) === (currentUser ? (currentUser._id || currentUser.id) : null) && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--primary)', marginLeft: '0.35rem' }}>(You)</span>
-                          )}
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                          {b.user.email ? `${b.user.email} • ` : ''}Paid ₹{b.totalPaid.toFixed(2)} • Owed ₹{b.totalOwed.toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
 
-                    <span className={`badge ${isPositive ? 'badge-emerald' : isNegative ? 'badge-rose' : 'badge-amber'}`}>
-                      {isPositive ? `gets back ₹${b.netBalance.toFixed(2)}` : isNegative ? `owes ₹${Math.abs(b.netBalance).toFixed(2)}` : 'settled up'}
-                    </span>
-                  </div>
-                );
-              })}
+            <div className="balances-table-container">
+              <table className="balances-table">
+                <colgroup>
+                  <col style={{ width: '30%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '18%' }} />
+                  <col style={{ width: '20%' }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left' }}>Member</th>
+                    <th style={{ textAlign: 'right' }}>Total Paid</th>
+                    <th style={{ textAlign: 'right' }}>Total Owed</th>
+                    <th style={{ textAlign: 'right' }}>Net Balance</th>
+                    <th style={{ textAlign: 'center' }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {balances.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
+                        No member balance data available. Add expenses to calculate net balances.
+                      </td>
+                    </tr>
+                  ) : (
+                    balances.map((b, idx) => {
+                      const isPositive = b.netBalance > 0.009;
+                      const isNegative = b.netBalance < -0.009;
+                      const isCurrent = (b.user._id || b.user.id) === (currentUser ? (currentUser._id || currentUser.id) : null);
+                      const curCode = currentGroup?.currency || group?.currency || 'INR';
+                      const curSym = curCode === 'USD' ? '$' : curCode === 'EUR' ? '€' : curCode === 'GBP' ? '£' : '₹';
+                      const formatVal = (v) => `${curSym}${Math.abs(Number(v) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                      return (
+                        <tr
+                          key={b.user._id || b.user.id || `bal-${idx}`}
+                          className={`balances-table-row ${isCurrent ? 'current-user' : ''}`}
+                        >
+                          {/* Member Profile */}
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                              <div style={{
+                                width: '38px',
+                                height: '38px',
+                                borderRadius: '50%',
+                                background: isCurrent ? 'linear-gradient(135deg, #6366f1, #06b6d4)' : 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))',
+                                border: isCurrent ? '1.5px solid rgba(99, 102, 241, 0.6)' : '1px solid rgba(255, 255, 255, 0.12)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: '700',
+                                fontSize: '0.92rem',
+                                color: '#fff',
+                                flexShrink: 0,
+                                boxShadow: isCurrent ? '0 0 12px rgba(99, 102, 241, 0.35)' : 'none'
+                              }}>
+                                {b.user.name ? b.user.name.charAt(0).toUpperCase() : '?'}
+                              </div>
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ fontSize: '0.92rem', fontWeight: '600', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={b.user.name || 'Member'}>
+                                    {b.user.name || 'Member'}
+                                  </span>
+                                  {isCurrent && (
+                                    <span style={{
+                                      fontSize: '0.68rem',
+                                      padding: '0.1rem 0.45rem',
+                                      borderRadius: '9999px',
+                                      background: 'rgba(99, 102, 241, 0.25)',
+                                      color: 'var(--primary)',
+                                      border: '1px solid rgba(99, 102, 241, 0.4)',
+                                      fontWeight: '700',
+                                      flexShrink: 0
+                                    }}>
+                                      You
+                                    </span>
+                                  )}
+                                </div>
+                                {b.user.email && (
+                                  <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.15rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={b.user.email}>
+                                    {b.user.email}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Total Paid */}
+                          <td style={{ textAlign: 'right' }}>
+                            <span className="balances-num" style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '0.95rem' }}>
+                              {formatVal(b.totalPaid || 0)}
+                            </span>
+                          </td>
+
+                          {/* Total Owed */}
+                          <td style={{ textAlign: 'right' }}>
+                            <span className="balances-num" style={{ fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                              {formatVal(b.totalOwed || 0)}
+                            </span>
+                          </td>
+
+                          {/* Net Balance */}
+                          <td style={{ textAlign: 'right' }}>
+                            <span
+                              className="balances-num"
+                              style={{
+                                fontWeight: '700',
+                                fontSize: '1rem',
+                                color: isPositive ? 'var(--accent-emerald)' : isNegative ? 'var(--accent-rose)' : 'var(--text-muted)'
+                              }}
+                            >
+                              {isPositive ? `+${formatVal(b.netBalance)}` : isNegative ? `-${formatVal(b.netBalance)}` : `${curSym}0.00`}
+                            </span>
+                          </td>
+
+                          {/* Status Badge */}
+                          <td style={{ textAlign: 'center' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                              <span
+                                className={`balances-status-pill badge ${isPositive ? 'badge-emerald' : isNegative ? 'badge-rose' : 'badge-amber'}`}
+                              >
+                                {isPositive ? `Gets back ${formatVal(b.netBalance)}` : isNegative ? `Owes ${formatVal(b.netBalance)}` : '✓ Settled Up'}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Greedy Optimized Settlements */}
-          <div className="glass-card">
+
+          {/* 9️⃣, 🔟, 1️⃣1️⃣ Greedy Optimized Debt Flow & Simplification */}
+          <div className="glass-card" style={{ gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem' }}>Greedy Debt Simplification</h3>
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', marginBottom: '0.2rem' }}>
+                  ⚡ Greedy Debt Simplification & Interactive Flow
+                </h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>
+                  Live visual flow of min-cash-flow payment paths between members.
+                </p>
+              </div>
               <span className="badge badge-cyan">Min-Cash-Flow Algorithm</span>
             </div>
 
-            {optimized.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)' }}>
-                🎉 Everyone is completely settled up! No debts pending.
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                {optimized.map((opt, idx) => (
-                  <div key={idx} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.75rem 1rem',
-                    background: 'rgba(99, 102, 241, 0.08)',
-                    border: '1px solid rgba(99, 102, 241, 0.2)',
-                    borderRadius: 'var(--radius-sm)'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.9rem' }}>
-                      <span style={{ fontWeight: '600', color: 'var(--accent-rose)' }}>{opt.fromUser.name}</span>
-                      <span style={{ color: 'var(--text-dim)' }}>pays</span>
-                      <span style={{ fontWeight: '600', color: 'var(--accent-emerald)' }}>{opt.toUser.name}</span>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ fontFamily: 'var(--font-display)', fontWeight: '700', fontSize: '1.1rem', color: '#fff' }}>
-                        ₹{opt.amount.toFixed(2)}
-                      </span>
-                      <button className="btn btn-primary btn-sm" onClick={() => quickSettle(opt)}>
-                        Settle
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <DebtFlowVisualizer
+              balances={balances}
+              optimizedTransactions={optimized}
+              groupCurrency={currentGroup?.currency || group?.currency || 'INR'}
+              onSettle={(tx) => quickSettle(tx.originalTx || tx)}
+              onRefresh={() => loadGroupData(true)}
+              groupId={group._id || group.id}
+            />
           </div>
+
         </div>
       ) : (
         /* Transaction History Ledger */

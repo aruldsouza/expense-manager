@@ -117,63 +117,65 @@ Base URL: `/api`
 
 ## 9️⃣ Create Interactive Debt Flow Visualization
 
-* [ ] 9.1 Create reusable debt flow visualization component
-* [ ] 9.2 Represent each member as a node
-* [ ] 9.3 Represent each optimized payment as a directed connection
-* [ ] 9.4 Clearly show payment direction
-* [ ] 9.5 Display payment amount on connections
-* [ ] 9.6 Generate graph dynamically from API data
-* [ ] 9.7 Handle members with no outgoing transactions
-* [ ] 9.8 Handle larger groups without making the graph unusable
-* [ ] 9.9 Make the visualization responsive
+* [x] 9.1 Create reusable debt flow visualization component
+* [x] 9.2 Represent each member as a node
+* [x] 9.3 Represent each optimized payment as a directed connection
+* [x] 9.4 Clearly show payment direction
+* [x] 9.5 Display payment amount on connections
+* [x] 9.6 Generate graph dynamically from API data
+* [x] 9.7 Handle members with no outgoing transactions
+* [x] 9.8 Handle larger groups without making the graph unusable
+* [x] 9.9 Make the visualization responsive
 
 ---
 
 ## 🔟 Add Interactive Payment Suggestions
 
-* [ ] 10.1 Add hover/click interaction to payment connections
-* [ ] 10.2 Display payer information
-* [ ] 10.3 Display receiver information
-* [ ] 10.4 Display payment amount
-* [ ] 10.5 Display human-readable suggestion
-* [ ] 10.6 Example:
+* [x] 10.1 Add hover/click interaction to payment connections
+* [x] 10.2 Display payer information
+* [x] 10.3 Display receiver information
+* [x] 10.4 Display payment amount
+* [x] 10.5 Display human-readable suggestion
+* [x] 10.6 Example:
 
   * `Alice should pay Bob ₹500`
-* [ ] 10.7 Highlight the selected transaction
-* [ ] 10.8 Ensure interaction works on desktop and mobile
+* [x] 10.7 Highlight the selected transaction
+* [x] 10.8 Ensure interaction works on desktop and mobile
 
 ---
 
 ## 1️⃣1️⃣ Integrate With Existing Settlement Flow
 
-* [ ] 11.1 Connect optimized transactions with the existing settlement functionality
-* [ ] 11.2 Allow users to initiate settlement from an optimized transaction where applicable
-* [ ] 11.3 Reuse the existing settlement API
-* [ ] 11.4 Prevent duplicate settlement records
-* [ ] 11.5 Validate settlement amount on the backend
-* [ ] 11.6 Handle successful settlement
-* [ ] 11.7 Handle failed/cancelled settlement
-* [ ] 11.8 Refresh optimized debts after successful settlement
-* [ ] 11.9 Remove completed debts from outstanding suggestions
+* [x] 11.1 Connect optimized transactions with the existing settlement functionality
+* [x] 11.2 Allow users to initiate settlement from an optimized transaction where applicable
+* [x] 11.3 Reuse the existing settlement API
+* [x] 11.4 Prevent duplicate settlement records
+* [x] 11.5 Validate settlement amount on the backend
+* [x] 11.6 Handle successful settlement
+* [x] 11.7 Handle failed/cancelled settlement
+* [x] 11.8 Refresh optimized debts after successful settlement
+* [x] 11.9 Remove completed debts from outstanding suggestions
+
 
 ---
 
 ## 1️⃣2️⃣ Final Testing, UI Integration & Documentation
 
-* [ ] 12.1 Add "Simplify Debts" action to the appropriate group/expense screen
-* [ ] 12.2 Test complete flow: Expenses → Balances → Simplify Debts → Settlement
-* [ ] 12.3 Test circular debt scenario end-to-end
-* [ ] 12.4 Test multiple debtor/creditor scenario
-* [ ] 12.5 Test frontend visualization
-* [ ] 12.6 Test existing expense functionality
-* [ ] 12.7 Test existing settlement/payment functionality
-* [ ] 12.8 Test authentication and authorization
-* [ ] 12.9 Run backend and frontend tests
-* [ ] 12.10 Run production build
-* [ ] 12.11 Verify no console/server errors
-* [ ] 12.12 Update README with the Greedy Debt Minimization feature
-* [ ] 12.13 Document API and algorithm behavior
-* [ ] 12.14 Verify no existing functionality has been broken
+* [x] 12.1 Add "Simplify Debts" action to the appropriate group/expense screen
+* [x] 12.2 Test complete flow: Expenses → Balances → Simplify Debts → Settlement
+* [x] 12.3 Test circular debt scenario end-to-end
+* [x] 12.4 Test multiple debtor/creditor scenario
+* [x] 12.5 Test frontend visualization
+* [x] 12.6 Test existing expense functionality
+* [x] 12.7 Test existing settlement/payment functionality
+* [x] 12.8 Test authentication and authorization
+* [x] 12.9 Run backend and frontend tests
+* [x] 12.10 Run production build
+* [x] 12.11 Verify no console/server errors
+* [x] 12.12 Update README with the Greedy Debt Minimization feature
+* [x] 12.13 Document API and algorithm behavior
+* [x] 12.14 Verify no existing functionality has been broken
+
 
 ---
 

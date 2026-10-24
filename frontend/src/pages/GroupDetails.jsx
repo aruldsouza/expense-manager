@@ -143,6 +143,18 @@ const GroupDetails = () => {
                                 >
                                     <FaPlus /> Add Expense
                                 </Button>
+                                {/* 12.1 Simplify Debts Action */}
+                                <Button
+                                    variant="outline-info"
+                                    onClick={() => {
+                                        setActiveTab('debt-summary');
+                                        setRefreshTrigger(prev => prev + 1);
+                                        toast('⚡ Greedy debt simplification calculated!', { icon: '💡' });
+                                    }}
+                                    className="d-flex align-items-center gap-2 shadow-sm rounded-pill px-4"
+                                >
+                                    <FaCalculator /> Simplify Debts
+                                </Button>
                                 <Button
                                     variant="outline-success"
                                     onClick={() => handleOpenSettlement(null)}
@@ -150,6 +162,7 @@ const GroupDetails = () => {
                                 >
                                     <FaHandHoldingUsd /> Settle Up
                                 </Button>
+
                             </>
                         )}
                         <Link

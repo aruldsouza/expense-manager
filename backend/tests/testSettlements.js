@@ -46,11 +46,11 @@ const runTests = async () => {
         const u2 = await post(`${API_URL}/auth/register`, { name: 'Bob', email: `bob_${emailSuffix}@example.com`, password: 'password123' });
         const u3 = await post(`${API_URL}/auth/register`, { name: 'Charlie', email: `charlie_${emailSuffix}@example.com`, password: 'password123' });
 
-        const token1 = u1.data.token;
-        const id1 = u1.data.user.id;
-        const id2 = u2.data.user.id;
-        const id3 = u3.data.user.id;
-        console.log('Users registered.');
+        const token1 = u1.data?.token || u1.token;
+        const id1 = (u1.data?.user?._id || u1.data?.user?.id || u1.user?._id || u1.user?.id).toString();
+        const id2 = (u2.data?.user?._id || u2.data?.user?.id || u2.user?._id || u2.user?.id).toString();
+        const id3 = (u3.data?.user?._id || u3.data?.user?.id || u3.user?._id || u3.user?.id).toString();
+        console.log('Users registered:', { id1, id2, id3 });
 
         // 2. Create Group
         console.log(`\n2. Creating Group...`);
@@ -58,8 +58,10 @@ const runTests = async () => {
             name: 'Settlement Test Group',
             members: [id2, id3]
         }, token1);
-        const groupId = groupRes.data._id;
-        console.log('Group created.');
+        const groupObj = groupRes.data?.data || groupRes.data?.group || groupRes.data || groupRes;
+        const groupId = (groupObj._id || groupObj.id).toString();
+        console.log('Group created with ID:', groupId);
+
 
         // 3. Alice pays 300, split equally (100 each)
         // Alice Net: +200, Bob Net: -100, Charlie Net: -100
@@ -96,9 +98,11 @@ const runTests = async () => {
 
         console.log(`\n6. Fetching Balances...`);
         const balRes = await get(`${API_URL}/groups/${groupId}/balances`, token1);
-        const aliceBal = balRes.data.find(b => b.user._id === id1).balance;
-        const bobBal = balRes.data.find(b => b.user._id === id2).balance;
-        const charlieBal = balRes.data.find(b => b.user._id === id3).balance;
+        const balList = Array.isArray(balRes.data) ? balRes.data : (balRes.data?.data || balRes || []);
+        const aliceBal = balList.find(b => (b.user?._id || b.user).toString() === id1).balance;
+        const bobBal = balList.find(b => (b.user?._id || b.user).toString() === id2).balance;
+        const charlieBal = balList.find(b => (b.user?._id || b.user).toString() === id3).balance;
+
 
         console.log(`Alice: ${aliceBal}, Bob: ${bobBal}, Charlie: ${charlieBal}`);
 

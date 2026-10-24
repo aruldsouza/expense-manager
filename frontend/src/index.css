@@ -309,3 +309,127 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
 }
+
+/* ==========================================================================
+   Member Net Balances Table Component
+   ========================================================================== */
+.balances-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
+  margin-top: 0.5rem;
+}
+
+.balances-table {
+  width: 100%;
+  min-width: 720px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+  text-align: left;
+}
+
+.balances-table thead tr th {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  vertical-align: middle;
+  border: none;
+  background: transparent;
+  user-select: none;
+}
+
+.balances-table-row {
+  transition: all 0.2s ease;
+}
+
+.balances-table-row td {
+  padding: 0.9rem 1.25rem;
+  vertical-align: middle;
+  background: rgba(15, 23, 42, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.balances-table-row:hover td {
+  background: rgba(30, 41, 67, 0.75);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.balances-table-row td:first-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.balances-table-row:hover td:first-child {
+  border-left-color: rgba(255, 255, 255, 0.12);
+}
+
+.balances-table-row td:last-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.balances-table-row:hover td:last-child {
+  border-right-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Current user highlighted row */
+.balances-table-row.current-user td {
+  background: rgba(99, 102, 241, 0.09);
+  border-top: 1px solid rgba(99, 102, 241, 0.35);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.balances-table-row.current-user:hover td {
+  background: rgba(99, 102, 241, 0.16);
+  border-top-color: rgba(99, 102, 241, 0.5);
+  border-bottom-color: rgba(99, 102, 241, 0.5);
+}
+
+.balances-table-row.current-user td:first-child {
+  border-left: 3px solid var(--primary);
+}
+
+.balances-table-row.current-user:hover td:first-child {
+  border-left: 3px solid var(--primary);
+}
+
+.balances-table-row.current-user td:last-child {
+  border-right: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.balances-table-row.current-user:hover td:last-child {
+  border-right-color: rgba(99, 102, 241, 0.5);
+}
+
+.balances-num {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-main);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.balances-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  min-width: 130px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+

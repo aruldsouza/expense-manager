@@ -12,20 +12,24 @@ import {
     FaUser,
     FaInfoCircle,
     FaArrowUp,
-    FaArrowDown
+    FaArrowDown,
+    FaProjectDiagram,
+    FaListUl
 } from 'react-icons/fa';
 import { useCurrency } from '../context/CurrencyContext';
+import DebtFlowVisualizer from './DebtFlowVisualizer';
 
 /**
- * 8️⃣ Reusable Debt Summary Component
+ * 8️⃣, 9️⃣, 🔟, 1️⃣1️⃣ Reusable Debt Summary & Interactive Debt Flow Component
  *
  * Displays:
- * 1. High-level group debt & balance metrics
- * 2. Who needs to pay (Debtors)
- * 3. Who needs to receive (Creditors)
- * 4. Each member's net balance breakdown (Paid, Owed, Net Balance)
- * 5. Optimized settlement payment suggestions (Payer -> Receiver with amounts)
- * 6. Optimization efficiency statistics
+ * 1. Interactive Directed Debt Flow Network / Stream Visualization
+ * 2. High-level group debt & balance metrics
+ * 3. Who needs to pay (Debtors)
+ * 4. Who needs to receive (Creditors)
+ * 5. Each member's net balance breakdown (Paid, Owed, Net Balance)
+ * 6. Interactive settlement payment suggestions & quick settlement integration
+ * 7. Optimization efficiency statistics
  *
  * Responsive, glassmorphic, currency-formatted, and resilient.
  */
@@ -38,8 +42,10 @@ const DebtSummary = ({
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [activeView, setActiveView] = useState('all'); // 'interactive' | 'cards' | 'all'
     const { formatCurrency } = useCurrency();
     const gc = groupCurrency || 'INR';
+
 
     const fetchSummary = useCallback(async () => {
         if (!groupId) return;
@@ -146,6 +152,52 @@ const DebtSummary = ({
                 )}
             </div>
 
+            {/* View Mode Controls */}
+            {!isAllSettled && (
+                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 p-2 glass-card border border-secondary border-opacity-25" style={{ background: 'rgba(15, 23, 42, 0.45)' }}>
+                    <div className="d-flex align-items-center gap-2 ps-2">
+                        <span className="text-muted small fw-semibold">View Perspective:</span>
+                    </div>
+                    <div className="btn-group btn-group-sm p-1 rounded-pill bg-black bg-opacity-40 border border-secondary border-opacity-30" role="group">
+                        <button
+                            type="button"
+                            className={`btn rounded-pill px-3 py-1 btn-sm fw-semibold ${activeView === 'interactive' ? 'btn-primary text-white shadow-sm' : 'btn-link text-muted text-decoration-none'}`}
+                            onClick={() => setActiveView('interactive')}
+                        >
+                            <FaProjectDiagram className="me-1" /> Flow Visualization
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn rounded-pill px-3 py-1 btn-sm fw-semibold ${activeView === 'cards' ? 'btn-primary text-white shadow-sm' : 'btn-link text-muted text-decoration-none'}`}
+                            onClick={() => setActiveView('cards')}
+                        >
+                            <FaListUl className="me-1" /> Cards & Table
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn rounded-pill px-3 py-1 btn-sm fw-semibold ${activeView === 'all' ? 'btn-primary text-white shadow-sm' : 'btn-link text-muted text-decoration-none'}`}
+                            onClick={() => setActiveView('all')}
+                        >
+                            ⚡ Comprehensive (All)
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* 9️⃣, 🔟, 1️⃣1️⃣ Interactive Debt Flow Visualization */}
+            {!isAllSettled && (activeView === 'interactive' || activeView === 'all') && (
+                <div className="mb-4">
+                    <DebtFlowVisualizer
+                        balances={balances}
+                        optimizedTransactions={transactions}
+                        groupCurrency={gc}
+                        onSettle={onSettle}
+                        onRefresh={fetchSummary}
+                        groupId={groupId}
+                    />
+                </div>
+            )}
+
             {/* 8.8 Empty State: All Settled Up */}
             {isAllSettled ? (
                 <div className="glass-card text-center py-5 my-4 border border-success border-opacity-30 bg-success bg-opacity-10">
@@ -157,10 +209,11 @@ const DebtSummary = ({
                         Every member in this group is completely squared away with a zero net balance. No pending payments are required.
                     </p>
                 </div>
-            ) : (
+            ) : (activeView === 'cards' || activeView === 'all') && (
                 <>
                     {/* 8.3 & 8.4 Two-Column Summary: Who Needs to Pay vs Who Needs to Receive */}
                     <Row className="g-3 mb-4">
+
                         {/* Who Needs to Pay (Debtors) */}
                         <Col xs={12} md={6}>
                             <Card className="glass-card h-100 border border-danger border-opacity-25" style={{ background: 'rgba(244, 63, 94, 0.05)' }}>
@@ -343,7 +396,7 @@ const DebtSummary = ({
             )}
 
             {/* 8.2 Each Member's Net Balance Breakdown */}
-            <div className="glass-card border border-secondary border-opacity-25">
+            <div className="glass-card">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h6 className="fw-bold text-uppercase text-muted small mb-0">
@@ -353,67 +406,112 @@ const DebtSummary = ({
                     </div>
                 </div>
 
-                <div className="table-responsive">
-                    <table className="table table-dark table-hover align-middle mb-0" style={{ background: 'transparent' }}>
+                <div className="balances-table-container">
+                    <table className="balances-table">
+                        <colgroup>
+                            <col style={{ width: '30%' }} />
+                            <col style={{ width: '16%' }} />
+                            <col style={{ width: '16%' }} />
+                            <col style={{ width: '18%' }} />
+                            <col style={{ width: '20%' }} />
+                        </colgroup>
                         <thead>
-                            <tr className="text-muted small border-secondary">
-                                <th style={{ background: 'transparent' }}>Member</th>
-                                <th style={{ background: 'transparent' }} className="text-end">Total Paid</th>
-                                <th style={{ background: 'transparent' }} className="text-end">Total Owed</th>
-                                <th style={{ background: 'transparent' }} className="text-end">Net Balance</th>
-                                <th style={{ background: 'transparent' }} className="text-center">Status</th>
+                            <tr>
+                                <th style={{ textAlign: 'left' }}>Member</th>
+                                <th style={{ textAlign: 'right' }}>Total Paid</th>
+                                <th style={{ textAlign: 'right' }}>Total Owed</th>
+                                <th style={{ textAlign: 'right' }}>Net Balance</th>
+                                <th style={{ textAlign: 'center' }}>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {balances.map((b, idx) => {
-                                const isPositive = b.netBalance > 0.009;
-                                const isNegative = b.netBalance < -0.009;
-                                const isSettled = !isPositive && !isNegative;
+                            {balances.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)' }}>
+                                        No member balance data available.
+                                    </td>
+                                </tr>
+                            ) : (
+                                balances.map((b, idx) => {
+                                    const isPositive = b.netBalance > 0.009;
+                                    const isNegative = b.netBalance < -0.009;
 
-                                return (
-                                    <tr key={idx} className="border-secondary border-opacity-25">
-                                        <td style={{ background: 'transparent' }}>
-                                            <div className="d-flex align-items-center gap-2">
-                                                <div className="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style={{ width: '32px', height: '32px', fontSize: '13px' }}>
-                                                    {(b.user?.name || '?').charAt(0).toUpperCase()}
+                                    return (
+                                        <tr key={idx} className="balances-table-row">
+                                            {/* Member Profile */}
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                                                    <div style={{
+                                                        width: '38px',
+                                                        height: '38px',
+                                                        borderRadius: '50%',
+                                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))',
+                                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontWeight: '700',
+                                                        fontSize: '0.92rem',
+                                                        color: '#fff',
+                                                        flexShrink: 0
+                                                    }}>
+                                                        {(b.user?.name || '?').charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div style={{ minWidth: 0 }}>
+                                                        <div style={{ fontSize: '0.92rem', fontWeight: '600', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={b.user?.name || 'Unknown'}>
+                                                            {b.user?.name || 'Unknown'}
+                                                        </div>
+                                                        {b.user?.email && (
+                                                            <div style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.15rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={b.user.email}>
+                                                                {b.user.email}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <div className="fw-bold text-light small">{b.user?.name || 'Unknown'}</div>
-                                                    {b.user?.email && <div className="text-muted" style={{ fontSize: '11px' }}>{b.user.email}</div>}
+                                            </td>
+
+                                            {/* Total Paid */}
+                                            <td style={{ textAlign: 'right' }}>
+                                                <span className="balances-num" style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '0.95rem' }}>
+                                                    {formatCurrency(b.totalPaid || 0, gc)}
+                                                </span>
+                                            </td>
+
+                                            {/* Total Owed */}
+                                            <td style={{ textAlign: 'right' }}>
+                                                <span className="balances-num" style={{ fontWeight: '500', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                                                    {formatCurrency(b.totalOwed || 0, gc)}
+                                                </span>
+                                            </td>
+
+                                            {/* Net Balance */}
+                                            <td style={{ textAlign: 'right' }}>
+                                                <span
+                                                    className="balances-num"
+                                                    style={{
+                                                        fontWeight: '700',
+                                                        fontSize: '1rem',
+                                                        color: isPositive ? 'var(--accent-emerald)' : isNegative ? 'var(--accent-rose)' : 'var(--text-muted)'
+                                                    }}
+                                                >
+                                                    {isPositive ? `+${formatCurrency(b.netBalance, gc)}` : isNegative ? `-${formatCurrency(Math.abs(b.netBalance), gc)}` : formatCurrency(0, gc)}
+                                                </span>
+                                            </td>
+
+                                            {/* Status Badge */}
+                                            <td style={{ textAlign: 'center' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <span
+                                                        className={`balances-status-pill badge ${isPositive ? 'badge-emerald' : isNegative ? 'badge-rose' : 'badge-amber'}`}
+                                                    >
+                                                        {isPositive ? `Gets back ${formatCurrency(b.netBalance, gc)}` : isNegative ? `Owes ${formatCurrency(Math.abs(b.netBalance), gc)}` : '✓ Settled Up'}
+                                                    </span>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td style={{ background: 'transparent' }} className="text-end text-light small">
-                                            {formatCurrency(b.totalPaid || 0, gc)}
-                                        </td>
-                                        <td style={{ background: 'transparent' }} className="text-end text-light small">
-                                            {formatCurrency(b.totalOwed || 0, gc)}
-                                        </td>
-                                        <td style={{ background: 'transparent' }} className="text-end fw-bold">
-                                            <span className={isPositive ? 'text-success' : isNegative ? 'text-danger' : 'text-muted'}>
-                                                {isPositive ? `+${formatCurrency(b.netBalance, gc)}` : formatCurrency(b.netBalance, gc)}
-                                            </span>
-                                        </td>
-                                        <td style={{ background: 'transparent' }} className="text-center">
-                                            {isPositive && (
-                                                <Badge bg="success" className="bg-opacity-25 text-success border border-success border-opacity-50">
-                                                    Gets back {formatCurrency(b.netBalance, gc)}
-                                                </Badge>
-                                            )}
-                                            {isNegative && (
-                                                <Badge bg="danger" className="bg-opacity-25 text-danger border border-danger border-opacity-50">
-                                                    Owes {formatCurrency(Math.abs(b.netBalance), gc)}
-                                                </Badge>
-                                            )}
-                                            {isSettled && (
-                                                <Badge bg="secondary" className="bg-opacity-25 text-muted border border-secondary border-opacity-50">
-                                                    Settled
-                                                </Badge>
-                                            )}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            )}
                         </tbody>
                     </table>
                 </div>
