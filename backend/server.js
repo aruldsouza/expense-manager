@@ -20,7 +20,13 @@ initSocket(server, '*');
 
 // Middleware
 app.use(cors());
+
+// Stripe Webhook endpoint requires unparsed raw body for cryptographic signature verification
+const { stripeWebhook } = require('./controllers/paymentController');
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
 app.use(express.json());
+
 
 // Request logging middleware
 app.use((req, res, next) => {

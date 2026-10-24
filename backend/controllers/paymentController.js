@@ -1,18 +1,10 @@
-const Stripe = require('stripe');
 const Settlement = require('../models/Settlement');
 const Group = require('../models/Group');
 const Expense = require('../models/Expense');
 const { getIO } = require('../socket');
 const { createNotifications } = require('../utils/notificationHelper');
+const { getStripe, validateStripeWebhookConfig, isStripeConfigured } = require('../config/stripe');
 
-const getStripe = () => {
-    if (!process.env.STRIPE_SECRET_KEY) {
-        const e = new Error('Stripe is not configured. Set STRIPE_SECRET_KEY in the server environment.');
-        e.statusCode = 503;
-        throw e;
-    }
-    return Stripe(process.env.STRIPE_SECRET_KEY);
-};
 
 // @desc  Create a Stripe PaymentIntent for settling a debt
 // @route POST /api/groups/:groupId/payments/intent
@@ -75,19 +67,19 @@ const createPaymentIntent = async (req, res, next) => {
 // @route POST /api/payments/webhook
 // @access Public (verified by Stripe signature)
 const stripeWebhook = async (req, res) => {
-    const stripe = Stripe(process.env.STRIPE_SECRET_KEY || '');
     const sig = req.headers['stripe-signature'];
+    if (!sig) {
+        return res.status(400).json({ error: 'Missing stripe-signature header' });
+    }
 
     let event;
     try {
-        event = stripe.webhooks.constructEvent(
-            req.body,
-            sig,
-            process.env.STRIPE_WEBHOOK_SECRET || ''
-        );
+        const stripe = getStripe();
+        const webhookSecret = validateStripeWebhookConfig();
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
     } catch (err) {
         console.error('Stripe webhook signature error:', err.message);
-        return res.status(400).send(`Webhook Error: ${err.message}`);
+        return res.status(err.statusCode || 400).send(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === 'payment_intent.succeeded') {
